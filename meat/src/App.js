@@ -28,7 +28,7 @@ const menu = [
     text: '주문',
     path: '/order',
     children: [
-      { text: '주문 등록', path: '/order/register', hasInput: true }, // Added hasInput property
+      { text: '주문 등록', path: '/order/register', hasInput: true }, 
       { text: '작업지시서', path: '/order/work-order' },
       { text: '배송 사고', path: '/order/accident' },
     ],
@@ -76,6 +76,7 @@ const ProcurementPage = () => (
       <label htmlFor="orderAmount">발주금액</label>
       <input type="text" id="orderAmount"/>
     </div>
+    <button>등록</button>
   </div>
 );
 
@@ -86,7 +87,7 @@ const IncomingPage = () => (
       <label htmlFor="purchaseOrderNumber">발주번호</label>
       <input type="text" id="purchaseOrderNumber"/>
       <button>조회</button>
-      <label htmlFor="item">입고품목</label>
+      <label htmlFor="item" className="item-label">입고품목</label>
       <input type="text" id="item"/>
     </div>
     <div className="input-container">
@@ -108,6 +109,7 @@ const IncomingPage = () => (
     <div className="input-container">
       <label htmlFor="actualPurchasePrice">실 매입가</label>
       <input type="text" id="actualPurchasePrice"/>
+      <button>등록</button>
     </div>
   </div>
 );
@@ -157,7 +159,7 @@ const RegisterPage = () => (
       <label htmlFor="category">구분</label>
       <input type="text" id="category"/>
       <label htmlFor="product2" className="product-label">제품명</label>
-      <input type="text" id="product2"/>
+      <input type="text" id="product2" className="product-input"/>
       <label htmlFor="price2" className="price-label">가격</label>
       <input type="text" id="price2"/>
     </div>
@@ -165,7 +167,7 @@ const RegisterPage = () => (
       <label htmlFor="orderer">주문자</label>
       <input type="text" id="orderer"/>
       <label htmlFor="product3" className="product-label">제품명</label>
-      <input type="text" id="product3"/>
+      <input type="text" id="product3" className="product-input"/>
       <label htmlFor="price3" className="price-label">가격</label>
       <input type="text" id="price3"/>
     </div>

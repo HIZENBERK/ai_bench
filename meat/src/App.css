@@ -106,11 +106,16 @@ button {
 }
 
 /* 입고 등록 */
-.input-container label[for="item"],
 .input-container label[for="historyNumber"],
 .input-container label[for="unitPrice"] {
   margin-left: 50px;
   width: 100px;
+}
+.item-label{
+  margin-left: 7px
+}
+#item{
+  margin-left: -19px
 }
 
 /* 2차가공 */
@@ -123,14 +128,22 @@ button {
 
 /* 주문등록 */
 .product-label {
-  margin-left: 50px;
+  margin-left: 30px;
   width: 70px;
   }
-  
+
+#product1, #product2, #product3 {
+  margin-left: -50px; 
+  }
+
   .price-label {
-  margin-left: 50px;
+  margin-left: 20px;
   width: 50px;
   }
+
+  #price1, #price2, #price3 {
+  margin-left: -70px; 
+}
 
 /* 메뉴 스타일 수정 */
 ul {
