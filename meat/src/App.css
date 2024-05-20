@@ -11,7 +11,34 @@
   padding: 20px;
   background-color: #f0f0f0; /* 메뉴 배경색 추가 */
 }
+.menu-container ul {
+  list-style-type: none;
+  padding: 0;
+}
 
+.menu-container li {
+  margin: 10px 0;
+}
+
+.menu-container a {
+  text-decoration: none;
+  color: #007bff;
+}
+
+.menu-container a:hover {
+  text-decoration: underline;
+}
+
+.help-text {
+  margin-top: 20px;
+  font-size: 14px;
+  color: #6c757d;
+}
+
+.content-container {
+  flex-grow: 1;
+  padding: 20px;
+}
 /* 컨텐츠 컨테이너 스타일 수정 flex = 나머지 공간을 컨텐츠 컨테이너가 차지하도록 설정 */
 /* .content-container {
   flex: 1; 
