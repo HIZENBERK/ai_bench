@@ -2,7 +2,8 @@ import React from 'react';
 import './App.css';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import LoginPage from "./Login";
-import Main from "./Main";
+import Menu from "./Menu";
+import Main from "./Main"
 import ProcurementPage from "./ProcurementPage";
 import IncomingPage from "./IncomingPage";
 import ProcessingPage from "./ProcessingPage";
@@ -14,7 +15,8 @@ const App = () => {
         <Router>
             <Routes>
                 <Route path="/" element={<LoginPage />} />
-                <Route path="/*" element={<Main />}>
+                <Route path="/*" element={<Menu />}>
+                    <Route path="main" element={<Main />} />
                     <Route path="raw-material/procurement" element={<ProcurementPage />} />
                     <Route path="raw-material/incoming" element={<IncomingPage />} />
                     <Route path="raw-material/processing" element={<ProcessingPage />} />
