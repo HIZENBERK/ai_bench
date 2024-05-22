@@ -1,31 +1,59 @@
 import React from "react";
+//import DataTable from "./dataTable";
+
+// const headers = [
+//     {
+//         text: '부위',
+//         value: 'part'
+//     },
+//     {
+//         text: '용도',
+//         value: 'usage'
+//     },
+//     {
+//         text: '제품',
+//         value: 'product'
+//     },
+//     {
+//         text: '수량',
+//         value: 'quantity'
+//     }
+// ];
+// const items = [
+//     {
+//         part: '채끝',
+//         usage: '구이',
+//         product: '안심 스테이크 200g',
+//         quantity: '5'
+//     },
+//     {
+//         part: '채끝',
+//         usage: '구이',
+//         product: '안심 스테이크 200g',
+//         quantity: '5'
+//     },
+//     {
+//         part: '채끝',
+//         usage: '구이',
+//         product: '안심 스테이크 200g',
+//         quantity: '5'
+//     },
+//     {
+//         part: '채끝',
+//         usage: '구이',
+//         product: '안심 스테이크 200g',
+//         quantity: '5'
+//     }
+// ];
+
 
 const Main = () => (
     <div className="Main-container">
         <h2>메인 페이지</h2>
-        {/*<div className="input-container">*/}
-        {/*    <label htmlFor="rawMaterialNumber">원료 번호</label>*/}
-        {/*    <input type="text" id="rawMaterialNumber"/>*/}
-        {/*    <button>조회</button>*/}
-        {/*</div>*/}
-        {/*<div className="input-container">*/}
-        {/*    <label htmlFor="workingDay">작업일(요일)</label>*/}
-        {/*    <input type="text" id="workingDay"/>*/}
-        {/*    <label htmlFor="loss">로스</label>*/}
-        {/*    <input type="text" id="loss"/>*/}
-        {/*</div>*/}
-        {/*<div className="input-container">*/}
-        {/*    <label htmlFor="worker">작업자</label>*/}
-        {/*    <input type="text" id="worker"/>*/}
-        {/*    <label htmlFor="unitPrice">단가</label>*/}
-        {/*    <input type="text" id="unitPrice"/>*/}
-        {/*</div>*/}
-        {/*<div className="input-container">*/}
-        {/*    <label htmlFor="finalWeight">작업 후 중량</label>*/}
-        {/*    <input type="text" id="finalWeight"/>*/}
-        {/*    <label htmlFor="discountRate">할인율</label>*/}
-        {/*    <input type="text" id="discountRate"/>*/}
-        {/*</div>*/}
+        {/*<DataTable*/}
+        {/*    headers={headers}*/}
+        {/*    items={items}*/}
+        {/*/>*/}
     </div>
 );
 
