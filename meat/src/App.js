@@ -8,6 +8,7 @@ import ProcurementPage from "./ProcurementPage";
 import IncomingPage from "./IncomingPage";
 import ProcessingPage from "./ProcessingPage";
 import RegisterPage from "./RegisterPage";
+import Signup from "./Signup";
 
 
 const App = () => {
@@ -15,6 +16,7 @@ const App = () => {
         <Router>
             <Routes>
                 <Route path="/" element={<LoginPage />} />
+                <Route path="/signup" element={<Signup />} />
                 <Route path="/*" element={<Menu />}>
                     <Route path="main" element={<Main />} />
                     <Route path="raw-material/procurement" element={<ProcurementPage />} />

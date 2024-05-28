@@ -106,15 +106,13 @@ const Main = () => (
         </div>
         <div className="Main-container">
             <div className="item">
-                <DataTable 
-                    headers={headers} 
-                    items={items} /* items props 보내기 */
-                />
+
             </div>
             <div className="item">
-                <PieChart 
-                    data={data} 
-                    labels={labels} />
+                <DataTable
+                    headers={headers}
+                    items={items} /* items props 보내기 */
+                />
             </div>              
         </div>
     </div>
