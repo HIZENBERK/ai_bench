@@ -1,4 +1,6 @@
 import React from "react";
+import './DataTable.css';
+
 
 const DataTable = ({ headers, items = [] }) => {
     if (!headers || !headers.length) {
@@ -8,15 +10,15 @@ const DataTable = ({ headers, items = [] }) => {
     const headerKey = headers.map((header) => header.value);
 
     return (
-        <table>
-            <thead>
+        <table className="data-table">
+        <thead>
             <tr>
                 {headers.map((header) => (
                     <th key={header.value}>{header.text}</th>
                 ))}
             </tr>
-            </thead>
-            <tbody>
+        </thead>
+        <tbody>
             {items.map((item, index) => (
                 <tr key={index}>
                     {headerKey.map((key) => (
@@ -24,8 +26,8 @@ const DataTable = ({ headers, items = [] }) => {
                     ))}
                 </tr>
             ))}
-            </tbody>
-        </table>
+        </tbody>
+    </table>
     );
 };
 
