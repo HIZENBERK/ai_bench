@@ -9,3 +9,14 @@
     flex: 1; /* 각 아이템이 동일한 비율로 공간을 차지하도록 설정합니다 */
     min-width: 300px; /* 각 아이템의 최소 너비를 설정합니다 */
 }
+
+.container {
+    display: flex;
+    justify-content: center;
+  }
+  
+.box {
+    border: 2px solid #ccc; /* 테두리 스타일과 색상 지정 */
+    padding: 20px; /* 내부 여백 설정 */
+    margin-bottom: 20px; /* 아래쪽 여백 설정 */
+}
