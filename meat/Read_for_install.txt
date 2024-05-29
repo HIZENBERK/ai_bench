@@ -12,3 +12,6 @@ rm package-lock.json
 npm install
 npm install react-scripts@latest
 npm start
+
+파이차트
+npm install react-chartjs-2 chart.js
