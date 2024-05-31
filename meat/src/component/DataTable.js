@@ -1,5 +1,5 @@
 import React from "react";
-import './DataTable.css';
+import '../css/DataTable.css';
 
 
 const DataTable = ({ headers, items = [] }) => {

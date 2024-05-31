@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from "axios";
-import './Login.css';  // CSS 파일 경로
+import '../css/Login.css';  // CSS 파일 경로
 
 const Login = () => {
     const [empNo, setEmpNo] = useState('');
