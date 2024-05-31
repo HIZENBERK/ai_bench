@@ -1,54 +1,69 @@
 import React from 'react';
 import { Bar } from 'react-chartjs-2';
-import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend } from 'chart.js';
-ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
+import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend, LineElement, PointElement } from 'chart.js';
+import 'chartjs-plugin-trendline';
 
-const BarChart = ({ data, labels }) => {
+// Chart.js의 구성 요소 등록
+ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend, LineElement, PointElement);
+
+const BarChart = ({ data }) => {
     const chartData = {
-        labels: labels,
+        labels: data.map(item => item.month),
         datasets: [
             {
-                label: 'Dataset 1',
-                data: data,
-                backgroundColor: [
-                    '#FF6384',
-                    '#36A2EB',
-                    '#FFCE56',
-                    '#4BC0C0',
-                    '#9966FF',
-                    '#FF9F40'
-                ],
-                borderColor: [
-                    '#FF6384',
-                    '#36A2EB',
-                    '#FFCE56',
-                    '#4BC0C0',
-                    '#9966FF',
-                    '#FF9F40'
-                ],
+                label: '주문 중량',
+                data: data.map(item => item.month_order_weight),
+                backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                borderColor: 'rgba(75, 192, 192, 1)',
                 borderWidth: 1,
             },
+            {
+                label: '실중량',
+                data: data.map(item => item.month_real_weight),
+                backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                borderColor: 'rgba(255, 99, 132, 1)',
+                borderWidth: 1,
+            },
+            {
+                label: '오차',
+                type: 'line',
+                data: data.map(item => (item.month_real_weight)),
+                fill: true,
+                borderColor: 'rgba(75, 192, 192, 1)',
+                backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                borderWidth: 2,
+                pointRadius: 0,
+                trendlineLinear: {
+                    style: "rgba(255,105,180, .8)",
+                    lineStyle: "dotted",
+                    width: 2
+                }
+            }
         ],
     };
 
     const options = {
-        responsive: true,
-        plugins: {
-            legend: {
-                position: 'top',
+        scales: {
+            x: {
+                stacked: true,
             },
-            title: {
-                display: true,
-                text: 'Bar Chart Example',
+            y: {
+                beginAtZero: true,
+                ticks: {
+                    stepSize: 100,
+                },
             },
         },
     };
 
-    return (
-        <div>
-            <Bar data={chartData} options={options} />
-        </div>
-    );
+    return <Bar data={chartData} options={options} />;
 };
+
+    // return (
+    //     <div>
+    //         <Bar data={chartData} options={options} />
+    //     </div>
+    // );
+
 
 export default BarChart;

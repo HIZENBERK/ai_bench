@@ -1,6 +1,11 @@
 import React from "react";
 
 const ProcurementPage = () => {
+
+    const handleRegisterNavigation = async (e) => {
+
+    }
+
     return (
         <div className="procurement-page-container">
             <h2>발주 등록 페이지</h2>
@@ -26,7 +31,7 @@ const ProcurementPage = () => {
                 <label htmlFor="orderAmount">발주금액</label>
                 <input type="text" id="orderAmount"/>
             </div>
-            <button>등록</button>
+            <button onClick={handleRegisterNavigation} className="register-button">등록</button>
         </div>
     )
 };

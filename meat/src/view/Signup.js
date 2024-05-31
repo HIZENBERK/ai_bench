@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import axios from "axios";
 import '../css/Signup.css';
+import {useNavigate} from "react-router-dom";
 
 const Signup = () => {
     const [username, setUsername] = useState('');
@@ -8,6 +9,7 @@ const Signup = () => {
     const [position, setPosition] = useState('U');
     const [error, setError] = useState('');
     const [success, setSuccess] = useState('');
+    const navigate = useNavigate();
 
     const handleSignup = async (e) => {
         e.preventDefault();
@@ -31,6 +33,9 @@ const Signup = () => {
                 setError('An error occurred.');
             }
         }
+    };
+    const handleLoginNavigation = () => {
+        navigate('/');
     };
 
     return (
@@ -58,7 +63,8 @@ const Signup = () => {
                     </div>
                     <div className="signup-form-group">
                         <label className="signup-label">Position:</label>
-                        <select value={position} onChange={(e) => setPosition(e.target.value)} required className="signup-input">
+                        <select value={position} onChange={(e) => setPosition(e.target.value)} required
+                                className="signup-input">
                             <option value="A">관리자</option>
                             <option value="M">매니저</option>
                             <option value="U">사용자</option>
@@ -68,6 +74,7 @@ const Signup = () => {
                 </form>
                 {error && <div className="signup-error">{error}</div>}
                 {success && <div className="signup-success">{success}</div>}
+                <button onClick={handleLoginNavigation} type="submit" className="login-button">로그인</button>
             </div>
         </div>
     );

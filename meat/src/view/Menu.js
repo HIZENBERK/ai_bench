@@ -1,6 +1,6 @@
 import React from 'react';
 import '../css/App.css';
-import {Link, Outlet} from 'react-router-dom';
+import {Outlet} from 'react-router-dom';
 
 
 const menu = [
@@ -10,7 +10,6 @@ const menu = [
     },
     {
         text: '원료',
-        path: '/raw-material',
         children: [
             { text: '발주', path: '/raw-material/procurement', hasInput: true },
             { text: '입고', path: '/raw-material/incoming', hasInput: true },
@@ -19,7 +18,6 @@ const menu = [
     },
     {
         text: '제품',
-        path: '/product',
         children: [
             { text: '제품 등록', path: '/product/register' },
             { text: '제품 조회', path: '/product/inventory' },
@@ -27,7 +25,6 @@ const menu = [
     },
     {
         text: '주문',
-        path: '/order',
         children: [
             { text: '주문 등록', path: '/order/register', hasInput: true },
             { text: '작업지시서', path: '/order/work-order' },
@@ -36,7 +33,6 @@ const menu = [
     },
     {
         text: '결산',
-        path: '/settlement',
         children: [
             { text: '매입 명세', path: '/settlement/purchase' },
             { text: '매출 명세', path: '/settlement/sales' },
@@ -44,36 +40,40 @@ const menu = [
     },
     {
         text: '기타',
-        path: '/others',
         children: [
             { text: '거래처 추가/삭제', path: '/others/customer' },
             { text: '제품 추가/삭제', path: '/others/product' },
         ],
     },
+
 ];
 
 const Menu = () => {
     const renderMenu = (menuItems) => (
         <ul>
             {menuItems.map((item) => (
-                <li key={item.path}>
-                    <Link to={item.path}>{item.text}</Link>
-                    {item.children && item.children.length > 0 && (
-                        <ul>
-                            {item.children.map((child) => (
-                                <li key={child.path}>
-                                    <Link to={child.path}>- {child.text}</Link>
-                                </li>
-                            ))}
-                        </ul>
-                    )}
+                <li key={item.path} className={!item.path ? 'no-click' : ''}>
+                {item.path ? (
+                    <a href={item.path}>{item.text}</a>
+                ) : (
+                    <span>{item.text}</span>
+                )}
+                {item.children && (
+                    <ul>
+                        {item.children.map((child, childIndex) => (
+                            <li key={childIndex}>
+                                <a href={child.path}>- {child.text}</a>
+                            </li>
+                        ))}
+                    </ul>
+                )}
                 </li>
             ))}
         </ul>
     );
 
     return (
-            <div className="app-container">
+        <div className="app-container">
                 <div className="menu-container">
                     {renderMenu(menu)}
                     <div className="help-text">도움말</div>

@@ -1,6 +1,8 @@
 .data-table {
     width: 100%;
     border-collapse: collapse;
+    overflow-y: auto;
+    max-height: 400px;
 }
 
 .data-table th,
@@ -26,4 +28,7 @@
 
 .data-table td {
     border-bottom: 1px solid #ddd;
+}
+.data-table-body {
+
 }

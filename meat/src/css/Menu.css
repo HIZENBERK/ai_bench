@@ -1,0 +1,4 @@
+.no-click {
+    pointer-events: none; /* 클릭 방지 */
+    color: gray; /* 시각적으로 클릭 불가능하게 표시 */
+}

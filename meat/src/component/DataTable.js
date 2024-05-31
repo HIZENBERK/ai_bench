@@ -18,7 +18,7 @@ const DataTable = ({ headers, items = [] }) => {
                 ))}
             </tr>
         </thead>
-        <tbody>
+        <tbody >
             {items.map((item, index) => (
                 <tr key={index}>
                     {headerKey.map((key) => (
@@ -26,7 +26,7 @@ const DataTable = ({ headers, items = [] }) => {
                     ))}
                 </tr>
             ))}
-        </tbody>
+        </tbody >
     </table>
     );
 };
