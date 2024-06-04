@@ -1,7 +1,6 @@
 import React from 'react';
+import { Outlet, Link } from 'react-router-dom';
 import '../css/App.css';
-import {Outlet} from 'react-router-dom';
-
 
 const menu = [
     {
@@ -45,28 +44,27 @@ const menu = [
             { text: '제품 추가/삭제', path: '/others/product' },
         ],
     },
-
 ];
 
 const Menu = () => {
     const renderMenu = (menuItems) => (
         <ul>
             {menuItems.map((item) => (
-                <li key={item.path} className={!item.path ? 'no-click' : ''}>
-                {item.path ? (
-                    <a href={item.path}>{item.text}</a>
-                ) : (
-                    <span>{item.text}</span>
-                )}
-                {item.children && (
-                    <ul>
-                        {item.children.map((child, childIndex) => (
-                            <li key={childIndex}>
-                                <a href={child.path}>- {child.text}</a>
-                            </li>
-                        ))}
-                    </ul>
-                )}
+                <li key={item.path || item.text} className={!item.path ? 'no-click' : ''}>
+                    {item.path ? (
+                        <Link to={item.path}>{item.text}</Link>
+                    ) : (
+                        <span>{item.text}</span>
+                    )}
+                    {item.children && (
+                        <ul>
+                            {item.children.map((child) => (
+                                <li key={child.path}>
+                                    <Link to={child.path}>- {child.text}</Link>
+                                </li>
+                            ))}
+                        </ul>
+                    )}
                 </li>
             ))}
         </ul>
@@ -74,14 +72,14 @@ const Menu = () => {
 
     return (
         <div className="app-container">
-                <div className="menu-container">
-                    {renderMenu(menu)}
-                    <div className="help-text">도움말</div>
-                </div>
-                <div className="content-container">
-                    <Outlet />
-                </div>
+            <div className="menu-container">
+                {renderMenu(menu)}
+                <div className="help-text">도움말</div>
             </div>
+            <div className="content-container">
+                <Outlet />
+            </div>
+        </div>
     );
 };
 
