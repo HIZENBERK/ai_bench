@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from "axios";
 import '../css/Login.css';  // CSS 파일 경로
-import { useAuth } from './AuthContext'; // Import the context
+import { useAuth } from '../component/AuthContext'; // Import the context
 
 const Login = () => {
     const [empNo, setEmpNo] = useState('');

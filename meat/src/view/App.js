@@ -15,7 +15,7 @@ import SettlementSalesPage from "./SettlementSalesPage";
 import OthersCustomerPage from "./OthersCustomerPage";
 import OthersProductPage from "./OthersProductPage";
 import Signup from "./Signup";
-import { AuthProvider } from './AuthContext';
+import { AuthProvider } from '../component/AuthContext';
 import Navbar from './Navbar';
 
 const App = () => {
