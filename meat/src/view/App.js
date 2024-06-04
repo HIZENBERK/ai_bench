@@ -13,6 +13,7 @@ import ProductInventoryPage from "./ProductInventoryPage";
 import WorkOderPage from "./WorkOderPage";
 import SettlementSalesPage from "./SettlementSalesPage";
 import OthersCustomerPage from "./OthersCustomerPage";
+import DeliveryaccidentPage from "./DeliveryaccidentPage";
 import OthersProductPage from "./OthersProductPage";
 import Signup from "./Signup";
 import { AuthProvider } from '../component/AuthContext';
@@ -35,6 +36,7 @@ const App = () => {
                         <Route path="product/inventory" element={<ProductInventoryPage />} />
                         <Route path="order/register" element={<RegisterPage />} />
                         <Route path="order/work-order" element={<WorkOderPage />} />
+                        <Route path="order/accident" element={<DeliveryaccidentPage />} />
                         <Route path="settlement/sales" element={<SettlementSalesPage />} />
                         <Route path="others/customer" element={<OthersCustomerPage />} />
                         <Route path="others/product" element={<OthersProductPage />} />
