@@ -26,7 +26,7 @@ const Login = () => {
 
                 localStorage.setItem('access_token', response.data.access);
                 localStorage.setItem('refresh_token', response.data.refresh);
-                login(empNo); // Update the auth state with the employee number
+                login(response.data.username); // Update the auth state with the employee number
                 setSuccess(`Logged in successfully! Welcome ${response.data.username}`);
                 navigate('/main');
             } catch (error) {
