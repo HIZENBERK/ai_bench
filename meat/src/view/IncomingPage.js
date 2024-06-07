@@ -450,6 +450,11 @@ const IncomingPage = () => {
                         <option value="50">50</option>
                     </select>
                 </div>
+                <div className="input-container">
+                    <label htmlFor="orderDateTimeSearch">컬럼별 조회 목록</label>
+                    <input type="text" id="orderDateTimeSearch"/>
+                    <button>조회</button>
+                </div>
                 <table className="results-table">
                     <thead>
                         <tr>

@@ -76,9 +76,14 @@ const ProcessingPage = () => {
                     <label htmlFor="resultsPerPage">한 페이지에 볼 리스트 개수:</label>
                     <select id="resultsPerPage" value={resultsPerPage} onChange={handleResultsPerPageChange}>
                         <option value="10">10</option>
+                        <option value="20">20</option>
                         <option value="30">30</option>
-                        <option value="50">50</option>
                     </select>
+                </div>
+                <div className="input-container">
+                    <label htmlFor="orderDateTimeSearch">컬럼별 조회 목록</label>
+                    <input type="text" id="orderDateTimeSearch"/>
+                    <button>조회</button>
                 </div>
                 <table className="results-table">
                     <thead>

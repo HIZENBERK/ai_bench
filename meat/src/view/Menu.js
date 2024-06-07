@@ -18,8 +18,7 @@ const menu = [
     {
         text: '제품',
         children: [
-            { text: '제품 등록', path: '/product/register' },
-            { text: '제품 조회', path: '/product/inventory' },
+            { text: '재고현황', path: '/product/inventory' },
         ],
     },
     {
