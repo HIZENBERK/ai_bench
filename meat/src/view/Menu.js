@@ -32,6 +32,7 @@ const menu = [
     {
         text: '결산',
         children: [
+            { text: '금액', path: '/settlement/money' },
             { text: '매입 명세', path: '/settlement/purchase' },
             { text: '매출 명세', path: '/settlement/sales' },
         ],

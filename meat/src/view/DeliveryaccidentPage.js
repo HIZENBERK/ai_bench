@@ -1,7 +1,11 @@
 import React, { useState, useEffect } from "react";
+import Pagination from '../component/Pagination';
+import '../css/Pagination.css'; // Make sure the path is correct
 
 const DeliveryaccidentPage = () => {
     const [searchResults, setSearchResults] = useState([]);
+    const [currentPage, setCurrentPage] = useState(1);
+    const [resultsPerPage, setResultsPerPage] = useState(10);
 
     useEffect(() => {
         const results = [
@@ -260,14 +264,14 @@ const DeliveryaccidentPage = () => {
             {
                 no: 19,
                 trackingNumber: "ZAB567",
-                recipient: "Noah Wright",
-                totalFreight: "$63",
-                productPrice: "$113",
+                recipient: "Benjamin Wright",
+                totalFreight: "$64",
+                productPrice: "$114",
                 compensationAmount: "$14",
                 registrationDate: "2024-06-19",
                 dispatchDate: "2024-06-21",
                 actualDeliveryDate: "2024-06-23",
-                depositAmount: "$88",
+                depositAmount: "$87",
                 compensationDate: "2024-06-28",
                 edit: "Edit"
             },
@@ -289,10 +293,31 @@ const DeliveryaccidentPage = () => {
         setSearchResults(results);
     }, []);
 
+    const indexOfLastResult = currentPage * resultsPerPage;
+    const indexOfFirstResult = indexOfLastResult - resultsPerPage;
+    // eslint-disable-next-line
+    const currentResults = searchResults.slice(indexOfFirstResult, indexOfLastResult);
+
+    const handlePageChange = (pageNumber) => {
+        setCurrentPage(pageNumber);
+    };
+
+    const handleResultsPerPageChange = (event) => {
+        setResultsPerPage(parseInt(event.target.value));
+        setCurrentPage(1); // Reset to the first page
+    };
+
     return (
         <div className="procurement-page-container">
             <h2>베송 사고 페이지</h2>
-            <button>한페이지에 볼 리스트 개수</button>
+            <div className="results-per-page">
+                <label htmlFor="resultsPerPage">한페이지에 볼 리스트 개수:</label>
+                <select id="resultsPerPage" value={resultsPerPage} onChange={handleResultsPerPageChange}>
+                    <option value={10}>10</option>
+                    <option value={30}>30</option>
+                    <option value={50}>50</option>
+                </select>
+            </div>
             <table className="results-table">
                 <thead>
                     <tr>
@@ -329,6 +354,11 @@ const DeliveryaccidentPage = () => {
                     ))}
                 </tbody>
             </table>
+            <Pagination
+                currentPage={currentPage}
+                totalPages={Math.ceil(searchResults.length / resultsPerPage)}
+                onPageChange={handlePageChange}
+            />
         </div>
     );
 };

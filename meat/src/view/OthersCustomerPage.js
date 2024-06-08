@@ -1,6 +1,7 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from 'react';
 import Pagination from '../component/Pagination';
-import '../css/Pagination.css'; // 경로가 정확한지 확인하세요
+import '../css/Pagination.css'; // Make sure the path is correct
+
 
 const OthersAddbusinesspartnerPage = () => {
     const [othersAddbusinesspartnerResults] = useState([
@@ -266,13 +267,18 @@ const OthersAddbusinesspartnerPage = () => {
         }
     ]);
 
+    const [searchResults, setSearchResults] = useState(othersAddbusinesspartnerResults);
     const [currentPage, setCurrentPage] = useState(1);
     const [resultsPerPage, setResultsPerPage] = useState(10);
-    const [searchResults, setSearchResults] = useState([]); // Define searchResults state
+    const [searchTerm, setSearchTerm] = useState('');
+
+    useEffect(() => {
+        setCurrentPage(1); // Reset to the first page on search or results per page change
+    }, [searchResults, resultsPerPage]);
 
     const indexOfLastResult = currentPage * resultsPerPage;
     const indexOfFirstResult = indexOfLastResult - resultsPerPage;
-    const currentResults = othersAddbusinesspartnerResults.slice(indexOfFirstResult, indexOfLastResult);
+    const currentResults = searchResults.slice(indexOfFirstResult, indexOfLastResult);
 
     const handlePageChange = (pageNumber) => {
         setCurrentPage(pageNumber);
@@ -280,11 +286,14 @@ const OthersAddbusinesspartnerPage = () => {
 
     const handleResultsPerPageChange = (e) => {
         setResultsPerPage(parseInt(e.target.value));
-        setCurrentPage(1);
     };
 
     const handleSearch = () => {
-        // Implement your search logic here
+        const filteredResults = othersAddbusinesspartnerResults.filter(result =>
+            result.type.includes(searchTerm) ||
+            result.representativeName.includes(searchTerm)
+        );
+        setSearchResults(filteredResults);
     };
 
     return (
@@ -293,16 +302,16 @@ const OthersAddbusinesspartnerPage = () => {
                 <h2>거래처 추가 페이지</h2>
                 <div className="input-container">
                     <label htmlFor="partnerType">유형</label>
-                    <input type="text" id="partnerType"/>
+                    <input type="text" id="partnerType" value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} />
                     <label htmlFor="partnerName">거래처명</label>
                     <div className="partner-search-container">
-                        <input type="text" id="partnerName"/>
+                        <input type="text" id="partnerName" value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} />
                         <button onClick={handleSearch}>검색</button>
                     </div>
                 </div>
             </div>
             <div>
-            <div className="dropdown-container">
+                <div className="dropdown-container">
                     <label htmlFor="resultsPerPage">한 페이지에 볼 리스트 개수:</label>
                     <select id="resultsPerPage" value={resultsPerPage} onChange={handleResultsPerPageChange}>
                         <option value="10">10</option>
@@ -310,51 +319,54 @@ const OthersAddbusinesspartnerPage = () => {
                         <option value="30">30</option>
                     </select>
                 </div>
-            {currentResults.length > 0 && (
-                <table className="results-table">
-                    <thead>
-                        <tr>
-                            <th>No</th>
-                            <th>거래처 유형</th>
-                            <th>대표자 명</th>
-                            <th>사업자 번호</th>
-                            <th>사업장 주소</th>
-                            <th>사업자 연락처</th>
-                            <th>담당자명(직급)</th>
-                            <th>담당자 연락처</th>
-                            <th>최초 거래일</th>
-                            <th>최종 거래일</th>
-                            <th>납입/ 납품 정보</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {currentResults.map((result, index) => (
-                            <tr key={index}>
-                                <td>{result.no}</td>
-                                <td>{result.type}</td>
-                                <td>{result.representativeName}</td>
-                                <td>{result.businessNumber}</td>
-                                <td>{result.address}</td>
-                                <td>{result.contact}</td>
-                                <td>{result.managerName}</td>
-                                <td>{result.managerContact}</td>
-                                <td>{result.firstTransactionDate}</td>
-                                <td>{result.lastTransactionDate}</td>
-                                <td>{result.supplyInfo}</td>
+                {currentResults.length > 0 ? (
+                    <table className="results-table">
+                        <thead>
+                            <tr>
+                                <th>No</th>
+                                <th>거래처 유형</th>
+                                <th>대표자 명</th>
+                                <th>사업자 번호</th>
+                                <th>사업장 주소</th>
+                                <th>사업자 연락처</th>
+                                <th>담당자명(직급)</th>
+                                <th>담당자 연락처</th>
+                                <th>최초 거래일</th>
+                                <th>최종 거래일</th>
+                                <th>납입/ 납품 정보</th>
                             </tr>
-                        ))}
-                    </tbody>
-                </table>
-            )}
-             <Pagination
+                        </thead>
+                        <tbody>
+                            {currentResults.map((result, index) => (
+                                <tr key={index}>
+                                    <td>{result.no}</td>
+                                    <td>{result.type}</td>
+                                    <td>{result.representativeName}</td>
+                                    <td>{result.businessNumber}</td>
+                                    <td>{result.address}</td>
+                                    <td>{result.contact}</td>
+                                    <td>{result.managerName}</td>
+                                    <td>{result.managerContact}</td>
+                                    <td>{result.firstTransactionDate}</td>
+                                    <td>{result.lastTransactionDate}</td>
+                                    <td>{result.supplyInfo}</td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                ) : (
+                    <p>No results found</p>
+                )}
+                <Pagination
                     currentPage={currentPage}
-                    totalPages={Math.ceil(othersAddbusinesspartnerResults.length / resultsPerPage)}
+                    totalPages={Math.ceil(searchResults.length / resultsPerPage)}
                     onPageChange={handlePageChange}
                 />
             </div>
         </div>
-        
     );
 };
+
+
 
 export default OthersAddbusinesspartnerPage;

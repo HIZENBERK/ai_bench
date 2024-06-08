@@ -11,6 +11,7 @@ import RegisterPage from "./RegisterPage";
 import ProductregisterPage from "./ProductregisterPage";
 import ProductInventoryPage from "./ProductInventoryPage";
 import WorkOderPage from "./WorkOderPage";
+import SettlementMoneyPage from "./SettlementMoneyPage";
 import SettlementSalesPage from "./SettlementSalesPage";
 import OthersCustomerPage from "./OthersCustomerPage";
 import DeliveryaccidentPage from "./DeliveryaccidentPage";
@@ -37,6 +38,8 @@ const App = () => {
                         <Route path="order/register" element={<RegisterPage />} />
                         <Route path="order/work-order" element={<WorkOderPage />} />
                         <Route path="order/accident" element={<DeliveryaccidentPage />} />
+                        <Route path="/settlement/money" element={<SettlementMoneyPage />} />
+                        <Route path="/settlement/purchase" element={<SettlementSalesPage />} />
                         <Route path="settlement/sales" element={<SettlementSalesPage />} />
                         <Route path="others/customer" element={<OthersCustomerPage />} />
                         <Route path="others/product" element={<OthersProductPage />} />
