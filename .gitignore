@@ -1,2 +1,3 @@
-meat/node_modules/
+meat/node_modules/.cache
 meat/.idea/workspace.xml
+meat/.idea/vcs.xml
