@@ -16,6 +16,8 @@ import SettlementSalesPage from "./SettlementSalesPage";
 import OthersCustomerPage from "./OthersCustomerPage";
 import DeliveryaccidentPage from "./DeliveryaccidentPage";
 import OthersProductPage from "./OthersProductPage";
+import OtherCostsPage from "./OtherCostsPage";
+import OthersAddproductPage from "./OthersAddproductPage";
 import Signup from "./Signup";
 import { AuthProvider } from '../component/AuthContext';
 import Navbar from './Navbar';
@@ -41,6 +43,8 @@ const App = () => {
                         <Route path="/settlement/money" element={<SettlementMoneyPage />} />
                         <Route path="/settlement/purchase" element={<SettlementSalesPage />} />
                         <Route path="settlement/sales" element={<SettlementSalesPage />} />
+                        <Route path="others/addproduct" element={<OthersAddproductPage />} />
+                        <Route path="others/costs" element={<OtherCostsPage />} />
                         <Route path="others/customer" element={<OthersCustomerPage />} />
                         <Route path="others/product" element={<OthersProductPage />} />
                     </Route>

@@ -1,65 +1,124 @@
-import React, { useState } from 'react';
-import '../css/Pagination.css'; // Ensure the path is correct
+import React, { useState } from "react";
+import Pagination from '../component/Pagination'; // Ensure this path is correct
+import '../css/Pagination.css';
 
-const SettlementMoneyPage = () => {
-    const [selectedYear, setSelectedYear] = useState(""); // State for selected year
+const OthersProductPage = () => {
+    const [searchResults] = useState([
+        {
+            no: 1,
+            orderNumber: "2138836992",
+            part: "삼겹",
+            score: 4.3,
+            orderQuantity: 3736,
+            plannedQuantity: 274,
+            sumQuantity: 10,
+            totalQuantity: 4,
+            sector1: {
+                gui: 2,
+                bulgogi: 3,
+                standalone: 1,
+                gukgueri: 2,
+                sagol: 2,
+                total: 10
+            },
+            unitPrice: "₩40,000",
+            amount: "₩40,000",
+            retentionRate: "93%",
+            totalSales: "₩612,000",
+            profit: "₩212,000",
+            profitRate: "35%",
+        },
+        // Add more sample data as needed...
+    ]);
 
-    const years = ["2022", "2023", "2024", "2025"]; // Update with appropriate years
+    const [currentPage, setCurrentPage] = useState(1);
+    const [resultsPerPage, setResultsPerPage] = useState(10); // Default value is 10
 
-    // Function to handle year selection change
-    const handleYearChange = (event) => {
-        setSelectedYear(event.target.value);
+    const indexOfLastResult = currentPage * resultsPerPage;
+    const indexOfFirstResult = indexOfLastResult - resultsPerPage;
+    const currentResults = searchResults.slice(indexOfFirstResult, indexOfLastResult);
+
+    const handlePageChange = (pageNumber) => {
+        setCurrentPage(pageNumber);
     };
 
-    // Function to handle button click event
-    const handleButtonClick = () => {
-        // Here you would typically fetch your data from an API or a local source
-        // For now, let's assume you have some dummy data
-        const dummyData = {
-            historyNumber: "456",
-            region: "Region B",
-            purchaseWeight: "20 kg",
-            actualWeight: "15 kg",
-            processedWeight: "12 kg",
-            lossWeight: "3 kg",
-            remainingWeight: "9 kg",
-            productionCount: {
-                gui: 25,
-                bulgogi: 35,
-                tangsuyuk: 20,
-                bujeon: 15,
-                gukgori: 30,
-                gift: 10,
-                total: 135
-            },
-            unitPrice: "1200 won",
-            amount: "162000 won",
-            productYield: "90%",
-            lossRate: "4%",
-            salesProfit: "7000 won",
-            netProfit: "6000 won",
-            profitRate: "5%"
-        };
-
-        // Update state with fetched data
-        // setData(dummyData);
+    const handleResultsPerPageChange = (event) => {
+        setResultsPerPage(parseInt(event.target.value));
+        setCurrentPage(1); // Reset to the first page
     };
 
     return (
-        <div className="incoming-page-container">
-            <h2>매출명세 페이지</h2>
-            <div className="input-container">
-                <label htmlFor="yearSelect">연도별 조회</label>
-                <select id="yearSelect" value={selectedYear} onChange={handleYearChange}>
-                    <option value="">-- 선택 --</option>
-                    {years.map((year) => (
-                        <option key={year} value={year}>{year}</option>
-                    ))}
-                </select>
-                <button onClick={handleButtonClick}>조회</button>
+        <div className="others-product-page-container">
+            <div className="input-header">
+                <input type="text" placeholder="월별조회" />
+                <button>조회</button>
+            </div>
+            <label htmlFor="resultsPerPage">Results Per Page: </label>
+                    <select id="resultsPerPage" value={resultsPerPage} onChange={handleResultsPerPageChange}>
+                        <option value="10">10</option>
+                        <option value="20">20</option>
+                        <option value="30">30</option>
+                    </select>
+            <div className="procurement-page-container">
+                <table className="results-table">
+                    <thead>
+                        <tr>
+                            <th>이력번호</th>
+                            <th>부위</th>
+                            <th>발주량</th>
+                            <th>실송량</th>
+                            <th>합계량</th>
+                            <th>생산수</th>
+                            <th>구이</th>
+                            <th>불고기</th>
+                            <th>단독</th>
+                            <th>국거리</th>
+                            <th>사골</th>
+                            <th>합계</th>
+                            <th>단가</th>
+                            <th>금액</th>
+                            <th>지속률</th>
+                            <th>총수량</th>
+                            <th>판매이익</th>
+                            <th>손이익</th>
+                            <th>손이익률</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {currentResults.map((result, index) => (
+                            <tr key={index}>
+                                <td>{result.orderNumber}</td>
+                                <td>{result.part}</td>
+                                <td>{result.orderQuantity}</td>
+                                <td>{result.plannedQuantity}</td>
+                                <td>{result.sumQuantity}</td>
+                                <td>{result.totalQuantity}</td>
+                                <td>{result.sector1.gui}</td>
+                                <td>{result.sector1.bulgogi}</td>
+                                <td>{result.sector1.standalone}</td>
+                                <td>{result.sector1.gukgueri}</td>
+                                <td>{result.sector1.sagol}</td>
+                                <td>{result.sector1.total}</td>
+                                <td>{result.unitPrice}</td>
+                                <td>{result.amount}</td>
+                                <td>{result.retentionRate}</td>
+                                <td>{result.totalSales}</td>
+                                <td>{result.profit}</td>
+                                <td>{result.profitRate}</td>
+                            </tr>
+                        ))}
+                    </tbody>
+                </table>
+                <Pagination
+                    currentPage={currentPage}
+                    totalPages={Math.ceil(searchResults.length / resultsPerPage)}
+                    onPageChange={handlePageChange}
+                />
+                <div>
+                </div>
             </div>
         </div>
     );
 };
 
-export default SettlementMoneyPage;
+export default OthersProductPage;
