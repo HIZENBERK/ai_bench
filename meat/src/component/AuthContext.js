@@ -6,12 +6,14 @@ export const AuthProvider = ({ children }) => {
     const [authState, setAuthState] = useState({
         isAuthenticated: false,
         empNo: null,
+        username:null,
     });
 
-    const login = (empNo) => {
+    const login = (empNo,username) => {
         setAuthState({
             isAuthenticated: true,
             empNo,
+            username,
         });
     };
 
