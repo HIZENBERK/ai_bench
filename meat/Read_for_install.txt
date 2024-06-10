@@ -16,3 +16,6 @@ npm start
 파이차트
 npm install react-chartjs-2 chart.js
 npm install chartjs-plugin-trendline
+
+데이트 피커
+npm install react-datepicker

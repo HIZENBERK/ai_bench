@@ -1,7 +1,8 @@
 import React, { useState } from "react";
 import Pagination from '../component/Pagination'; // Ensure this path is correct
 import '../css/Pagination.css';
-
+import Datepicker from "../component/DatePicker";
+import {useAuth} from "../component/AuthContext";
 const ProcurementPage = () => {
     const [searchResults] = useState([
         {
@@ -267,6 +268,13 @@ const ProcurementPage = () => {
         // Add functionality here if needed
         console.log('Register button clicked');
     };
+    const { authState } = useAuth();
+
+    let empNo;
+    try {empNo = authState.empNo;}
+    catch (e) {empNo = 'admin';}
+
+
 
     return (
         <div>
@@ -274,15 +282,17 @@ const ProcurementPage = () => {
                 <h2>발주 등록 페이지</h2>
                 <div className="input-container">
                     <label htmlFor="orderDateTime">발주일시</label>
-                    <input type="text" id="orderDateTime"/>
+                    <Datepicker id="orderDateTime"/>
                     <label htmlFor="totalQuantity">발주중량</label>
                     <input type="text" id="totalQuantity"/>
                 </div>
                 <div className="input-container">
                     <label htmlFor="ordererID">발주자(사번)명</label>
-                    <input type="text" id="ordererID"/>
+                    {/*<span>{authState.empNo}</span>*/}
+                    <text id="ordererID" >{empNo}</text>
+                    {/*<input type="text" id="ordererID" defaultValue=/>*/}
                     <label htmlFor="expectedDeliveryDate">입고 예정일</label>
-                    <input type="text" id="expectedDeliveryDate"/>
+                    <Datepicker id="expectedDeliveryDate"/>
                 </div>
                 <div className="input-container">
                     <label htmlFor="part">부위</label>

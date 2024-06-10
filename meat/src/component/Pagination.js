@@ -1,3 +1,4 @@
+//페이지 번호 생성기
 import React from 'react';
 import '../css/Pagination.css'; // Import the CSS file
 
