@@ -1,32 +1,48 @@
-import React from "react";
+import React, { useState } from 'react';
+import '../css/WorkOrderPage.css';
 
-const WorkOderPage = () => (
-    <div className="procurement-page-container">
-        <h2>작업지시서 페이지</h2>
-        <div className="input-container">
-            <label htmlFor="orderDateTime">발주일시</label>
-            <input type="text" id="orderDateTime"/>
-            <label htmlFor="totalQuantity">발주중량</label>
-            <input type="text" id="totalQuantity"/>
-        </div>
-        <div className="input-container">
-            <label htmlFor="ordererID">발주자(사번)명</label>
-            <input type="text" id="ordererID"/>
-            <label htmlFor="expectedDeliveryDate">입고 예정일</label>
-            <input type="text" id="expectedDeliveryDate"/>
-        </div>
-        <div className="input-container">
-            <label htmlFor="part">부위</label>
-            <input type="text" id="part"/>
-            <label htmlFor="supplier">거래처</label>
-            <input type="text" id="supplier"/>
-        </div>
-        <div className="input-container">
-            <label htmlFor="orderAmount">발주금액</label>
-            <input type="text" id="orderAmount"/>
-        </div>
-        <button>등록</button>
+function SearchBar({ recentSearches, removeSearchItem }) {
+  return (
+    <div className="search-bar-container">
+      <div className="search-bar">
+        <button>부위</button>
+        <button>제품명</button>
+        <button>제품 번호</button>
+        <input type="text" placeholder="검색어" />
+        <button>검색</button>
+      </div>
+      <div className="recent-searches">
+        <h3>최근 검색</h3>
+        {recentSearches.map((item, index) => (
+          <div key={index} className="search-item">
+            <div className="item-text">{item}</div>
+            <button onClick={() => removeSearchItem(index)}>X</button>
+          </div>
+        ))}
+      </div>
     </div>
-);
+  );
+}
 
-export default WorkOderPage;
+
+
+function WorkOrderPage() {
+  const [recentSearches, setRecentSearches] = useState([
+    '모딘한담_한우_구이_채끝 200g',
+    '모딘한담_한우_구이_채끝 250g',
+  ]);
+
+  const removeSearchItem = (index) => {
+    setRecentSearches(recentSearches.filter((_, i) => i !== index));
+  };
+
+  return (
+    <div className="work-order-page">
+      <header className="work-order-header">
+        <SearchBar recentSearches={recentSearches} removeSearchItem={removeSearchItem} />
+      </header>
+    </div>
+  );
+}
+
+export default WorkOrderPage;
