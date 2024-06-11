@@ -40,10 +40,9 @@ const menu = [
     {
         text: '기타',
         children: [
-            { text: '거래처 관리', path: '/others/product' },
+            { text: '거래처 관리', path: '/others/customer' },
             { text: '기타비용', path: '/others/costs' },
             { text: '지용/제품 추가', path: '/others/addproduct' },
-            { text: '거래처 추가', path: '/others/customer' },
         ],
     },
 ];
