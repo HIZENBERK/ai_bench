@@ -70,7 +70,7 @@ const OthersAddbusinesspartnerPage = () => {
     return (
         <div>
             <div className="procurement-page-container">
-                <h2>거래처 추가 페이지</h2>
+                <h2>거래처 관리 페이지</h2>
                 <div className="input-container">
                     <label htmlFor="partnerType">유형</label>
                     <input type="text" id="partnerType" value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} />
