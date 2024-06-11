@@ -1,7 +1,148 @@
+/* 전체 페이지 컨테이너 */
+.procurement-page-container {
+    padding: 20px;
+    font-family: Arial, sans-serif;
+}
+
+/* 페이지 제목 */
+.procurement-page-container h2 {
+    text-align: center;
+    color: #6dbb1a;
+    margin-bottom: 20px;
+}
+
+/* 입력 컨테이너 */
+.input-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    margin-bottom: 15px;
+}
+
+.input-container input[type="text"],
+.input-container text {
+    flex: 0 0 200px;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+/* 드롭다운 스타일 */
+.input-container ul {
+    position: absolute;
+    background-color: #fff;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    padding: 5px 0;
+    list-style-type: none;
+    margin-top: 5px;
+    width: calc(100% - 2px);
+    max-height: 200px;
+    overflow-y: auto;
+    z-index: 1000;
+}
+
+.input-container ul li {
+    padding: 8px 12px;
+    cursor: pointer;
+}
+
+.input-container ul li:hover {
+    background-color: #f2f2f2;
+}
+
+/* 발주 등록 버튼 컨테이너 */
+.register-button-container {
+    display: flex;
+    justify-content: flex-end; /* 오른쪽으로 정렬 */
+    margin-top: 20px;
+}
+
+/* 발주 등록 버튼 */
+.register-button {
+    background-color: #6dbb1a;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.register-button:hover {
+    background-color: #5aa017;
+}
+
+/* 한 페이지에 볼 리스트 개수 선택 */
+.results-per-page {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 15px;
+}
+
+.results-per-page label {
+    margin-right: 10px;
+}
+
+.results-per-page select {
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+/* 조회 버튼 */
+.input-container button {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.input-container button:hover {
+    background-color: #0056b3;
+}
+
+/* 검색 결과 테이블 */
+.results-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 20px;
+}
+
+.results-table th,
+.results-table td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: left;
+    background-color: #6dbb1a;
+    color: white;
+}
+
+.results-table td:first-child,
+.results-table td:nth-child(2) {
+    background-color: #f2f2f2;
+}
+
+.results-table button {
+    background-color: #6dbb1a;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.results-table button:hover {
+    background-color: #5aa017;
+}
+
+/* 페이지네이션 컨테이너 */
 .pagination-container {
     display: flex;
     justify-content: center;
-    margin: 20px 0;
+    margin-top: 20px;
 }
 
 .pagination {
@@ -16,7 +157,7 @@
 
 .page-link {
     border: 1px solid #ddd;
-    padding: 10px 15px;
+    padding: 8px 12px;
     text-decoration: none;
     color: #007bff;
     cursor: pointer;

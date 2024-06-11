@@ -143,7 +143,9 @@ const ProcurementPage = () => {
                     <label htmlFor="orderAmount">발주금액</label>
                     <input type="text" id="orderAmount" />
                 </div>
-                <button onClick={handleRegisterNavigation} className="register-button">등록</button>
+                <div className="register-button-container">
+                    <button onClick={handleRegisterNavigation} className="register-button">등록</button>
+                </div>
             </div>
             <div className="procurement-page-container">
                 <div className="results-per-page">
