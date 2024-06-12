@@ -85,7 +85,7 @@ const ProcessingPage = () => {
                     <input type="text" id="orderDateTimeSearch"/>
                     <button>조회</button>
                 </div>
-                <table className="results-table">
+                <table className="table-container">
                     <thead>
                         <tr>
                             <th>순번</th>

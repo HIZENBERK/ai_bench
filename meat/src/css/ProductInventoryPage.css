@@ -75,11 +75,13 @@ th {
 }
 
 td:first-child {
-    background-color: #f2f2f2;
+    background-color: #ffffff;
+    color: #000;
 }
 
 td:nth-child(2) {
-    background-color: #f2f2f2;
+    background-color: #ffffff;
+    color: #000;
 }
 
 td button.edit-button {

@@ -11,6 +11,12 @@
     margin-bottom: 20px;
 }
 
+.processing-page-container h2 {
+    text-align: center;
+    color: #6dbb1a;
+    margin-bottom: 20px;
+}
+
 /* 입력 컨테이너 */
 .input-container {
     display: flex;

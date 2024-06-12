@@ -259,7 +259,7 @@ const OthersAddProductPage = () => {
                     </select>
                 </div>
                 {currentResults.length > 0 ? (
-                    <table className="results-table">
+                    <table className="table-container">
                         <thead>
                             <tr>
                                 <th>No.</th>

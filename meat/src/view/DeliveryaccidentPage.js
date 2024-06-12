@@ -318,7 +318,7 @@ const DeliveryaccidentPage = () => {
                     <option value={50}>50</option>
                 </select>
             </div>
-            <table className="results-table">
+            <table className="table-container">
                 <thead>
                     <tr>
                         <th>No</th>
