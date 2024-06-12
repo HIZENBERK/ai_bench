@@ -256,7 +256,7 @@ const RegisterPage = () => {
     return (
         <div>
             <div className="processing-page-container">
-                <h2>제품등록 페이지</h2>
+                <h2>주문등록 페이지</h2>
                 {/* input fields for product registration */}
                 <div className="input-container">
                     <label htmlFor="workingDay">등록일(요일)</label>

@@ -17,6 +17,7 @@ import OthersCustomerPage from "./OthersCustomerPage";
 import DeliveryaccidentPage from "./DeliveryaccidentPage";
 import OtherCostsPage from "./OtherCostsPage";
 import OthersAddproductPage from "./OthersAddproductPage";
+import PurchaseDetailsPage from "./PurchaseDetailsPage";
 import Signup from "./Signup";
 import { AuthProvider } from '../component/AuthContext';
 import Navbar from './Navbar';
@@ -39,8 +40,9 @@ const App = () => {
                         <Route path="order/register" element={<RegisterPage />} />
                         <Route path="order/work-order" element={<WorkOderPage />} />
                         <Route path="order/accident" element={<DeliveryaccidentPage />} />
-                        <Route path="/settlement/money" element={<SettlementMoneyPage />} />
-                        <Route path="/settlement/purchase" element={<SettlementSalesPage />} />
+                        <Route path="settlement/money" element={<SettlementMoneyPage />} />
+                        <Route path="settlement/purchase" element={<SettlementSalesPage />} />
+                        <Route path="settlement/details" element={<PurchaseDetailsPage />} />
                         <Route path="settlement/sales" element={<SettlementSalesPage />} />
                         <Route path="others/addproduct" element={<OthersAddproductPage />} />
                         <Route path="others/costs" element={<OtherCostsPage />} />

@@ -104,7 +104,7 @@ const OthersCustomerPage = () => {
                         <option value={30}>30</option>
                         <option value={50}>50</option>
                     </select>
-                    <table className="results-table">
+                    <table className="table-container">
                         <thead>
                         <tr>
                             <th>No</th>

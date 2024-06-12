@@ -175,38 +175,40 @@ const ProcurementPage = () => {
                     <input type="text" id="orderDateTimeSearch" />
                     <button>조회</button>
                 </div>
-                <table className="results-table">
-                    <thead>
-                    <tr>
-                        <th>순번</th>
-                        <th>발주일시</th>
-                        <th>입고 예정 일</th>
-                        <th>거래처(번호)</th>
-                        <th>발주중량(KG)</th>
-                        <th>부위</th>
-                        <th>발주금액</th>
-                        <th>상태</th>
-                        <th>발주번호</th>
-                        <th>수정</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    {currentResults.map((result, index) => (
-                        <tr key={index}>
-                            <td>{result.ID}</td>
-                            <td>{result.OrderDate}</td>
-                            <td>{result.ETA}</td>
-                            <td>{result.Client}</td>
-                            <td>{result.OrderWeight}</td>
-                            <td>{result.Part}</td>
-                            <td>{result.OrderPrice}</td>
-                            <td>{result.OrderSituation}</td>
-                            <td>{result.OrderNo}</td>
-                            <td>수정/삭제</td>
+                <div className="procurement-page-container">
+                    <table className="table-container">
+                        <thead>
+                        <tr>
+                            <th>순번</th>
+                            <th>발주일시</th>
+                            <th>입고 예정 일</th>
+                            <th>거래처(번호)</th>
+                            <th>발주중량(KG)</th>
+                            <th>부위</th>
+                            <th>발주금액</th>
+                            <th>상태</th>
+                            <th>발주번호</th>
+                            <th>수정</th>
                         </tr>
-                    ))}
-                    </tbody>
-                </table>
+                        </thead>
+                        <tbody>
+                        {currentResults.map((result, index) => (
+                            <tr key={index}>
+                                <td>{result.ID}</td>
+                                <td>{result.OrderDate}</td>
+                                <td>{result.ETA}</td>
+                                <td>{result.Client}</td>
+                                <td>{result.OrderWeight}</td>
+                                <td>{result.Part}</td>
+                                <td>{result.OrderPrice}</td>
+                                <td>{result.OrderSituation}</td>
+                                <td>{result.OrderNo}</td>
+                                <td>수정/삭제</td>
+                            </tr>
+                        ))}
+                        </tbody>
+                    </table>
+                </div>
                 <Pagination
                     currentPage={currentPage}
                     totalPages={Math.ceil(searchResults.length / resultsPerPage)}
