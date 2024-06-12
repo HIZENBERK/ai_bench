@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, {useEffect, useRef, useState} from "react";
 import Pagination from '../component/Pagination'; // Ensure this path is correct
 import '../css/Pagination.css';
 import Datepicker from "../component/DatePicker";
@@ -19,9 +19,11 @@ const ProcurementPage = () => {
     const [isPartOpen, setIsPartOpen] = useState(false);
 
     // client dropdown state
-    const [clientOptions, setclientOptions] = useState([]);
-    const [selectedclientOption, setSelectedclientOption] = useState('');
-    const [isclientOpen, setIsclientOpen] = useState(false);
+    const [clientOptions, setClientOptions] = useState([]);
+    const [selectedClientOption, setSelectedClientOption] = useState('');
+    const [isClientOpen, setIsClientOpen] = useState(false);
+    const partRef = useRef();
+    const clientRef = useRef();
 
     useEffect(() => {
         const fetchSearchResults = async () => {
@@ -46,11 +48,11 @@ const ProcurementPage = () => {
         }
     };
 
-    const fetchclientOptions = async () => {
+    const fetchClientOptions = async () => {
         try {
             const response = await axios.get('http://localhost:8000/api/ClientInfo/'); // Replace with actual URL for clients
             console.log(response.data);
-            setclientOptions(response.data.ClientName);
+            setClientOptions(response.data);
         } catch (error) {
             console.error('Error fetching client data:', error);
         }
@@ -82,23 +84,37 @@ const ProcurementPage = () => {
         setIsPartOpen(!isPartOpen);
     };
 
-    const handleDropdownClickclient = () => {
-        if (!isclientOpen) {
-            fetchclientOptions();
+    const handleDropdownClickClient = () => {
+        if (!isClientOpen) {
+            fetchClientOptions();
         }
-        setIsclientOpen(!isclientOpen);
+        setIsClientOpen(!isClientOpen);
     };
 
     const handlePartOptionClick = (option) => {
-        setSelectedPartOption(option);
+        setSelectedPartOption(option.name);
         setIsPartOpen(false);
     };
 
-    const handleclientOptionClick = (option) => {
-        setSelectedclientOption(option);
-        setIsclientOpen(false);
+    const handleClientOptionClick = (option) => {
+        setSelectedClientOption(option.ClientName);
+        setIsClientOpen(false);
+    };
+    const handleClickOutside = (event) => {
+        if (partRef.current && !partRef.current.contains(event.target)) {
+            setIsPartOpen(false);
+        }
+        if (clientRef.current && !clientRef.current.contains(event.target)) {
+            setIsClientOpen(false);
+        }
     };
 
+    useEffect(() => {
+        document.addEventListener('mousedown', handleClickOutside);
+        return () => {
+            document.removeEventListener('mousedown', handleClickOutside);
+        };
+    }, []);
     return (
         <div>
             <div className="procurement-page-container">
@@ -119,21 +135,21 @@ const ProcurementPage = () => {
                     <label htmlFor="part">부위</label>
                     <input type="text" id="part" value={selectedPartOption} onClick={handleDropdownClickPart} readOnly />
                     {isPartOpen && (
-                        <ul>
+                        <ul style={{ position: 'relative', top:'100%', backgroundColor: 'white', border: '1px solid #ccc', listStyle: 'none', margin: 0, padding: 0, zIndex: 0 }}>
                             {partOptions.map((option, index) => (
-                                <li key={index} onClick={() => handlePartOptionClick(option)}>
-                                    {option}
+                                <li key={index} onClick={() => handlePartOptionClick(option)} style={{ padding: '8px', cursor: 'pointer' }}>
+                                    {option.name}
                                 </li>
                             ))}
                         </ul>
                     )}
                     <label htmlFor="client">거래처</label>
-                    <input type="text" id="client" value={selectedclientOption} onClick={handleDropdownClickclient} readOnly />
-                    {isclientOpen && (
-                        <ul>
+                    <input type="text" id="client" value={selectedClientOption} onClick={handleDropdownClickClient} readOnly />
+                    {isClientOpen && (
+                        <ul style={{position: 'relative', backgroundColor: 'white', border: '1px solid #ccc', listStyle: 'none', margin: 0, padding: 0}}>
                             {clientOptions.map((option, index) => (
-                                <li key={index} onClick={() => handleclientOptionClick(option)}>
-                                    {option}
+                                <li key={index} onClick={() => handleClientOptionClick(option)} style={{ padding: '8px', cursor: 'pointer' }}>
+                                    {option.ClientName}
                                 </li>
                             ))}
                         </ul>
@@ -143,9 +159,7 @@ const ProcurementPage = () => {
                     <label htmlFor="orderAmount">발주금액</label>
                     <input type="text" id="orderAmount" />
                 </div>
-                <div className="register-button-container">
-                    <button onClick={handleRegisterNavigation} className="register-button">등록</button>
-                </div>
+                <button onClick={handleRegisterNavigation} className="register-button">등록</button>
             </div>
             <div className="procurement-page-container">
                 <div className="results-per-page">
