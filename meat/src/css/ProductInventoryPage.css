@@ -74,11 +74,11 @@ th {
     color: white; /* 글자 색상 흰색으로 지정 */
 }
 
-<<<<<<< HEAD
+
 td {
     background-color: #ffffff; /* 연두색 배경색 지정 */
     color: rgb(0, 0, 0); /* 글자 색상 흰색으로 지정 */
-=======
+}
 td:first-child {
     background-color: #ffffff;
     color: #000;
@@ -87,7 +87,6 @@ td:first-child {
 td:nth-child(2) {
     background-color: #ffffff;
     color: #000;
->>>>>>> origin/jeonjaeH
 }
 
 td button.edit-button {
