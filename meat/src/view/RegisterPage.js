@@ -263,6 +263,7 @@ const RegisterPage = () => {
                     <input type="text" id="workingDay" />
                     <label htmlFor="category">구분</label>
                     <input type="text" id="category" />
+                    
                 </div>
                 <div className="input-container">
                     <label htmlFor="customer">주문자</label>

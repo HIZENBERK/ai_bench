@@ -317,7 +317,11 @@ const DeliveryaccidentPage = () => {
                     <option value={30}>30</option>
                 </select>
             </div>
+<<<<<<< HEAD
             <div className="table-container"><table>
+=======
+            <table className="table-container">
+>>>>>>> origin/jeonjaeH
                 <thead>
                     <tr>
                         <th>No</th>
