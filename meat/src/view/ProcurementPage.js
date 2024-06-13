@@ -6,6 +6,11 @@ import { useAuth } from "../component/AuthContext";
 import axios from "axios";
 
 const ProcurementPage = () => {
+    const [OrderDate,setOrderDate] = useState('')
+    const [ETA,setETA] = useState('')
+    const [OrderWeight,setOrderWeight] = useState('')
+    const [OderPrice, setOderPrice] = useState('')
+
     const [searchResults, setSearchResults] = useState([]);
     const [currentPage, setCurrentPage] = useState(1);
     const [resultsPerPage, setResultsPerPage] = useState(10); // Default value is 10
@@ -67,8 +72,22 @@ const ProcurementPage = () => {
         setCurrentPage(1); // Reset to the first page
     };
 
-    const handleRegisterNavigation = () => {
-        console.log('Register button clicked');
+    const handleRegisterNavigation = async () => {
+        try {
+            const response = await axios.post('http://localhost:8000/api/order/',{
+                'PartName':selectedPartOption,
+                'OrderDate': OrderDate,
+                'OrderWorker': authState.empNo,
+                'ETA': ETA,
+                'Client': selectedClientOption,
+                'OrderWeight': OrderWeight,
+                'OderPrice': OderPrice
+            });
+            console.log(response);
+            setSearchResults(response);
+        } catch (error) {
+            console.error('데이터 가져오기 에러:', error);
+        }
     };
 
     const { authState } = useAuth();
@@ -115,15 +134,16 @@ const ProcurementPage = () => {
             document.removeEventListener('mousedown', handleClickOutside);
         };
     }, []);
+
     return (
         <div>
             <div className="procurement-page-container">
                 <h2>발주 등록 페이지</h2>
                 <div className="input-container">
                     <label htmlFor="orderDateTime">발주일시</label>
-                    <Datepicker id="orderDateTime" />
+                    <Datepicker id="orderDateTime"/>
                     <label htmlFor="totalQuantity">발주중량</label>
-                    <input type="text" id="totalQuantity" />
+                    <input type="text" id="totalQuantity" value={OrderWeight} onChange={(e) => setOrderWeight(e.target.value)}/>
                 </div>
                 <div className="input-container">
                     <label htmlFor="ordererID">발주자(사번)명</label>
@@ -157,7 +177,7 @@ const ProcurementPage = () => {
                 </div>
                 <div className="input-container">
                     <label htmlFor="orderAmount">발주금액</label>
-                    <input type="text" id="orderAmount" />
+                    <input type="text" id="orderAmount" value={OderPrice} onChange={(e) => setOderPrice(e.target.value)}/>
                 </div>
                 <button onClick={handleRegisterNavigation} className="register-button">등록</button>
             </div>
