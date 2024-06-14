@@ -20,7 +20,7 @@ const ProcurementPage = () => {
     const [resultsPerPage, setResultsPerPage] = useState(10); // Default value is 10
     const indexOfLastResult = currentPage * resultsPerPage;
     const indexOfFirstResult = indexOfLastResult - resultsPerPage;
-    const currentResults = searchResults.slice(indexOfFirstResult, indexOfLastResult);
+    const currentResults = filteredResults.slice(indexOfFirstResult, indexOfLastResult);
 
     // Part dropdown state
     const [partOptions, setPartOptions] = useState([]);
@@ -118,6 +118,30 @@ const ProcurementPage = () => {
 
     const handleSearch = () => {
         const lowerCasedFilter = TextForSearch.toLowerCase();
+        const filteredData = searchResults.filter(item => {
+            switch (SearchOption) {
+                case '발주일시':
+                    return item.OrderDate.toLowerCase().includes(lowerCasedFilter);
+                case '입고예정일':
+                    return item.ETA.toLowerCase().includes(lowerCasedFilter);
+                case '거래처':
+                    return item.Client.toLowerCase().includes(lowerCasedFilter);
+                case '상태':
+                    return item.OrderSituation.toLowerCase().includes(lowerCasedFilter);
+                case '발주번호':
+                    return item.OrderNo.toLowerCase().includes(lowerCasedFilter);
+                case '부위':
+                    return item.Part.toLowerCase().includes(lowerCasedFilter);
+                default:
+                    return false;
+            }
+        });
+        setFilteredResults(filteredData);
+    };
+    const handleSearch2 = (searchValue) => {
+        console.log(searchValue);
+        setTextForSearch(searchValue);
+        const lowerCasedFilter = searchValue.toLowerCase();
         const filteredData = searchResults.filter(item => {
             switch (SearchOption) {
                 case '발주일시':
@@ -250,7 +274,7 @@ const ProcurementPage = () => {
                         <option value={'부위'}>부위</option>
                     </select>
                     <input type="text" id="orderDateTimeSearch" value={TextForSearch}
-                           onChange={(e) => setTextForSearch(e.target.value)}/>
+                           onChange={(e)=>handleSearch2(e.target.value)}/>
                     <button onClick={handleSearch}>조회</button>
                 </div>
                 <div className="procurement-page-container">
@@ -261,37 +285,37 @@ const ProcurementPage = () => {
                             <th>발주일시</th>
                             <th>입고 예정 일</th>
                             <th>거래처(번호)</th>
-                        <th>발주중량(KG)</th>
-                        <th>부위</th>
-                        <th>발주금액</th>
-                        <th>상태</th>
-                        <th>발주번호</th>
-                        <th>수정</th>
-                    </tr>
-                    </thead>
-                        <tbody>
-                        {filteredResults.map((result, index) => (
-                            <tr key={index}>
-                                <td>{index+1}</td>
-                                <td>{result.OrderDate}</td>
-                                <td>{result.ETA}</td>
-                                <td>{result.Client}</td>
-                                <td>{result.OrderWeight}</td>
-                                <td>{result.Part}</td>
-                                <td>{result.OrderPrice}</td>
-                                <td>{result.OrderSituation}</td>
-                                <td>{result.OrderNo}</td>
-                                <td>수정/삭제</td>
-                            </tr>
-                        ))}
-                        </tbody>
-                    </table>
-                </div>
-                <Pagination
-                    currentPage={currentPage}
-                    totalPages={Math.ceil(searchResults.length / resultsPerPage)}
-                    onPageChange={handlePageChange}
-                />
+                            <th>발주중량(KG)</th>
+                            <th>부위</th>
+                            <th>발주금액</th>
+                            <th>상태</th>
+                            <th>발주번호</th>
+                            <th>수정</th>
+                        </tr>
+                        </thead>
+                            <tbody>
+                            {currentResults.map((result, index) => (
+                                <tr key={index}>
+                                    <td>{index+1}</td>
+                                    <td>{result.OrderDate}</td>
+                                    <td>{result.ETA}</td>
+                                    <td>{result.Client}</td>
+                                    <td>{result.OrderWeight}</td>
+                                    <td>{result.Part}</td>
+                                    <td>{result.OrderPrice}</td>
+                                    <td>{result.OrderSituation}</td>
+                                    <td>{result.OrderNo}</td>
+                                    <td>수정/삭제</td>
+                                </tr>
+                            ))}
+                            </tbody>
+                        </table>
+                    </div>
+                    <Pagination
+                        currentPage={currentPage}
+                        totalPages={Math.ceil(searchResults.length / resultsPerPage)}
+                        onPageChange={handlePageChange}
+                    />
             </div>
         </div>
     );
