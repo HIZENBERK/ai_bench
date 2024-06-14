@@ -7,6 +7,9 @@ import axios from "axios";
 import {format} from "date-fns";
 
 const ProcurementPage = () => {
+    const [filteredResults, setFilteredResults] = useState([]);
+    const [TextForSearch, setTextForSearch] = useState('')
+    const [SearchOption, setSearchOption] = useState('')
     const [OrderDate,setOrderDate] = useState('')
     const [ETA,setETA] = useState('')
     const [OrderWeight,setOrderWeight] = useState('')
@@ -37,6 +40,7 @@ const ProcurementPage = () => {
             const response = await axios.get('http://localhost:8000/api/order/');
             console.log(response.data);
             setSearchResults(response.data);
+            setFilteredResults(response.data); // 초기 데이터 설정
         } catch (error) {
             console.error('데이터 가져오기 에러:', error);
         }
@@ -82,6 +86,9 @@ const ProcurementPage = () => {
         setResultsPerPage(parseInt(event.target.value));
         setCurrentPage(1); // Reset to the first page
     };
+    const handleSearchOption = (event) => {
+        setSearchOption(event.target.value);
+    }
 
     const handleRegisterNavigation = async () => {
         try {
@@ -109,6 +116,28 @@ const ProcurementPage = () => {
         }
     };
 
+    const handleSearch = () => {
+        const lowerCasedFilter = TextForSearch.toLowerCase();
+        const filteredData = searchResults.filter(item => {
+            switch (SearchOption) {
+                case '발주일시':
+                    return item.OrderDate.toLowerCase().includes(lowerCasedFilter);
+                case '입고예정일':
+                    return item.ETA.toLowerCase().includes(lowerCasedFilter);
+                case '거래처':
+                    return item.Client.toLowerCase().includes(lowerCasedFilter);
+                case '상태':
+                    return item.OrderSituation.toLowerCase().includes(lowerCasedFilter);
+                case '발주번호':
+                    return item.OrderNo.toLowerCase().includes(lowerCasedFilter);
+                case '부위':
+                    return item.Part.toLowerCase().includes(lowerCasedFilter);
+                default:
+                    return false;
+            }
+        });
+        setFilteredResults(filteredData);
+    };
     const { authState } = useAuth();
     let empNo = 'admin';
     try {
@@ -212,17 +241,26 @@ const ProcurementPage = () => {
                 </div>
                 <div className="input-container">
                     <label htmlFor="orderDateTimeSearch">컬럼별 조회 목록</label>
-                    <input type="text" id="orderDateTimeSearch" />
-                    <button>조회</button>
+                    <select id="resultsPerPage" value={SearchOption} onChange={handleSearchOption}>
+                        <option value={'발주일시'}>발주일시</option>
+                        <option value={'입고예정일'}>입고예정일</option>
+                        <option value={'거래처'}>거래처</option>
+                        <option value={'상태'}>상태</option>
+                        <option value={'발주번호'}>발주번호</option>
+                        <option value={'부위'}>부위</option>
+                    </select>
+                    <input type="text" id="orderDateTimeSearch" value={TextForSearch}
+                           onChange={(e) => setTextForSearch(e.target.value)}/>
+                    <button onClick={handleSearch}>조회</button>
                 </div>
                 <div className="procurement-page-container">
-                <table className="table-container">
-                    <thead>
-                    <tr>
-                        <th>순번</th>
-                        <th>발주일시</th>
-                        <th>입고 예정 일</th>
-                        <th>거래처(번호)</th>
+                    <table className="table-container">
+                        <thead>
+                        <tr>
+                            <th>순번</th>
+                            <th>발주일시</th>
+                            <th>입고 예정 일</th>
+                            <th>거래처(번호)</th>
                         <th>발주중량(KG)</th>
                         <th>부위</th>
                         <th>발주금액</th>
@@ -232,7 +270,7 @@ const ProcurementPage = () => {
                     </tr>
                     </thead>
                         <tbody>
-                        {currentResults.map((result, index) => (
+                        {filteredResults.map((result, index) => (
                             <tr key={index}>
                                 <td>{index+1}</td>
                                 <td>{result.OrderDate}</td>
