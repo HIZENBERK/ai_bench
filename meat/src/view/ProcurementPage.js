@@ -4,12 +4,13 @@ import '../css/Pagination.css';
 import Datepicker from "../component/DatePicker";
 import { useAuth } from "../component/AuthContext";
 import axios from "axios";
+import {format} from "date-fns";
 
 const ProcurementPage = () => {
     const [OrderDate,setOrderDate] = useState('')
     const [ETA,setETA] = useState('')
     const [OrderWeight,setOrderWeight] = useState('')
-    const [OderPrice, setOderPrice] = useState('')
+    const [OrderPrice, setOrderPrice] = useState('')
 
     const [searchResults, setSearchResults] = useState([]);
     const [currentPage, setCurrentPage] = useState(1);
@@ -21,6 +22,7 @@ const ProcurementPage = () => {
     // Part dropdown state
     const [partOptions, setPartOptions] = useState([]);
     const [selectedPartOption, setSelectedPartOption] = useState('');
+    const [selectedPartCode, setSelectedPartCode] = useState('')
     const [isPartOpen, setIsPartOpen] = useState(false);
 
     // client dropdown state
@@ -30,16 +32,16 @@ const ProcurementPage = () => {
     const partRef = useRef();
     const clientRef = useRef();
 
+    const fetchSearchResults = async () => {
+        try {
+            const response = await axios.get('http://localhost:8000/api/order/');
+            console.log(response.data);
+            setSearchResults(response.data);
+        } catch (error) {
+            console.error('데이터 가져오기 에러:', error);
+        }
+    };
     useEffect(() => {
-        const fetchSearchResults = async () => {
-            try {
-                const response = await axios.get('http://localhost:8000/api/order/');
-                console.log(response.data);
-                setSearchResults(response.data);
-            } catch (error) {
-                console.error('데이터 가져오기 에러:', error);
-            }
-        };
         fetchSearchResults();
     }, []);
 
@@ -63,6 +65,15 @@ const ProcurementPage = () => {
         }
     };
 
+    const handleDateChange = (date, id) =>{
+        if (id === 'orderDateTime'){
+            setOrderDate(date);
+            console.log(OrderDate)
+        }else if (id === 'expectedDeliveryDate') {
+            setETA(date);
+            console.log(ETA)
+        }
+    };
     const handlePageChange = (pageNumber) => {
         setCurrentPage(pageNumber);
     };
@@ -75,18 +86,26 @@ const ProcurementPage = () => {
     const handleRegisterNavigation = async () => {
         try {
             const response = await axios.post('http://localhost:8000/api/order/',{
-                'PartName':selectedPartOption,
-                'OrderDate': OrderDate,
-                'OrderWorker': authState.empNo,
-                'ETA': ETA,
-                'Client': selectedClientOption,
-                'OrderWeight': OrderWeight,
-                'OderPrice': OderPrice
+                Part:selectedPartCode,
+                OrderDate: OrderDate ? format(OrderDate, 'yyyy-MM-dd') : null,
+                OrderWorker: authState.empNo,
+                ETA: ETA ? format(ETA, 'yyyy-MM-dd') : null,
+                Client: selectedClientOption,
+                OrderWeight: OrderWeight,
+                OrderPrice: OrderPrice,
+                OrderSituation: '발주완료'
             });
             console.log(response);
-            setSearchResults(response);
+            fetchSearchResults();
+            setSelectedPartCode('');
+            setSelectedPartOption('')
+            setOrderDate('');
+            setETA('');
+            setSelectedClientOption('');
+            setOrderWeight('');
+            setOrderPrice('');
         } catch (error) {
-            console.error('데이터 가져오기 에러:', error);
+            console.error('데이터 생성 에러:', error);
         }
     };
 
@@ -112,6 +131,7 @@ const ProcurementPage = () => {
 
     const handlePartOptionClick = (option) => {
         setSelectedPartOption(option.name);
+        setSelectedPartCode(option.code);
         setIsPartOpen(false);
     };
 
@@ -141,7 +161,7 @@ const ProcurementPage = () => {
                 <h2>발주 등록 페이지</h2>
                 <div className="input-container">
                     <label htmlFor="orderDateTime">발주일시</label>
-                    <Datepicker id="orderDateTime"/>
+                    <Datepicker id="orderDateTime" selectedDate={OrderDate} onChangeDate={handleDateChange}/>
                     <label htmlFor="totalQuantity">발주중량</label>
                     <input type="text" id="totalQuantity" value={OrderWeight} onChange={(e) => setOrderWeight(e.target.value)}/>
                 </div>
@@ -149,7 +169,7 @@ const ProcurementPage = () => {
                     <label htmlFor="ordererID">발주자(사번)명</label>
                     <text id="ordererID">{empNo}</text>
                     <label htmlFor="expectedDeliveryDate">입고 예정일</label>
-                    <Datepicker id="expectedDeliveryDate" />
+                    <Datepicker id="expectedDeliveryDate" selectedDate={ETA} onChangeDate={handleDateChange}/>
                 </div>
                 <div className="input-container">
                     <label htmlFor="part">부위</label>
@@ -177,7 +197,7 @@ const ProcurementPage = () => {
                 </div>
                 <div className="input-container">
                     <label htmlFor="orderAmount">발주금액</label>
-                    <input type="text" id="orderAmount" value={OderPrice} onChange={(e) => setOderPrice(e.target.value)}/>
+                    <input type="text" id="orderAmount" value={OrderPrice} onChange={(e) => setOrderPrice(e.target.value)}/>
                 </div>
                 <button onClick={handleRegisterNavigation} className="register-button">등록</button>
             </div>
@@ -214,7 +234,7 @@ const ProcurementPage = () => {
                         <tbody>
                         {currentResults.map((result, index) => (
                             <tr key={index}>
-                                <td>{result.ID}</td>
+                                <td>{index+1}</td>
                                 <td>{result.OrderDate}</td>
                                 <td>{result.ETA}</td>
                                 <td>{result.Client}</td>

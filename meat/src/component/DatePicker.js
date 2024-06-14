@@ -1,14 +1,16 @@
-import React, { useState } from "react";
+import React from "react";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
+import { ko } from "date-fns/locale";
 
-const Datepicker = () => {
-    const [inputDate, setInputDate] = useState(new Date());
+const Datepicker = ({ selectedDate, onChangeDate, id }) => {
     return (
         <DatePicker
+            locale={ko}
+            selected={selectedDate}
+            onChange={(date) => onChangeDate(date, id)}
             dateFormat={"yyyy-MM-dd"}
-            selected={inputDate}
-            onChange={date => setInputDate(inputDate)} />
+        />
     );
 };
 
