@@ -3,7 +3,9 @@ import React, {useEffect, useState} from "react";
 import Pagination from '../component/Pagination';
 import '../css/Pagination.css';
 import axios from "axios";
-import {format} from "date-fns"; // Ensure this path is correct
+import {useAuth} from "../component/AuthContext";
+import Datepicker from "../component/DatePicker";
+//import {format} from "date-fns"; // Ensure this path is correct
 
 const ProcessingPage = () => {
     const [processingResults,setProcessingResults] = useState([]);
@@ -14,6 +16,8 @@ const ProcessingPage = () => {
     const indexOfLastResult = currentPage * resultsPerPage;
     const indexOfFirstResult = indexOfLastResult - resultsPerPage;
     const currentResults = processingResults.slice(indexOfFirstResult, indexOfLastResult);
+
+    const [workingDay, setWorkingDay] = useState('')
 
     const handlePageChange = (pageNumber) => {
         setCurrentPage(pageNumber);
@@ -35,6 +39,40 @@ const ProcessingPage = () => {
     useEffect(() => {
         fetchSearchResults();
     }, []);
+    const { authState } = useAuth();
+    let empNo = 'admin';
+    try {
+        empNo = authState.empNo;
+    } catch (e) {}
+    const handleDateChange = (date) =>{
+        setWorkingDay(date);
+        console.log(workingDay)
+    };
+    const handleRegisterNavigation = async () => {
+        // try {
+        //     const response = await axios.post('http://localhost:8000/api/order/',{
+        //         Part:selectedPartCode,
+        //         OrderDate: OrderDate ? format(OrderDate, 'yyyy-MM-dd') : null,
+        //         OrderWorker: authState.empNo,
+        //         ETA: ETA ? format(ETA, 'yyyy-MM-dd') : null,
+        //         Client: selectedClientOption,
+        //         OrderWeight: OrderWeight,
+        //         OrderPrice: OrderPrice,
+        //         OrderSituation: '발주완료'
+        //     });
+        //     console.log(response);
+        //     fetchSearchResults();
+        //     setSelectedPartCode('');
+        //     setSelectedPartOption('')
+        //     setOrderDate('');
+        //     setETA('');
+        //     setSelectedClientOption('');
+        //     setOrderWeight('');
+        //     setOrderPrice('');
+        // } catch (error) {
+        //     console.error('데이터 생성 에러:', error);
+        // }
+    };
     return (
         <div>
             <div className="processing-page-container">
@@ -46,13 +84,13 @@ const ProcessingPage = () => {
                 </div>
                 <div className="input-container">
                     <label htmlFor="workingDay">작업일(요일)</label>
-                    <input type="text" id="workingDay"/>
+                    <Datepicker id="workingDay" selectedDate={workingDay} onChangeDate={handleDateChange}/>
                     <label htmlFor="loss">로스</label>
                     <input type="text" id="loss"/>
                 </div>
                 <div className="input-container">
                     <label htmlFor="worker">작업자</label>
-                    <input type="text" id="worker"/>
+                    <text id="ordererID">{empNo}</text>
                     <label htmlFor="unitPrice">단가</label>
                     <input type="text" id="unitPrice"/>
                 </div>
@@ -62,6 +100,7 @@ const ProcessingPage = () => {
                     <label htmlFor="discountRate">할인율</label>
                     <input type="text" id="discountRate"/>
                 </div>
+                <button onClick={handleRegisterNavigation} className="register-button">등록</button>
             </div>
             <div className="processing-page-container">
                 <div className="dropdown-container">
@@ -109,19 +148,19 @@ const ProcessingPage = () => {
                         {currentResults.map((result, index) => (
                             <tr key={index}>
                                 <td>{index+1}</td>
-                                <td>{result.orderDateTime}</td>
-                                <td>{result.customerNumber}</td>
-                                <td>{result.orderWeight}</td>
-                                <td>{result.part}</td>
-                                <td>{result.orderAmount}</td>
-                                <td>{result.arrivalDateTime}</td>
-                                <td>{result.receiver}</td>
-                                <td>{result.item}</td>
-                                <td>{result.actualWeight}</td>
-                                <td>{result.actualPurchasePrice}</td>
-                                <td>{result.historyNumber}</td>
-                                <td>{result.slaughterDate}</td>
-                                <td>{result.unitPrice}</td>
+                                <td>{result.OrderDate}</td>
+                                <td>{result.Client}</td>
+                                <td>{result.OrderWeight}</td>
+                                <td>{result.Part}</td>
+                                <td>{result.OrderPrice}</td>
+                                <td>{result.StockDate}</td>
+                                <td>{result.StockWorker}</td>
+                                <td>{result.Stockitem}</td>
+                                <td>{result.RealWeight}</td>
+                                <td>{result.RealPrice}</td>
+                                <td>{result.MeterialNo}</td>
+                                <td>{result.SlaugtherDate}</td>
+                                <td>{result.UnitPrice}</td>
                                 <td>{result.ProductDate}</td>
                                 <td>{result.ProductWorker}</td>
                                 <td>{result.WeightAfterWork}</td>

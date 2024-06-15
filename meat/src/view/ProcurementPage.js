@@ -214,7 +214,7 @@ const ProcurementPage = () => {
                 <h2>발주 등록 페이지</h2>
                 <div className="input-container">
                     <label htmlFor="orderDateTime">발주일시</label>
-                    <Datepicker id="orderDateTime" selectedDate={OrderDate} onChangeDate={handleDateChange}/>
+                    <Datepicker id="orderDateTime" selectedDate={OrderDate} onChangeDate={handleDateChange} />
                     <label htmlFor="totalQuantity">발주중량</label>
                     <input type="text" id="totalQuantity" value={OrderWeight} onChange={(e) => setOrderWeight(e.target.value)}/>
                 </div>
