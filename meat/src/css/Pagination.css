@@ -72,6 +72,7 @@
     border: none;
     border-radius: 5px;
     cursor: pointer;
+    margin-left: 670px;
 }
 
 .register-button:hover {
@@ -180,4 +181,52 @@
 .page-item.active .page-link {
     font-weight: bold;
     cursor: default;
+}
+
+.input-totalQuantity{
+    margin-left: 33px;
+}
+
+#totalQuantity{
+    margin-left: 55px;
+}
+
+.input-client{
+    margin-left: 50px;
+}
+
+#client{
+    margin-left: 72px;
+}
+
+.item-label{
+    margin-left: 50px;
+}
+
+.unitPrice-label{
+    margin-left: -31px;
+}
+
+#unitPrice1{
+    margin-left: 55px;
+    width: 200px;
+}
+
+.slaughterDate-labal{
+    margin-left: 20px;
+}
+
+.input-product{
+    margin-left: 800px;
+    margin-top: -300px;
+}
+
+.button{
+    margin-left: 800px;
+    margin-top: -50px;
+}
+
+.total-price-container{
+    margin-left: 1100px;
+    margin-top: -35px;
 }
