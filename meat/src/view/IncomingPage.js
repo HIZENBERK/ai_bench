@@ -7,61 +7,65 @@ import axios from "axios";
 import { useAuth } from "../component/AuthContext";
 
 const IncomingPage = () => {
-    const [incomingResults, setIncomingResults] = useState([]);
-    const [orderNumbers, setOrderNumbers] = useState([]);
+    const [searchResults, setSearchResults] = useState([]);
+    const [filteredResults, setFilteredResults] = useState([]);
     const [selectedOrderNumber, setSelectedOrderNumber] = useState('');
     const [orderDetails, setOrderDetails] = useState(null);
     const [currentPage, setCurrentPage] = useState(1);
     const [resultsPerPage, setResultsPerPage] = useState(10);
+    const [textForSearch, setTextForSearch] = useState('');
+    const [searchOption, setSearchOption] = useState('');
+    const [orderNumbers, setOrderNumbers] = useState([]);
     const [arrivalDateTime, setArrivalDateTime] = useState(new Date());
     const [slaughter, setSlaughter] = useState(new Date());
-    const [historyNumber, setHistoryNumber] = useState('');
+    const [meterialNo, setMeterialNo] = useState('');
     const [unitPrice, setUnitPrice] = useState('');
     const [actualWeight, setActualWeight] = useState('');
     const [actualPurchasePrice, setActualPurchasePrice] = useState('');
     const [stockItem, setStockItem] = useState('');
     
+    const { authState } = useAuth();
+    let empNo = 'admin';
+    try {
+        empNo = authState.empNo;
+    } catch (e) {}
+
     const indexOfLastResult = currentPage * resultsPerPage;
     const indexOfFirstResult = indexOfLastResult - resultsPerPage;
-    const currentResults = incomingResults.slice(indexOfFirstResult, indexOfLastResult);
+    const currentResults = filteredResults.slice(indexOfFirstResult, indexOfLastResult);
 
     useEffect(() => {
-        const fetchOrderNumbers = async () => {
-            try {
-                const response = await axios.get('http://localhost:8000/api/order/');
-                setOrderNumbers(response.data);
-            } catch (error) {
-                console.error('발주번호 가져오기 에러:', error);
-            }
-        };
-
-        const fetchIncomingResults = async () => {
-            try {
-                const [stockResponse, orderResponse] = await Promise.all([
-                    axios.get('http://localhost:8000/api/stock/'),
-                    axios.get('http://localhost:8000/api/order/')
-                ]);
-
-                const stockData = stockResponse.data;
-                const orderData = orderResponse.data;
-
-                const combinedResults = stockData.map(stockItem => {
-                    const correspondingOrder = orderData.find(orderItem => orderItem.OrderNo === stockItem.OrderNo);
-                    return {
-                        ...stockItem,
-                        order: correspondingOrder || {}
-                    };
-                });
-
-                setIncomingResults(combinedResults);
-            } catch (error) {
-                console.error('데이터 가져오기 에러:', error);
-            }
-        };
-
-        fetchOrderNumbers();
-        fetchIncomingResults();
+        fetchInitialData();
     }, []);
+
+    useEffect(() => {
+        handleSearch();
+    }, [textForSearch, searchOption, searchResults]);
+
+    const fetchInitialData = async () => {
+        try {
+            const [orderResponse, stockResponse] = await Promise.all([
+                axios.get('http://localhost:8000/api/order/'),
+                axios.get('http://localhost:8000/api/stock/')
+            ]);
+            setOrderNumbers(orderResponse.data);
+            const combinedResults = mergeData(stockResponse.data, orderResponse.data);
+            setSearchResults(combinedResults);
+            setFilteredResults(combinedResults);
+        } catch (error) {
+            console.error('데이터 가져오기 에러:', error);
+        }
+    };
+
+    const mergeData = (stockData, orderData) => {
+        return stockData.map(stockItem => {
+            const correspondingOrder = orderData.find(orderItem => orderItem.OrderNo === stockItem.OrderNo);
+            return {
+                ...stockItem,
+                order: correspondingOrder || {}
+            };
+        });
+    };
 
     const handleOrderNumberChange = (event) => {
         const orderNumber = event.target.value;
@@ -79,37 +83,61 @@ const IncomingPage = () => {
         setCurrentPage(1);
     };
 
+    const handleSearchOptionChange = (event) => {
+        setSearchOption(event.target.value);
+    };
+
+    const handleSearch = () => {
+        if (!textForSearch) {
+            setFilteredResults(searchResults);
+            return;
+        }
+
+        const filtered = searchResults.filter(result => {
+            switch (searchOption) {
+                case '발주일시':
+                    return result.order.OrderDate?.includes(textForSearch);
+                case '입고 예정일':
+                    return result.order.ETA?.includes(textForSearch);
+                case '거래처(번호)':
+                    return result.order.Client?.includes(textForSearch);
+                case '입고 번호':
+                    return result.OrderNo?.includes(textForSearch);
+                default:
+                    return false;
+            }
+        });
+
+        setFilteredResults(filtered);
+        setCurrentPage(1);
+    };
+
     const handleRegisterNavigation = async () => {
         try {
             const payload = {
                 OrderNo: selectedOrderNumber,
                 StockDate: arrivalDateTime.toISOString().split('T')[0], // 입고일시
-                StockWorker: authState.empNo, // 로그인한 계정명
-                StockItem: stockItem, // 입고품목
-                RealWeight: parseFloat(actualWeight),
-                RealPrice: parseFloat(actualPurchasePrice),
-                MaterialNo: parseInt(historyNumber),
-                SlaughterDate: slaughter.toISOString().split('T')[0], // 도축일
-                UnitPrice: parseFloat(unitPrice),
+                StockWorker: empNo, // 로그인한 계정명
+                Stockitem: stockItem, // 입고품목
+                RealWeight: actualWeight, // 실 중량
+                RealPrice: actualPurchasePrice, // 실 매입가
+                MeterialNo: meterialNo, // 이력번호
+                SlaugtherDate: slaughter.toISOString().split('T')[0], // 도축일
+                UnitPrice: unitPrice, // 입고단가
                 StockSituation: '입고' // 상태 기본값 설정
             };
+
+            console.log(payload);
 
             const response = await axios.post('http://localhost:8000/api/stock/', payload);
             console.log('등록 성공:', response.data);
 
             // 상태 업데이트 후, 테이블 새로고침
-            const stockResponse = await axios.get('http://localhost:8000/api/stock/');
-            setIncomingResults(stockResponse.data);
+            fetchInitialData();
         } catch (error) {
             console.error('등록 실패:', error);
         }
     };
-
-    const { authState } = useAuth();
-    let empNo = 'admin';
-    try {
-        empNo = authState.empNo;
-    } catch (e) {}
 
     return (
         <div>
@@ -123,7 +151,6 @@ const IncomingPage = () => {
                             <option key={index} value={order.OrderNo}>{order.OrderNo}</option>
                         ))}
                     </select>
-                    <button onClick={() => handleOrderNumberChange({ target: { value: selectedOrderNumber } })}>조회</button>
                     <label htmlFor="item" className="item-label">입고품목</label>
                     <input type="text" id="item" value={stockItem} onChange={(e) => setStockItem(e.target.value)} />
                 </div>
@@ -135,8 +162,8 @@ const IncomingPage = () => {
                         onChange={(date) => setArrivalDateTime(date)}
                         dateFormat="yyyy-MM-dd"
                     />
-                    <label htmlFor="historyNumber">이력번호</label>
-                    <input type="text" id="historyNumber" value={historyNumber} onChange={(e) => setHistoryNumber(e.target.value)} />
+                    <label htmlFor="meterialNo">이력번호</label>
+                    <input type="text" id="meterialNo" value={meterialNo} onChange={(e) => setMeterialNo(e.target.value)} />
                 </div>
                 <div className="input-container">
                     <label htmlFor="receiver">입고자 명</label>
@@ -172,8 +199,14 @@ const IncomingPage = () => {
                 </div>
                 <div className="input-container">
                     <label htmlFor="orderDateTimeSearch">컬럼별 조회 목록</label>
-                    <input type="text" id="orderDateTimeSearch" />
-                    <button>조회</button>
+                    <select id="searchOption" value={searchOption} onChange={handleSearchOptionChange}>
+                        <option value="발주일시">발주일시</option>
+                        <option value="입고 예정일">입고 예정일</option>
+                        <option value="거래처(번호)">거래처(번호)</option>
+                        <option value="입고 번호">입고 번호</option>
+                    </select>
+                    <input type="text" id="textForSearch" value={textForSearch} onChange={(e) => setTextForSearch(e.target.value)} />
+                    <button onClick={handleSearch}>조회</button>
                 </div>
                 <table className="table-container">
                     <thead>
@@ -223,7 +256,7 @@ const IncomingPage = () => {
                 </table>
                 <Pagination
                     currentPage={currentPage}
-                    totalPages={Math.ceil(incomingResults.length / resultsPerPage)}
+                    totalPages={Math.ceil(searchResults.length / resultsPerPage)}
                     onPageChange={handlePageChange}
                 />
             </div>
