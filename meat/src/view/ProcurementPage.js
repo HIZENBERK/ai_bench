@@ -215,8 +215,9 @@ const ProcurementPage = () => {
                 <div className="input-container">
                     <label htmlFor="orderDateTime">발주일시</label>
                     <Datepicker id="orderDateTime" selectedDate={OrderDate} onChangeDate={handleDateChange}/>
+                    <div className="input-totalQuantity">
                     <label htmlFor="totalQuantity">발주중량</label>
-                    <input type="text" id="totalQuantity" value={OrderWeight} onChange={(e) => setOrderWeight(e.target.value)}/>
+                    <input type="text" id="totalQuantity" value={OrderWeight} onChange={(e) => setOrderWeight(e.target.value)}/></div>
                 </div>
                 <div className="input-container">
                     <label htmlFor="ordererID">발주자(사번)명</label>
@@ -236,6 +237,7 @@ const ProcurementPage = () => {
                             ))}
                         </ul>
                     )}
+                    <div className="input-client">
                     <label htmlFor="client">거래처</label>
                     <input type="text" id="client" value={selectedClientOption} onClick={handleDropdownClickClient} readOnly />
                     {isClientOpen && (
@@ -246,7 +248,7 @@ const ProcurementPage = () => {
                                 </li>
                             ))}
                         </ul>
-                    )}
+                    )}</div>
                 </div>
                 <div className="input-container">
                     <label htmlFor="orderAmount">발주금액</label>

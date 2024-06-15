@@ -281,6 +281,7 @@ const RegisterPage = () => {
             {/* search fields */}
             {searchFields.map((field, index) => (
                 <div className="input-container" key={index}>
+                    <div className="input-product">
                     <label htmlFor={`productName-${index}`}>제품명</label>
                     <input
                         type="text"
@@ -298,11 +299,13 @@ const RegisterPage = () => {
                         onChange={event => handleInputChange(index, event)}
                     />
                     <button onClick={() => handleRemoveField(index)}>-</button>
-                </div>
+                </div></div>
             ))}
             {/* buttons for adding/removing search fields and initiating search */}
+            <div className="button">
             <button onClick={handleAddField}>+</button>
             <button onClick={handleSearch}>검색</button>
+            </div>
             <div className="total-price-container">
                 <h3>가격 합계: {totalPrice}</h3>
             </div>

@@ -141,13 +141,14 @@ const IncomingPage = () => {
                 <div className="input-container">
                     <label htmlFor="receiver">입고자 명</label>
                     <text id="stockID">{empNo}</text>
+                    <div className="unitPrice-label">
                     <label htmlFor="unitPrice">입고단가</label>
-                    <input type="text" id="unitPrice" value={unitPrice} onChange={(e) => setUnitPrice(e.target.value)} />
+                    <input type="text" id="unitPrice1" value={unitPrice} onChange={(e) => setUnitPrice(e.target.value)} /></div>
                 </div>
                 <div className="input-container">
                     <label htmlFor="actualWeight">실 중량</label>
                     <input type="text" id="actualWeight" value={actualWeight} onChange={(e) => setActualWeight(e.target.value)} />
-                    <label htmlFor="slaughterDate">도축일</label>
+                    <label htmlFor="slaughterDate" className="slaughterDate-labal">도축일</label>
                     <Datepicker
                         id="slaughterDate"
                         selected={slaughter}
