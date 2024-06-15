@@ -37,6 +37,7 @@ const Login = () => {
                     setError('An error occurred on settings');
                 }
             }
+            console.log()
         } else {
             alert('사번과 비밀번호를 입력하세요.');
         }
