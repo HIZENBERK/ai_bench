@@ -4,15 +4,72 @@ import Pagination from '../component/Pagination';
 import '../css/Pagination.css';
 import axios from "axios";
 import {useAuth} from "../component/AuthContext";
-import Datepicker from "../component/DatePicker";
+// import Datepicker from "../component/DatePicker";
 import {format} from "date-fns";
 //import {format} from "date-fns"; // Ensure this path is correct
 
 const ProcessingPage = () => {
     const [processingResults,setProcessingResults] = useState([]);
-
+    const [searchResults, setSearchResults] = useState([]);
     const [currentPage, setCurrentPage] = useState(1);
     const [resultsPerPage, setResultsPerPage] = useState(10);
+    const [SearchOption, setSearchOption] = useState('')
+    const [TextForSearch, setTextForSearch] = useState('')
+    const handleSearchOption = (event) => {
+        setSearchOption(event.target.value);
+    }
+
+    const handleSearch = () => {
+        const lowerCasedFilter = TextForSearch.toLowerCase();
+        const filteredData = searchResults.filter(item => {
+            switch (SearchOption) {
+                case '발주일시':
+                    return item.OrderDate.toLowerCase().includes(lowerCasedFilter);
+                case '입고일시':
+                    return item.StockDate.toLowerCase().includes(lowerCasedFilter);
+                case '작업일':
+                    return item.ProductDate.toLowerCase().includes(lowerCasedFilter);
+                case '거래처':
+                    return item.Client.toLowerCase().includes(lowerCasedFilter);
+                case '부위':
+                    return item.Part.toLowerCase().includes(lowerCasedFilter);
+                case '제품번호':
+                    return item.ProductNo.toLowerCase().includes(lowerCasedFilter);
+                case '상태':
+                    return item.ProductSituation.toLowerCase().includes(lowerCasedFilter);
+                default:
+                    return false;
+            }
+        });
+        setProcessingResults(filteredData);
+    };
+
+    const handleSearch2 = (searchValue) => {
+        console.log(searchValue);
+        setTextForSearch(searchValue);
+        const lowerCasedFilter = searchValue.toLowerCase();
+        const filteredData = searchResults.filter(item => {
+            switch (SearchOption) {
+                case '발주일시':
+                    return item.OrderDate.toLowerCase().includes(lowerCasedFilter);
+                case '입고일시':
+                    return item.StockDate.toLowerCase().includes(lowerCasedFilter);
+                case '작업일':
+                    return item.ProductDate.toLowerCase().includes(lowerCasedFilter);
+                case '거래처':
+                    return item.Client.toLowerCase().includes(lowerCasedFilter);
+                case '부위':
+                    return item.Part.toLowerCase().includes(lowerCasedFilter);
+                case '제품번호':
+                    return item.ProductNo.toLowerCase().includes(lowerCasedFilter);
+                case '상태':
+                    return item.ProductSituation.toLowerCase().includes(lowerCasedFilter);
+                default:
+                    return false;
+            }
+        });
+        setProcessingResults(filteredData);
+    };
 
     const indexOfLastResult = currentPage * resultsPerPage;
     const indexOfFirstResult = indexOfLastResult - resultsPerPage;
@@ -39,7 +96,8 @@ const ProcessingPage = () => {
         try {
             const response = await axios.get('http://localhost:8000/api/product/');
             console.log(response.data);
-            setProcessingResults(response.data); // 초기 데이터 설정
+            setSearchResults(response.data); // 초기 데이터 설정
+            setProcessingResults(response.data);
         } catch (error) {
             console.error('데이터 가져오기 에러:', error);
         }
@@ -47,20 +105,29 @@ const ProcessingPage = () => {
     useEffect(() => {
         fetchSearchResults();
     }, []);
+
     const { authState } = useAuth();
-    let empNo = 'admin';
+    let empNo = '';
     try {
         empNo = authState.empNo;
     } catch (e) {}
-    const handleDateChange = (date) =>{
-
-        setWorkingDay(date);
-        console.log(workingDay)
-    };
+    // const handleDateChange = (date) =>{
+    //     const currentTime = new Date();
+    //     const selectedDateWithTime = new Date(
+    //         date.getFullYear(),
+    //         date.getMonth(),
+    //         date.getDate(),
+    //         currentTime.getHours(),
+    //         currentTime.getMinutes(),
+    //         currentTime.getSeconds()
+    //     ); // 선택된 날짜에 현재 시분초를 추가합니다.
+    //     setWorkingDay(selectedDateWithTime);
+    //     console.log(workingDay)
+    // };
     const handleRegisterNavigation = async () => {
         console.log(
             selectedRawMaterialNumberOption,
-            workingDay,
+            workingDay ? format(workingDay, "yyyy-MM-dd'T'HH:mm:ss") : null,
             finalWeight,
             loss,
             unitPrice,
@@ -69,7 +136,6 @@ const ProcessingPage = () => {
         try {
             const response = await axios.post('http://localhost:8000/api/product/',{
                 StockNo: selectedRawMaterialNumberOption,
-                ProductDate: workingDay ? format(workingDay, "yyyy-MM-dd 'T' HH:mm:ss") : null,
                 ProductWorker: authState.empNo,
                 WeightAfterWork: finalWeight,
                 LossWeight: loss,
@@ -129,8 +195,8 @@ const ProcessingPage = () => {
                     <button>조회</button>
                 </div>
                 <div className="input-container">
-                    <label htmlFor="workingDay">작업일(요일)</label>
-                    <Datepicker id="workingDay"  dateFormat="yyyy-MM-dd HH:mm:ss" selectedDate={workingDay} onChangeDate={handleDateChange}/>
+                    {/*<label htmlFor="workingDay">작업일(요일)</label>*/}
+                    {/*<Datepicker id="workingDay" selectedDate={workingDay} onChangeDate={handleDateChange}/>*/}
                     <label htmlFor="loss">로스</label>
                     <input type="text" id="loss" value={loss} onChange={(e) => setLoss(e.target.value)}/>
                 </div>
@@ -158,27 +224,37 @@ const ProcessingPage = () => {
                     </select>
                 </div>
                 <div className="input-container">
-                    <label htmlFor="orderDateTimeSearch">컬럼별 조회 목록</label>
-                    <input type="text" id="orderDateTimeSearch"/>
-                    <button>조회</button>
+                    {/*<label htmlFor="orderDateTimeSearch">컬럼별 조회 목록</label>*/}
+                    <select id="SearchOption" value={SearchOption} onChange={handleSearchOption}>
+                        <option value={'발주일시'}>발주일시</option>
+                        <option value={'입고일시'}>입고일시</option>
+                        <option value={'거래처'}>거래처</option>
+                        <option value={'부위'}>부위</option>
+                        <option value={'작업일'}>작업일</option>
+                        <option value={'제품번호'}>제품번호</option>
+                        <option value={'상태'}>상태</option>
+                    </select>
+                    <input type="text" id="TextForSearch" value={TextForSearch}
+                           onChange={(e) => handleSearch2(e.target.value)}/>
+                    <button onClick={handleSearch}>조회</button>
                 </div>
                 <table className="table-container">
                     <thead>
-                        <tr>
-                            <th>순번</th>
-                            <th>발주일시</th>
-                            <th>거래처(번호)</th>
-                            <th>발주중량(KG)</th>
-                            <th>부위</th>
-                            <th>발주금액</th>
-                            <th>입고일시</th>
-                            <th>입고자명</th>
-                            <th>입고품목</th>
-                            <th>실중량</th>
-                            <th>실 매입가</th>
-                            <th>이력번호</th>
-                            <th>도축일</th>
-                            <th>입고단가</th>
+                    <tr>
+                        <th>순번</th>
+                        <th>발주일시</th>
+                        <th>거래처(번호)</th>
+                        <th>발주중량(KG)</th>
+                        <th>부위</th>
+                        <th>발주금액</th>
+                        <th>입고일시</th>
+                        <th>입고자명</th>
+                        <th>입고품목</th>
+                        <th>실중량</th>
+                        <th>실 매입가</th>
+                        <th>이력번호</th>
+                        <th>도축일</th>
+                        <th>입고단가</th>
                             <th>작업일</th>
                             <th>작업자</th>
                             <th>작업 후 중량</th>

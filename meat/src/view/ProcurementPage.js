@@ -1,3 +1,4 @@
+//발주
 import React, {useEffect, useRef, useState} from "react";
 import Pagination from '../component/Pagination'; // Ensure this path is correct
 import '../css/Pagination.css';
@@ -16,6 +17,7 @@ const ProcurementPage = () => {
     const [OrderPrice, setOrderPrice] = useState('')
 
     const [filteredResults, setFilteredResults] = useState([]);
+    const [searchResults, setSearchResults] = useState([]);
     const [currentPage, setCurrentPage] = useState(1);
     const [resultsPerPage, setResultsPerPage] = useState(10); // Default value is 10
     const indexOfLastResult = currentPage * resultsPerPage;
@@ -39,7 +41,8 @@ const ProcurementPage = () => {
         try {
             const response = await axios.get('http://localhost:8000/api/order/');
             console.log(response.data);
-            setFilteredResults(response.data); // 초기 데이터 설정
+            setSearchResults(response.data);// 초기 데이터 설정
+            setFilteredResults(response.data);
         } catch (error) {
             console.error('데이터 가져오기 에러:', error);
         }
@@ -117,7 +120,7 @@ const ProcurementPage = () => {
 
     const handleSearch = () => {
         const lowerCasedFilter = TextForSearch.toLowerCase();
-        const filteredData = filteredResults.filter(item => {
+        const filteredData = searchResults.filter(item => {
             switch (SearchOption) {
                 case '발주일시':
                     return item.OrderDate.toLowerCase().includes(lowerCasedFilter);
@@ -141,7 +144,7 @@ const ProcurementPage = () => {
         console.log(searchValue);
         setTextForSearch(searchValue);
         const lowerCasedFilter = searchValue.toLowerCase();
-        const filteredData = filteredResults.filter(item => {
+        const filteredData = searchResults.filter(item => {
             switch (SearchOption) {
                 case '발주일시':
                     return item.OrderDate.toLowerCase().includes(lowerCasedFilter);
