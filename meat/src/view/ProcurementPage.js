@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import Pagination from '../component/Pagination'; // Ensure this path is correct
 import '../css/Pagination.css';
 import Datepicker from "../component/DatePicker";
@@ -47,11 +48,32 @@ const ProcurementPage = () => {
         }
     };
 
+    const navigate = useNavigate();
+    const { authState } = useAuth();
+    const userJob = authState.job; // 직급
+    const userPosition = authState.position; // 직위
 
 
-    useEffect(() => { //제한없이 모든 사용자가 접근 가능
-        fetchSearchResults();
-    }, []);
+    let empNo = 'admin';
+    try {
+        empNo = authState.empNo;
+    } catch (e) { }
+
+    useEffect(() => {
+        if (userJob === 'OM' || (userPosition === 'A' || userPosition === 'M')) {
+            fetchSearchResults();
+        // Warehouse Manager (WM) 또는 관리자 (A)일 경우 데이터를 가져오도록 처리
+        } else {
+        alert('접근 권한이 없습니다.');
+        navigate('/main');
+        // 접근 권한이 없을 때 처리 (예: 리디렉션, 메시지 출력 등)
+        }
+    }, [userJob, userPosition]);
+
+
+    // useEffect(() => { //제한없이 모든 사용자가 접근 가능
+    //     fetchSearchResults();
+    // }, []);
 
     const fetchPartOptions = async () => {
         try {
@@ -166,11 +188,6 @@ const ProcurementPage = () => {
         });
         setFilteredResults(filteredData);
     };
-    const { authState } = useAuth();
-    let empNo = 'admin';
-    try {
-        empNo = authState.empNo;
-    } catch (e) { }
 
     const handleDropdownClickPart = () => {
         if (!isPartOpen) {
