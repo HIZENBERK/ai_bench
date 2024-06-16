@@ -185,10 +185,12 @@
 
 .input-totalQuantity{
     margin-left: 33px;
+   
 }
 
 #totalQuantity{
-    margin-left: 55px;
+    margin-left: 33px;
+    width: 148px;
 }
 
 .input-client{
@@ -200,10 +202,18 @@
 }
 
 .item-label{
+    margin-left: 130px;
+}
+
+.meterialNo-label{
     margin-left: 50px;
 }
 
-.unitPrice-label{
+#meterialNo{
+    margin-left: -20px;
+}
+
+.unitPrice1-label{
     margin-left: -31px;
 }
 
@@ -229,4 +239,28 @@
 .total-price-container{
     margin-left: 1100px;
     margin-top: -35px;
+}
+
+.loss-label{
+    margin-left: 405px;
+}
+
+#loss{
+    margin-left: 30px;
+}
+
+.unitPrice-label{
+    margin-left: 26px;
+}
+
+#unitPrice{
+    margin-left: 30px;
+}
+
+.discountRate-label{
+    margin-left: 25px;
+}
+
+#discountRate{
+    margin-left: 16px;
 }

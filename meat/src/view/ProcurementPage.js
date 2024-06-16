@@ -1,19 +1,19 @@
-import React, {useEffect, useRef, useState} from "react";
+import React, { useEffect, useRef, useState } from "react";
 import Pagination from '../component/Pagination'; // Ensure this path is correct
 import '../css/Pagination.css';
 import Datepicker from "../component/DatePicker";
 import { useAuth } from "../component/AuthContext";
 import axios from "axios";
-import {format} from "date-fns";
+import { format } from "date-fns";
 
 const ProcurementPage = () => {
 
-    const [TextForSearch, setTextForSearch] = useState('')
-    const [SearchOption, setSearchOption] = useState('')
-    const [OrderDate,setOrderDate] = useState('')
-    const [ETA,setETA] = useState('')
-    const [OrderWeight,setOrderWeight] = useState('')
-    const [OrderPrice, setOrderPrice] = useState('')
+    const [TextForSearch, setTextForSearch] = useState('');
+    const [SearchOption, setSearchOption] = useState('');
+    const [OrderDate, setOrderDate] = useState('');
+    const [ETA, setETA] = useState('');
+    const [OrderWeight, setOrderWeight] = useState('');
+    const [OrderPrice, setOrderPrice] = useState('');
 
     const [filteredResults, setFilteredResults] = useState([]);
     const [currentPage, setCurrentPage] = useState(1);
@@ -25,7 +25,7 @@ const ProcurementPage = () => {
     // Part dropdown state
     const [partOptions, setPartOptions] = useState([]);
     const [selectedPartOption, setSelectedPartOption] = useState('');
-    const [selectedPartCode, setSelectedPartCode] = useState('')
+    const [selectedPartCode, setSelectedPartCode] = useState('');
     const [isPartOpen, setIsPartOpen] = useState(false);
 
     // client dropdown state
@@ -68,13 +68,13 @@ const ProcurementPage = () => {
         }
     };
 
-    const handleDateChange = (date, id) =>{
-        if (id === 'orderDateTime'){
+    const handleDateChange = (date, id) => {
+        if (id === 'orderDateTime') {
             setOrderDate(date);
-            console.log(OrderDate)
-        }else if (id === 'expectedDeliveryDate') {
+            console.log(OrderDate);
+        } else if (id === 'expectedDeliveryDate') {
             setETA(date);
-            console.log(ETA)
+            console.log(ETA);
         }
     };
     const handlePageChange = (pageNumber) => {
@@ -91,20 +91,20 @@ const ProcurementPage = () => {
 
     const handleRegisterNavigation = async () => {
         try {
-            const response = await axios.post('http://localhost:8000/api/order/',{
-                Part:selectedPartCode,
+            const response = await axios.post('http://localhost:8000/api/order/', {
+                Part: selectedPartCode,
                 OrderDate: OrderDate ? format(OrderDate, 'yyyy-MM-dd') : null,
                 OrderWorker: authState.empNo,
                 ETA: ETA ? format(ETA, 'yyyy-MM-dd') : null,
                 Client: selectedClientOption,
                 OrderWeight: OrderWeight,
-                OrderPrice: OrderPrice,
+                OrderPrice: OrderPrice.replace(/,/g, ''), // 천 단위 구분자를 제거한 후 전송
                 OrderSituation: '발주완료'
             });
             console.log(response);
             fetchSearchResults();
             setSelectedPartCode('');
-            setSelectedPartOption('')
+            setSelectedPartOption('');
             setOrderDate('');
             setETA('');
             setSelectedClientOption('');
@@ -165,7 +165,7 @@ const ProcurementPage = () => {
     let empNo = 'admin';
     try {
         empNo = authState.empNo;
-    } catch (e) {}
+    } catch (e) { }
 
     const handleDropdownClickPart = () => {
         if (!isPartOpen) {
@@ -207,28 +207,54 @@ const ProcurementPage = () => {
         };
     }, []);
 
+    const formatPrice = (price) => {
+        const number = parseFloat(price.replace(/,/g, '')); // 천 단위 구분자 제거
+        if (isNaN(number)) return '';
+        return number.toLocaleString('ko-KR'); // 천 단위 구분자 추가
+    }
+
+    const handlePriceChange = (e) => {
+        const { value } = e.target;
+        const formattedPrice = formatPrice(value);
+        setOrderPrice(formattedPrice); // 천 단위 구분자 추가, '원'은 제거
+    }
+
     return (
         <div>
             <div className="procurement-page-container">
                 <h2>발주 등록 페이지</h2>
                 <div className="input-container">
                     <label htmlFor="orderDateTime">발주일시</label>
-                    <Datepicker id="orderDateTime" selectedDate={OrderDate} onChangeDate={handleDateChange}/>
+                    <Datepicker id="orderDateTime" selectedDate={OrderDate} onChangeDate={handleDateChange} />
                     <div className="input-totalQuantity">
-                    <label htmlFor="totalQuantity">발주중량</label>
-                    <input type="text" id="totalQuantity" value={OrderWeight} onChange={(e) => setOrderWeight(e.target.value)}/></div>
+                        <label htmlFor="totalQuantity">발주중량</label></div>
+                        <div style={{ position: 'relative' }}>
+                            <input
+                                type="text"
+                                id="totalQuantity"
+                                value={OrderWeight}
+                                onChange={(e) => setOrderWeight(e.target.value)}
+                                style={{ paddingRight: '30px' }} // 오른쪽에 여백 추가
+                            />
+                            <span style={{
+                                position: 'absolute',
+                                right: '10px',
+                                top: '50%',
+                                transform: 'translateY(-50%)'
+                            }}>kg</span>
+                        </div>
                 </div>
                 <div className="input-container">
                     <label htmlFor="ordererID">발주자(사번)명</label>
                     <text id="ordererID">{empNo}</text>
                     <label htmlFor="expectedDeliveryDate">입고 예정일</label>
-                    <Datepicker id="expectedDeliveryDate" selectedDate={ETA} onChangeDate={handleDateChange}/>
+                    <Datepicker id="expectedDeliveryDate" selectedDate={ETA} onChangeDate={handleDateChange} />
                 </div>
                 <div className="input-container">
                     <label htmlFor="part">부위</label>
                     <input type="text" id="part" value={selectedPartOption} onClick={handleDropdownClickPart} readOnly />
                     {isPartOpen && (
-                        <ul style={{ position: 'relative', top:'100%', backgroundColor: 'white', border: '1px solid #ccc', listStyle: 'none', margin: 0, padding: 0, zIndex: 0 }}>
+                        <ul style={{ position: 'relative', top: '100%', backgroundColor: 'white', border: '1px solid #ccc', listStyle: 'none', margin: 0, padding: 0, zIndex: 0 }}>
                             {partOptions.map((option, index) => (
                                 <li key={index} onClick={() => handlePartOptionClick(option)} style={{ padding: '8px', cursor: 'pointer' }}>
                                     {option.name}
@@ -237,21 +263,35 @@ const ProcurementPage = () => {
                         </ul>
                     )}
                     <div className="input-client">
-                    <label htmlFor="client">거래처</label>
-                    <input type="text" id="client" value={selectedClientOption} onClick={handleDropdownClickClient} readOnly />
-                    {isClientOpen && (
-                        <ul style={{position: 'relative', backgroundColor: 'white', border: '1px solid #ccc', listStyle: 'none', margin: 0, padding: 0}}>
-                            {clientOptions.map((option, index) => (
-                                <li key={index} onClick={() => handleClientOptionClick(option)} style={{ padding: '8px', cursor: 'pointer' }}>
-                                    {option.ClientName}
-                                </li>
-                            ))}
-                        </ul>
-                    )}</div>
+                        <label htmlFor="client">거래처</label>
+                        <input type="text" id="client" value={selectedClientOption} onClick={handleDropdownClickClient} readOnly />
+                        {isClientOpen && (
+                            <ul style={{ position: 'relative', backgroundColor: 'white', border: '1px solid #ccc', listStyle: 'none', margin: 0, padding: 0 }}>
+                                {clientOptions.map((option, index) => (
+                                    <li key={index} onClick={() => handleClientOptionClick(option)} style={{ padding: '8px', cursor: 'pointer' }}>
+                                        {option.ClientName}
+                                    </li>
+                                ))}
+                            </ul>
+                        )}</div>
                 </div>
                 <div className="input-container">
                     <label htmlFor="orderAmount">발주금액</label>
-                    <input type="text" id="orderAmount" value={OrderPrice} onChange={(e) => setOrderPrice(e.target.value)}/>
+                    <div style={{ position: 'relative' }}>
+                        <input
+                            type="text"
+                            id="orderAmount"
+                            value={OrderPrice}
+                            onChange={handlePriceChange}
+                            style={{ paddingRight: '30px' }} // 오른쪽에 여백 추가
+                        />
+                        <span style={{
+                            position: 'absolute',
+                            right: '10px',
+                            top: '50%',
+                            transform: 'translateY(-50%)'
+                        }}>원</span>
+                    </div>
                 </div>
                 <button onClick={handleRegisterNavigation} className="register-button">등록</button>
             </div>
@@ -275,29 +315,29 @@ const ProcurementPage = () => {
                         <option value={'부위'}>부위</option>
                     </select>
                     <input type="text" id="orderDateTimeSearch" value={TextForSearch}
-                           onChange={(e)=>handleSearch2(e.target.value)}/>
+                        onChange={(e) => handleSearch2(e.target.value)} />
                     <button onClick={handleSearch}>조회</button>
                 </div>
                 <div className="procurement-page-container">
                     <table className="table-container">
                         <thead>
-                        <tr>
-                            <th>순번</th>
-                            <th>발주일시</th>
-                            <th>입고 예정 일</th>
-                            <th>거래처(번호)</th>
-                            <th>발주중량(KG)</th>
-                            <th>부위</th>
-                            <th>발주금액</th>
-                            <th>상태</th>
-                            <th>발주번호</th>
-                            <th>수정</th>
-                        </tr>
+                            <tr>
+                                <th>순번</th>
+                                <th>발주일시</th>
+                                <th>입고 예정 일</th>
+                                <th>거래처(번호)</th>
+                                <th>발주중량(KG)</th>
+                                <th>부위</th>
+                                <th>발주금액</th>
+                                <th>상태</th>
+                                <th>발주번호</th>
+                                <th>수정</th>
+                            </tr>
                         </thead>
-                            <tbody>
+                        <tbody>
                             {currentResults.map((result, index) => (
                                 <tr key={index}>
-                                    <td>{index+1}</td>
+                                    <td>{index + 1}</td>
                                     <td>{result.OrderDate}</td>
                                     <td>{result.ETA}</td>
                                     <td>{result.Client}</td>
@@ -309,14 +349,14 @@ const ProcurementPage = () => {
                                     <td>수정/삭제</td>
                                 </tr>
                             ))}
-                            </tbody>
-                        </table>
-                    </div>
-                    <Pagination
-                        currentPage={currentPage}
-                        totalPages={Math.ceil(filteredResults.length / resultsPerPage)}
-                        onPageChange={handlePageChange}
-                    />
+                        </tbody>
+                    </table>
+                </div>
+                <Pagination
+                    currentPage={currentPage}
+                    totalPages={Math.ceil(filteredResults.length / resultsPerPage)}
+                    onPageChange={handlePageChange}
+                />
             </div>
         </div>
     );

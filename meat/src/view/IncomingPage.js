@@ -177,13 +177,13 @@ const IncomingPage = () => {
                         onChange={(date) => setArrivalDateTime(date)}
                         dateFormat="yyyy-MM-dd"
                     />
-                    <label htmlFor="meterialNo">이력번호</label>
+                    <label htmlFor="meterialNo" className="meterialNo-label">이력번호</label>
                     <input type="text" id="meterialNo" value={meterialNo} onChange={(e) => setMeterialNo(e.target.value)} />
                 </div>
                 <div className="input-container">
                     <label htmlFor="receiver">입고자 명</label>
                     <text id="stockID">{empNo}</text>
-                    <div className="unitPrice-label">
+                    <div className="unitPrice1-label">
                     <label htmlFor="unitPrice">입고단가</label>
                     <input type="text" id="unitPrice1" value={unitPrice} onChange={(e) => setUnitPrice(e.target.value)} /></div>
                 </div>
