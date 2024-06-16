@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { useNavigate } from 'react-router-dom';
 import Pagination from '../component/Pagination';
 import '../css/Pagination.css'; // Ensure this path is correct
 import Datepicker from "react-datepicker";
@@ -30,18 +31,11 @@ const IncomingPage = () => {
     const currentResults = filteredResults.slice(indexOfFirstResult, indexOfLastResult);
 
 
+    const navigate = useNavigate();
     const { authState } = useAuth();
-    const userJob = authState.job;
-    const userPosition = authState.position;
+    const userJob = authState.job; // 직급
+    const userPosition = authState.position; // 직위
 
-    useEffect(() => {
-        if (userJob === 'WM' || userPosition === 'M') {
-            fetchInitialData();
-            // Warehouse Manager (WM) 또는 매니저 (M)일 경우 데이터를 가져오도록 처리
-        } else {
-            alert('접근 권한이 없습니다.');
-        }
-    }, [userJob, userPosition]);
     
 
     let empNo = 'admin';
@@ -49,9 +43,22 @@ const IncomingPage = () => {
         empNo = authState.empNo;
     } catch (e) {}
 
-    useEffect(() => { //접근 권한에 상관없이 데이터를 가져오도록 처리
-        fetchInitialData();
-    }, []);
+    // useEffect(() => { //접근 권한에 상관없이 데이터를 가져오도록 처리
+    //     fetchInitialData();
+    // }, []);
+
+
+    useEffect(() => {
+        if (userJob === 'WM' || (userPosition === 'A' || userPosition === 'M')) {
+            fetchInitialData();
+        // Warehouse Manager (WM) 또는 관리자 (A)일 경우 데이터를 가져오도록 처리
+        } else {
+        alert('접근 권한이 없습니다.');
+        navigate('/main');
+        // 접근 권한이 없을 때 처리 (예: 리디렉션, 메시지 출력 등)
+        }
+    }, [userJob, userPosition]);
+
 
     useEffect(() => {
         handleSearch();

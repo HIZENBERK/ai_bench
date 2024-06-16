@@ -1,26 +1,23 @@
-// PrivateRoute.js
 import React from 'react';
-import { Route, Redirect } from 'react-router-dom';
-import { useAuth } from '../component/AuthContext';
+import { Route, Navigate } from 'react-router-dom';
+import { useAuth } from './AuthContext';
 
-const PrivateRoute = ({ component: Component, allowedJobs, allowedPositions, ...rest }) => {
+const PrivateRoute = ({ element: Component, allowedJobs, allowedPositions, ...rest }) => {
     const { authState } = useAuth();
-    const userJob = authState.job;
-    const userPosition = authState.position;
+    const job = authState.job;
+    const position = authState.position;
+    console.log(authState);
+    console.log(job, position);
 
-    // 접근 허용 조건 확인
     const isAllowed =
-        (allowedJobs.includes(userJob) || allowedJobs.includes('*')) &&
-        (allowedPositions.includes(userPosition) || allowedPositions.includes('*'));
+        (allowedJobs.includes(job) || allowedJobs.includes('*')) &&
+        (allowedPositions.includes(position) || allowedPositions.includes('*'));
 
-    return (
-        <Route
-            {...rest}
-            render={(props) =>
-                isAllowed ? <Component {...props} /> : <Redirect to="/access-denied" />
-            }
-        />
-    );
+    if (!authState.isAuthenticated) {
+        return <Navigate to="/" />;
+    }
+
+    return isAllowed ? <Component {...rest} /> : <Navigate to="/access-denied" />;
 };
 
 export default PrivateRoute;
