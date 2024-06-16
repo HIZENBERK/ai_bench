@@ -21,11 +21,11 @@ const Login = () => {
             try {
                 const response = await axios.post('http://localhost:8000/api/login/', {
                     empNo,
-                    password
+                    password,
                 });
                 localStorage.setItem('access_token', response.data.access);
                 localStorage.setItem('refresh_token', response.data.refresh);
-                login( response.data.empNo,response.data.username); // Update the auth state with the employee number
+                login( response.data.empNo,response.data.username,response.data.job,response.data.position); // Update the auth state with the employee number
                 setSuccess(`Logged in successfully! Welcome ${response.data.username}`);
                 navigate('/main');
             } catch (error) {

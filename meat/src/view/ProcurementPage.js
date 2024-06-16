@@ -44,7 +44,10 @@ const ProcurementPage = () => {
             console.error('데이터 가져오기 에러:', error);
         }
     };
-    useEffect(() => {
+
+
+
+    useEffect(() => { //제한없이 모든 사용자가 접근 가능
         fetchSearchResults();
     }, []);
 

@@ -6,12 +6,12 @@ export const AuthProvider = ({ children }) => {
     const [authState, setAuthState] = useState({
         isAuthenticated: false,
         empNo: null,
-        username:null,
+        username: null,
         job: '',
         position: '',
     });
 
-    const login = (empNo,username, job, position) => {
+    const login = (empNo, username, job, position) => {
         setAuthState({
             isAuthenticated: true,
             empNo,
@@ -25,7 +25,7 @@ export const AuthProvider = ({ children }) => {
         setAuthState({
             isAuthenticated: false,
             empNo: null,
-            username:null,
+            username: null,
             job: '',
             position: '',
         });
