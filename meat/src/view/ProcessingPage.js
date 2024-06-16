@@ -105,7 +105,6 @@ const ProcessingPage = () => {
     useEffect(() => {
         fetchSearchResults();
     }, []);
-
     const { authState } = useAuth();
     let empNo = '';
     try {
@@ -195,22 +194,23 @@ const ProcessingPage = () => {
                     <button>조회</button>
                 </div>
                 <div className="input-container">
-                    {/*<label htmlFor="workingDay">작업일(요일)</label>*/}
-                    {/*<Datepicker id="workingDay" selectedDate={workingDay} onChangeDate={handleDateChange}/>*/}
+                    <div className="loss-label">
                     <label htmlFor="loss">로스</label>
-                    <input type="text" id="loss" value={loss} onChange={(e) => setLoss(e.target.value)}/>
+                    <input type="text" id="loss" value={loss} onChange={(e) => setLoss(e.target.value)}/></div>
                 </div>
                 <div className="input-container">
                     <label htmlFor="worker">작업자</label>
                     <text id="ordererID">{empNo}</text>
+                    <div className="unitPrice-label">
                     <label htmlFor="unitPrice">단가</label>
-                    <input type="text" id="unitPrice" value={unitPrice} onChange={(e) => setUnitPrice(e.target.value)}/>
+                    <input type="text" id="unitPrice" value={unitPrice} onChange={(e) => setUnitPrice(e.target.value)}/></div>
                 </div>
                 <div className="input-container">
                     <label htmlFor="finalWeight">작업 후 중량</label>
                     <input type="text" id="finalWeight" value={finalWeight} onChange={(e) => setFinalWeight(e.target.value)}/>
+                    <div className="discountRate-label">
                     <label htmlFor="discountRate">할인율</label>
-                    <input type="text" id="discountRate" value={discountRate} onChange={(e) => setDiscountRate(e.target.value)}/>
+                    <input type="text" id="discountRate" value={discountRate} onChange={(e) => setDiscountRate(e.target.value)}/></div>
                 </div>
                 <button onClick={handleRegisterNavigation} className="register-button">등록</button>
             </div>
