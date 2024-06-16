@@ -7,13 +7,17 @@ export const AuthProvider = ({ children }) => {
         isAuthenticated: false,
         empNo: null,
         username:null,
+        job: '',
+        position: '',
     });
 
-    const login = (empNo,username) => {
+    const login = (empNo,username, job, position) => {
         setAuthState({
             isAuthenticated: true,
             empNo,
             username,
+            job,
+            position,
         });
     };
 
@@ -21,6 +25,9 @@ export const AuthProvider = ({ children }) => {
         setAuthState({
             isAuthenticated: false,
             empNo: null,
+            username:null,
+            job: '',
+            position: '',
         });
     };
 

@@ -23,18 +23,33 @@ const IncomingPage = () => {
     const [actualWeight, setActualWeight] = useState('');
     const [actualPurchasePrice, setActualPurchasePrice] = useState('');
     const [stockItem, setStockItem] = useState('');
+
     
+    const indexOfLastResult = currentPage * resultsPerPage;
+    const indexOfFirstResult = indexOfLastResult - resultsPerPage;
+    const currentResults = filteredResults.slice(indexOfFirstResult, indexOfLastResult);
+
+
     const { authState } = useAuth();
+    const userJob = authState.job;
+    const userPosition = authState.position;
+
+    useEffect(() => {
+        if (userJob === 'WM' || userPosition === 'M') {
+            fetchInitialData();
+            // Warehouse Manager (WM) 또는 매니저 (M)일 경우 데이터를 가져오도록 처리
+        } else {
+            alert('접근 권한이 없습니다.');
+        }
+    }, [userJob, userPosition]);
+    
+
     let empNo = 'admin';
     try {
         empNo = authState.empNo;
     } catch (e) {}
 
-    const indexOfLastResult = currentPage * resultsPerPage;
-    const indexOfFirstResult = indexOfLastResult - resultsPerPage;
-    const currentResults = filteredResults.slice(indexOfFirstResult, indexOfLastResult);
-
-    useEffect(() => {
+    useEffect(() => { //접근 권한에 상관없이 데이터를 가져오도록 처리
         fetchInitialData();
     }, []);
 
