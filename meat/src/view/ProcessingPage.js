@@ -5,6 +5,7 @@ import '../css/Pagination.css';
 import axios from "axios";
 import {useAuth} from "../component/AuthContext";
 import Datepicker from "../component/DatePicker";
+import {format} from "date-fns";
 //import {format} from "date-fns"; // Ensure this path is correct
 
 const ProcessingPage = () => {
@@ -18,7 +19,14 @@ const ProcessingPage = () => {
     const currentResults = processingResults.slice(indexOfFirstResult, indexOfLastResult);
 
     const [workingDay, setWorkingDay] = useState('')
+    const [loss, setLoss] = useState('');
+    const [unitPrice, setUnitPrice] = useState('');
+    const [finalWeight, setFinalWeight] = useState('');
+    const [discountRate, setDiscountRate] = useState('');
 
+    const [isRawMaterialNumberOpen, setIsRawMaterialNumberOpen] = useState(false);
+    const [rawMaterialNumberOptions, setRawMaterialNumberOptions] = useState([]);
+    const [selectedRawMaterialNumberOption ,setSelectedRawMaterialNumberOption] = useState('')
     const handlePageChange = (pageNumber) => {
         setCurrentPage(pageNumber);
     };
@@ -45,33 +53,62 @@ const ProcessingPage = () => {
         empNo = authState.empNo;
     } catch (e) {}
     const handleDateChange = (date) =>{
+
         setWorkingDay(date);
         console.log(workingDay)
     };
     const handleRegisterNavigation = async () => {
-        // try {
-        //     const response = await axios.post('http://localhost:8000/api/order/',{
-        //         Part:selectedPartCode,
-        //         OrderDate: OrderDate ? format(OrderDate, 'yyyy-MM-dd') : null,
-        //         OrderWorker: authState.empNo,
-        //         ETA: ETA ? format(ETA, 'yyyy-MM-dd') : null,
-        //         Client: selectedClientOption,
-        //         OrderWeight: OrderWeight,
-        //         OrderPrice: OrderPrice,
-        //         OrderSituation: '발주완료'
-        //     });
-        //     console.log(response);
-        //     fetchSearchResults();
-        //     setSelectedPartCode('');
-        //     setSelectedPartOption('')
-        //     setOrderDate('');
-        //     setETA('');
-        //     setSelectedClientOption('');
-        //     setOrderWeight('');
-        //     setOrderPrice('');
-        // } catch (error) {
-        //     console.error('데이터 생성 에러:', error);
-        // }
+        console.log(
+            selectedRawMaterialNumberOption,
+            workingDay,
+            finalWeight,
+            loss,
+            unitPrice,
+            discountRate
+        )
+        try {
+            const response = await axios.post('http://localhost:8000/api/product/',{
+                StockNo: selectedRawMaterialNumberOption,
+                ProductDate: workingDay ? format(workingDay, "yyyy-MM-dd 'T' HH:mm:ss") : null,
+                ProductWorker: authState.empNo,
+                WeightAfterWork: finalWeight,
+                LossWeight: loss,
+                ProductPrice: unitPrice,
+                DiscountRate: discountRate,
+                ProductSituation: '제품 생성',
+                Quantity:1,
+            });
+            console.log(response);
+            fetchSearchResults();
+            setWorkingDay('');
+            setSelectedRawMaterialNumberOption('')
+            setFinalWeight('');
+            setLoss('');
+            setUnitPrice('');
+            setDiscountRate('');
+        } catch (error) {
+            console.error('데이터 생성 에러:', error);
+        }
+    };
+    const fetchRawMaterialNumberOptions = async () => {
+        try {
+            const response = await axios.get('http://localhost:8000/api/stockInfo/'); // Replace with actual URL for parts
+            console.log(response.data);
+            setRawMaterialNumberOptions(response.data);
+        } catch (error) {
+            console.error('Error fetching part data:', error);
+        }
+    };
+    const handleDropdownClickRawMaterialNumber = () => {
+        if (!isRawMaterialNumberOpen) {
+            fetchRawMaterialNumberOptions().then(r => null);
+        }
+        setIsRawMaterialNumberOpen(!isRawMaterialNumberOpen);
+    };
+
+    const handleRawMaterialNumberOptionClick = (option) => {
+        setSelectedRawMaterialNumberOption(option.StockNo);
+        setIsRawMaterialNumberOpen(false);
     };
     return (
         <div>
@@ -79,26 +116,35 @@ const ProcessingPage = () => {
                 <h2>2차가공 페이지</h2>
                 <div className="input-container">
                     <label htmlFor="rawMaterialNumber">원료 번호</label>
-                    <input type="text" id="rawMaterialNumber"/>
+                    <input type="text" id="rawMaterialNumber" value={selectedRawMaterialNumberOption} onClick={handleDropdownClickRawMaterialNumber}/>
+                    {isRawMaterialNumberOpen && (
+                        <ul style={{ position: 'relative', top:'100%', backgroundColor: 'white', border: '1px solid #ccc', listStyle: 'none', margin: 0, padding: 0, zIndex: 0 }}>
+                            {rawMaterialNumberOptions.map((option, index) => (
+                                <li key={index} onClick={() => handleRawMaterialNumberOptionClick(option)} style={{ padding: '8px', cursor: 'pointer' }}>
+                                    {option.StockNo}
+                                </li>
+                            ))}
+                        </ul>
+                    )}
                     <button>조회</button>
                 </div>
                 <div className="input-container">
                     <label htmlFor="workingDay">작업일(요일)</label>
-                    <Datepicker id="workingDay" selectedDate={workingDay} onChangeDate={handleDateChange}/>
+                    <Datepicker id="workingDay"  dateFormat="yyyy-MM-dd HH:mm:ss" selectedDate={workingDay} onChangeDate={handleDateChange}/>
                     <label htmlFor="loss">로스</label>
-                    <input type="text" id="loss"/>
+                    <input type="text" id="loss" value={loss} onChange={(e) => setLoss(e.target.value)}/>
                 </div>
                 <div className="input-container">
                     <label htmlFor="worker">작업자</label>
                     <text id="ordererID">{empNo}</text>
                     <label htmlFor="unitPrice">단가</label>
-                    <input type="text" id="unitPrice"/>
+                    <input type="text" id="unitPrice" value={unitPrice} onChange={(e) => setUnitPrice(e.target.value)}/>
                 </div>
                 <div className="input-container">
                     <label htmlFor="finalWeight">작업 후 중량</label>
-                    <input type="text" id="finalWeight"/>
+                    <input type="text" id="finalWeight" value={finalWeight} onChange={(e) => setFinalWeight(e.target.value)}/>
                     <label htmlFor="discountRate">할인율</label>
-                    <input type="text" id="discountRate"/>
+                    <input type="text" id="discountRate" value={discountRate} onChange={(e) => setDiscountRate(e.target.value)}/>
                 </div>
                 <button onClick={handleRegisterNavigation} className="register-button">등록</button>
             </div>

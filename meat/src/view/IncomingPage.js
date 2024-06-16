@@ -234,7 +234,7 @@ const IncomingPage = () => {
                     <tbody>
                         {currentResults.map((result, index) => (
                             <tr key={index}>
-                                <td>{result.ID}</td>
+                                <td>{index + 1}</td>
                                 <td>{result.order?.OrderDate || '-'}</td>
                                 <td>{result.order?.ETA || '-'}</td>
                                 <td>{result.order?.Client || '-'}</td>
