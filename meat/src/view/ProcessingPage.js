@@ -12,7 +12,7 @@ const ProcessingPage = () => {
     const [processingResults,setProcessingResults] = useState([]);
     const [searchResults, setSearchResults] = useState([]);
     const [currentPage, setCurrentPage] = useState(1);
-    const [resultsPerPage, setResultsPerPage] = useState(10);
+    const [resultsPerPage, setResultsPerPage] = useState(30);
     const [SearchOption, setSearchOption] = useState('')
     const [TextForSearch, setTextForSearch] = useState('')
     const handleSearchOption = (event) => {
@@ -175,6 +175,27 @@ const ProcessingPage = () => {
         setSelectedRawMaterialNumberOption(option.StockNo);
         setIsRawMaterialNumberOpen(false);
     };
+
+    const handleDelete = async (ProductNo) => {
+        console.log(ProductNo);
+        try {
+            const response = await axios.post('http://localhost:8000/api/product/delete/'
+            ,{
+                ProductNo: ProductNo
+            });
+            console.log(response);
+            fetchSearchResults();
+            setWorkingDay('');
+            setSelectedRawMaterialNumberOption('')
+            setFinalWeight('');
+            setLoss('');
+            setUnitPrice('');
+            setDiscountRate('');
+        } catch (error) {
+            console.error('데이터 삭제 에러:', error);
+        }
+    };
+
     return (
         <div>
             <div className="processing-page-container">
@@ -224,7 +245,6 @@ const ProcessingPage = () => {
                     </select>
                 </div>
                 <div className="input-container">
-                    {/*<label htmlFor="orderDateTimeSearch">컬럼별 조회 목록</label>*/}
                     <select id="SearchOption" value={SearchOption} onChange={handleSearchOption}>
                         <option value={'발주일시'}>발주일시</option>
                         <option value={'입고일시'}>입고일시</option>
@@ -240,21 +260,21 @@ const ProcessingPage = () => {
                 </div>
                 <table className="table-container">
                     <thead>
-                    <tr>
-                        <th>순번</th>
-                        <th>발주일시</th>
-                        <th>거래처(번호)</th>
-                        <th>발주중량(KG)</th>
-                        <th>부위</th>
-                        <th>발주금액</th>
-                        <th>입고일시</th>
-                        <th>입고자명</th>
-                        <th>입고품목</th>
-                        <th>실중량</th>
-                        <th>실 매입가</th>
-                        <th>이력번호</th>
-                        <th>도축일</th>
-                        <th>입고단가</th>
+                        <tr>
+                            <th>순번</th>
+                            <th>발주일시</th>
+                            <th>거래처(번호)</th>
+                            <th>발주중량(KG)</th>
+                            <th>부위</th>
+                            <th>발주금액</th>
+                            <th>입고일시</th>
+                            <th>입고자명</th>
+                            <th>입고품목</th>
+                            <th>실중량</th>
+                            <th>실 매입가</th>
+                            <th>이력번호</th>
+                            <th>도축일</th>
+                            <th>입고단가</th>
                             <th>작업일</th>
                             <th>작업자</th>
                             <th>작업 후 중량</th>
@@ -291,7 +311,11 @@ const ProcessingPage = () => {
                                 <td>{result.DiscountRate}</td>
                                 <td>{result.ProductNo}</td>
                                 <td>{result.ProductSituation}</td>
-                                <td>{'수정/삭제'}</td>
+                                <td>
+                                    <button onClick={() => handleDelete(result.ProductNo)}>수정</button>
+                                    /
+                                    <button onClick={() => handleDelete(result.ProductNo)}>삭제</button>
+                                </td>
                             </tr>
                         ))}
                     </tbody>

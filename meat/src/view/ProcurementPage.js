@@ -19,7 +19,7 @@ const ProcurementPage = () => {
     const [filteredResults, setFilteredResults] = useState([]);
     const [searchResults, setSearchResults] = useState([]);
     const [currentPage, setCurrentPage] = useState(1);
-    const [resultsPerPage, setResultsPerPage] = useState(10); // Default value is 10
+    const [resultsPerPage, setResultsPerPage] = useState(30); // Default value is 10
     const indexOfLastResult = currentPage * resultsPerPage;
     const indexOfFirstResult = indexOfLastResult - resultsPerPage;
     const currentResults = filteredResults.slice(indexOfFirstResult, indexOfLastResult);
@@ -61,14 +61,14 @@ const ProcurementPage = () => {
 
     useEffect(() => {
         if (userJob === 'OM' || (userPosition === 'A' || userPosition === 'M')) {
-            fetchSearchResults();
+            fetchSearchResults().then(r => null); //.then -> 통신을 하는 코드가 통신이 완료된 뒤에 어떤 걸 하는 지 결정하는 코드, 통신 속도가 느려 통신보다 결과 코드가 먼저 실행될 때 사용하면 좋을 듯
         // Warehouse Manager (WM) 또는 관리자 (A)일 경우 데이터를 가져오도록 처리
         } else {
         alert('접근 권한이 없습니다.');
         navigate('/main');
         // 접근 권한이 없을 때 처리 (예: 리디렉션, 메시지 출력 등)
         }
-    }, [userJob, userPosition]);
+    }, [userJob, userPosition, navigate]);
 
 
     // useEffect(() => { //제한없이 모든 사용자가 접근 가능
@@ -129,7 +129,7 @@ const ProcurementPage = () => {
                 OrderSituation: '발주완료'
             });
             console.log(response);
-            fetchSearchResults();
+            fetchSearchResults().then(r => null);
             setSelectedPartCode('');
             setSelectedPartOption('');
             setOrderDate('');
@@ -240,6 +240,10 @@ const ProcurementPage = () => {
         const formattedPrice = formatPrice(value);
         setOrderPrice(formattedPrice); // 천 단위 구분자 추가, '원'은 제거
     }
+
+    const handleDelete = () => {
+
+    };
 
     return (
         <div>
@@ -368,7 +372,11 @@ const ProcurementPage = () => {
                                     <td>{result.OrderPrice}</td>
                                     <td>{result.OrderSituation}</td>
                                     <td>{result.OrderNo}</td>
-                                    <td>수정/삭제</td>
+                                    <td>
+                                        <button onClick={() => handleDelete()}>수정</button>
+                                        /
+                                        <button onClick={() => handleDelete()}>삭제</button>
+                                    </td>
                                 </tr>
                             ))}
                         </tbody>

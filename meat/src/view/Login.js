@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from "axios";
 import '../css/Login.css';  // CSS 파일 경로
-import { useAuth } from '../component/AuthContext'; // Import the context
+import { useAuth } from '../component/AuthContext';
 
 const Login = () => {
     const [empNo, setEmpNo] = useState('');
@@ -11,22 +11,28 @@ const Login = () => {
     const [success, setSuccess] = useState('');
     const navigate = useNavigate();
     const { login } = useAuth(); // Use the login function from context
+    const {setLogoutSuccess} = useAuth();
 
     const handleLogin = async (e) => {
         e.preventDefault();
         setError('');
         setSuccess('');
 
+        localStorage.removeItem('access_token');
+        localStorage.removeItem('refresh_token');
         if (empNo && password) {
             try {
                 const response = await axios.post('http://localhost:8000/api/login/', {
                     empNo,
                     password,
                 });
+                console.log('acees:', response.data.access)
+                console.log('refresh_token:', response.data.refresh)
                 localStorage.setItem('access_token', response.data.access);
                 localStorage.setItem('refresh_token', response.data.refresh);
                 login( response.data.empNo,response.data.username,response.data.job,response.data.position); // Update the auth state with the employee number
                 setSuccess(`Logged in successfully! Welcome ${response.data.username}`);
+                setLogoutSuccess('');
                 navigate('/main');
             } catch (error) {
                 if (error.response) {

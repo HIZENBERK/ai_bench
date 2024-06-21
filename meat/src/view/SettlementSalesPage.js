@@ -51,7 +51,7 @@ const SettlementSalesPage = () => {
     return (
         <div>
             <div className="processing-page-container">
-                <h2>매출명세 페이지</h2>
+                <h2>매입명세 페이지</h2>
                 {/* Search field */}
                 <div className="input-container">
                     <label htmlFor="searchQuery">검색</label>
