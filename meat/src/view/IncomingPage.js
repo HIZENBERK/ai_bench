@@ -13,7 +13,7 @@ const IncomingPage = () => {
     const [selectedOrderNumber, setSelectedOrderNumber] = useState('');
     const [orderDetails, setOrderDetails] = useState(null);
     const [currentPage, setCurrentPage] = useState(1);
-    const [resultsPerPage, setResultsPerPage] = useState(10);
+    const [resultsPerPage, setResultsPerPage] = useState(30);
     const [textForSearch, setTextForSearch] = useState('');
     const [searchOption, setSearchOption] = useState('');
     const [orderNumbers, setOrderNumbers] = useState([]);
@@ -161,6 +161,10 @@ const IncomingPage = () => {
         }
     };
 
+    const handleDelete = () =>{
+
+    };
+
     return (
         <div>
             <div className="procurement-page-container">
@@ -272,7 +276,7 @@ const IncomingPage = () => {
                                 <td>{result.UnitPrice}</td>
                                 <td>{result.StockNo}</td>
                                 <td>{result.StockSituation}</td>
-                                <td>{result.edit}</td>
+                                <td><button onClick={() => handleDelete()}>수정</button></td>
                             </tr>
                         ))}
                     </tbody>

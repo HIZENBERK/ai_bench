@@ -1,34 +1,34 @@
-import React, { useState } from 'react';
+import React, {useState} from 'react';
 import { useAuth } from '../component/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import '../css/Navbar.css';
 import axios from "axios";
 
 const Navbar = () => {
-    const { authState, logout } = useAuth();
+    const { authState, logout, LogoutSuccess, setLogoutSuccess } = useAuth();
     const navigate = useNavigate();
     const [error, setError] = useState('');
-    const [success, setSuccess] = useState('');
     
     const refreshToken = localStorage.getItem('refresh_token');
 
-    //사용시 400에러 발생
+
     const handleLogout = async () => {
         setError('');
-        setSuccess('');
+        setLogoutSuccess('');
 
         try {
-            const response = await axios.post('http://localhost:8000/api/logout/', {
-                refresh_token: refreshToken,
-            }, {
-                withCredentials: true, // CORS 요청을 위해 credentials 설정 추가
+            console.log(localStorage.getItem('access_token'));
+            const response = await axios.post('http://localhost:8000/api/logout/', { refresh_token: refreshToken }, {
+                headers: {
+                    Authorization: `Bearer ${localStorage.getItem('access_token')}`
+                }
             });
 
-            setSuccess(response.data.message || '로그아웃 성공!');
+            setLogoutSuccess(response.data.message || '로그아웃 성공!');
             localStorage.removeItem('access_token');
             localStorage.removeItem('refresh_token');
             logout(); // Update the auth state to logged out
-            navigate('/login'); // Redirect to the login page
+            navigate('/'); // Redirect to the login page
         } catch (error) {
             if (error.response) {
                 setError(`로그아웃 실패: ${error.response.data.error || '알 수 없는 오류'}`);
@@ -84,7 +84,7 @@ const Navbar = () => {
                         <span className="navbar-empNo">{authState.username}님 환영합니다</span>
                         <button onClick={handleLogout} className="logout-button">로그아웃</button>
                         {error && <span className="logout-error">{error}</span>}
-                        {success && <span className="logout-success">{success}</span>}
+                        {LogoutSuccess && <span className="logout-success">{LogoutSuccess}</span>}
                     </div>
                 )}
             </div>

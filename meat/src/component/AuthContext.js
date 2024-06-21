@@ -31,8 +31,10 @@ export const AuthProvider = ({ children }) => {
         });
     };
 
+    const [LogoutSuccess, setLogoutSuccess] = useState('');
+
     return (
-        <AuthContext.Provider value={{ authState, login, logout }}>
+        <AuthContext.Provider value={{ authState, login, logout, LogoutSuccess, setLogoutSuccess }}>
             {children}
         </AuthContext.Provider>
     );

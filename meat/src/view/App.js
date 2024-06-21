@@ -20,7 +20,7 @@ import PurchaseDetailsPage from "./PurchaseDetailsPage";
 import Signup from "./Signup";
 import { AuthProvider } from '../component/AuthContext';
 import Navbar from './Navbar';
-import PrivateRoute from '../component/PrivateRoute';
+//import PrivateRoute from '../component/PrivateRoute';
 import AccessDeniedPage from './AccessDeniedPage';
 
 const App = () => {
