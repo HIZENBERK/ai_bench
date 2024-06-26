@@ -4,7 +4,6 @@ import BarChart from "../component/BarChart";
 import BarChart1 from "../component/BarChart1";
 import BarChart2 from "../component/BarChart2";
 import '../css/Main.css';
-import SunburstWithTooltips from '../component/SunburstWithTooltips';
 import BasicSunburst from '../component/BasicSunburst';
 
 const headers = [

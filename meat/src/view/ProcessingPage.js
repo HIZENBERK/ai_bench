@@ -134,6 +134,7 @@ const ProcessingPage = () => {
         )
         try {
             const response = await axios.post('http://localhost:8000/api/product/',{
+                Method: 'post',
                 StockNo: selectedRawMaterialNumberOption,
                 ProductWorker: authState.empNo,
                 WeightAfterWork: finalWeight,
@@ -179,8 +180,9 @@ const ProcessingPage = () => {
     const handleDelete = async (ProductNo) => {
         console.log(ProductNo);
         try {
-            const response = await axios.post('http://localhost:8000/api/product/delete/'
+            const response = await axios.post('http://localhost:8000/api/product/'
             ,{
+                Method: 'delete',
                 ProductNo: ProductNo
             });
             console.log(response);

@@ -1,24 +1,3 @@
-// Copyright (c) 2016 - 2017 Uber Technologies, Inc.
-//
-// Permission is hereby granted, free of charge, to any person obtaining a copy
-// of this software and associated documentation files (the "Software"), to deal
-// in the Software without restriction, including without limitation the rights
-// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-// copies of the Software, and to permit persons to whom the Software is
-// furnished to do so, subject to the following conditions:
-//
-// The above copyright notice and this permission notice shall be included in
-// all copies or substantial portions of the Software.
-//
-// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-// THE SOFTWARE.
-// BasicSunburst.js
-// BasicSunburst.js
 import React from 'react';
 import { LabelSeries, Sunburst } from 'react-vis';
 
@@ -58,6 +37,7 @@ function getShadeColor(color, percent) {
 
 function transformData(items) {
     const dataMap = {};
+    const labels = [];
 
     items.forEach(item => {
         const { part, usage, product, quantity } = item;
@@ -69,26 +49,32 @@ function transformData(items) {
             dataMap[part].children[usage] = { name: usage, children: {}, clr: getShadeColor(dataMap[part].clr, -20), count: 0 };
         }
         if (!dataMap[part].children[usage].children[product]) {
-            dataMap[part].children[usage].children[product] = { name: product, bigness: parseInt(quantity), clr: getShadeColor(dataMap[part].children[usage].clr, -20) };
+            dataMap[part].children[usage].children[product] = { name: product, children: {}, clr: getShadeColor(dataMap[part].children[usage].clr, -20), count: 0 };
         }
-
-        dataMap[part].children[usage].children[product].bigness += parseInt(quantity);
+        if (!dataMap[part].children[usage].children[product].children[quantity]) {
+            dataMap[part].children[usage].children[product].children[quantity] = { name: quantity, bigness: parseInt(quantity), clr: getShadeColor(dataMap[part].children[usage].children[product].clr, -20) };
+        }
+        dataMap[part].children[usage].children[product].children[quantity].bigness += parseInt(quantity);
     });
 
-    function convertToChildren(obj) {
+    function convertToChildren(obj, depth = 0) {
         return Object.values(obj).map(value => {
             if (value.children) {
                 value.count = Object.keys(value.children).length;
-                return { ...value, children: convertToChildren(value.children) };
+                const children = convertToChildren(value.children, depth + 1);
+                labels.push({ x: depth * 100, y: labels.length * 20, label: value.name, style: LABEL_STYLE });
+                return { ...value, children };
             }
+            labels.push({ x: depth * 100, y: labels.length * 20, label: value.name, style: LABEL_STYLE });
             return value;
         });
     }
 
-    return { children: convertToChildren(dataMap) };
+    const transformedData = { children: convertToChildren(dataMap) };
+    return { data: transformedData, labels };
 }
 
-export default class BasicSunburst extends React.Component {
+class BasicSunburst extends React.Component {
     state = {
         pathValue: false,
         finalValue: 'SUNBURST',
@@ -98,11 +84,10 @@ export default class BasicSunburst extends React.Component {
     render() {
         const { clicked, finalValue, pathValue } = this.state;
         const { items } = this.props;
-        const data = transformData(items);
+        const { data, labels } = transformData(items);
 
         return (
             <div className="basic-sunburst-example-wrapper">
-                <div>{clicked ? 'click to unlock selection' : 'click to lock selection'}</div>
                 <Sunburst
                     animation
                     className="basic-sunburst-example"
@@ -128,10 +113,10 @@ export default class BasicSunburst extends React.Component {
                             : this.setState({
                                 pathValue: false,
                                 finalValue: false,
-                                data: transformData(items)
+                                data: transformData(items).data
                             })
                     }
-                    onValueClick={() => this.setState({ clicked: !clicked })}
+                    // onValueClick={() => this.setState({ clicked: !clicked })}
                     style={{
                         stroke: '#ddd',
                         strokeOpacity: 0.3,
@@ -141,10 +126,10 @@ export default class BasicSunburst extends React.Component {
                     getSize={d => d.bigness}
                     getColor={d => d.clr}
                     data={data}
-                    height={300}
+                    height={450}
                     width={350}
                 >
-                    {finalValue && <LabelSeries data={[{ x: 0, y: 0, label: finalValue, style: LABEL_STYLE }]} />}
+                    <LabelSeries data={labels} />
                 </Sunburst>
                 <div className="basic-sunburst-example-path-name">{pathValue}</div>
             </div>
@@ -168,3 +153,5 @@ function updateData(data, keyPath) {
     };
     return data;
 }
+
+export default BasicSunburst;
