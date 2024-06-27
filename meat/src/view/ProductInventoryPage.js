@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import Pagination from '../component/Pagination';
 import '../css/ProductInventoryPage.css';
+import '../component/WebcamBarcodeScanner';
+import WebcamBarcodeScanner from "../component/WebcamBarcodeScanner";
 
 const ProductInventoryPage = () => {
     const [inventoryResults] = useState([
@@ -427,6 +429,7 @@ const ProductInventoryPage = () => {
                         <input type="checkbox" /> 제품번호
                     </label>
                     <input type="text" placeholder="QR 인식" />
+                    <WebcamBarcodeScanner />
                 </div>
             </div>
 

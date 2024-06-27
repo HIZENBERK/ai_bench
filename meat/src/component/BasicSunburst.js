@@ -6,6 +6,10 @@ const LABEL_STYLE = {
     textAnchor: 'middle'
 };
 
+// Object to store dynamically generated colors
+const COLORS = {};
+
+// Function to generate a random color
 function getRandomColor() {
     const letters = '0123456789ABCDEF';
     let color = '#';
@@ -13,6 +17,14 @@ function getRandomColor() {
         color += letters[Math.floor(Math.random() * 16)];
     }
     return color;
+}
+
+// Function to get a color for a part, generating a new one if it doesn't exist
+function getColor(part) {
+    if (!COLORS[part]) {
+        COLORS[part] = getRandomColor();
+    }
+    return COLORS[part];
 }
 
 function getShadeColor(color, percent) {
@@ -43,7 +55,7 @@ function transformData(items) {
         const { part, usage, product, quantity } = item;
 
         if (!dataMap[part]) {
-            dataMap[part] = { name: part, children: {}, clr: getRandomColor(), count: 0 };
+            dataMap[part] = { name: part, children: {}, clr: getColor(part), count: 0 };
         }
         if (!dataMap[part].children[usage]) {
             dataMap[part].children[usage] = { name: usage, children: {}, clr: getShadeColor(dataMap[part].clr, -20), count: 0 };
@@ -77,12 +89,12 @@ function transformData(items) {
 class BasicSunburst extends React.Component {
     state = {
         pathValue: false,
-        finalValue: 'SUNBURST',
+        // finalValue: 'SUNBURST',
         clicked: false
     };
 
     render() {
-        const { clicked, finalValue, pathValue } = this.state;
+        const { clicked, pathValue } = this.state;
         const { items } = this.props;
         const { data, labels } = transformData(items);
 
@@ -116,7 +128,6 @@ class BasicSunburst extends React.Component {
                                 data: transformData(items).data
                             })
                     }
-                    // onValueClick={() => this.setState({ clicked: !clicked })}
                     style={{
                         stroke: '#ddd',
                         strokeOpacity: 0.3,
@@ -129,7 +140,7 @@ class BasicSunburst extends React.Component {
                     height={450}
                     width={350}
                 >
-                    <LabelSeries data={labels} />
+                    {/*<LabelSeries data={labels} />*/}
                 </Sunburst>
                 <div className="basic-sunburst-example-path-name">{pathValue}</div>
             </div>
