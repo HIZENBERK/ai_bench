@@ -1,3 +1,4 @@
+//접근 제한 페이지
 import React from 'react';
 
 const AccessDeniedPage = () => {

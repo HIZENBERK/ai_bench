@@ -1,3 +1,4 @@
+//메뉴 사이드 바
 import React from 'react';
 import { Outlet, Link } from 'react-router-dom';
 import '../css/App.css';

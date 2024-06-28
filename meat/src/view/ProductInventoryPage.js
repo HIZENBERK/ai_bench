@@ -1,3 +1,4 @@
+//재고 현황 페이지
 import React, { useState } from 'react';
 import Pagination from '../component/Pagination';
 import '../css/ProductInventoryPage.css';

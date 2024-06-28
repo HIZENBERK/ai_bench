@@ -1,3 +1,4 @@
+//제품추가 페이지
 import React, { useState, useEffect } from 'react';
 import Pagination from '../component/Pagination';
 import '../css/Pagination.css'; // Make sure the path is correct

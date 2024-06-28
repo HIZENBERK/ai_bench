@@ -1,3 +1,4 @@
+//메인
 import React from "react";
 import DataTable from "../component/DataTable";
 import BarChart from "../component/BarChart";

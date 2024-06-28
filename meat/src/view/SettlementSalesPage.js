@@ -1,3 +1,4 @@
+//매입 명세
 import React, { useState } from 'react';
 import Pagination from '../component/Pagination'; // Make sure the path is correct
 import '../css/Pagination.css'; // Ensure this path is correct

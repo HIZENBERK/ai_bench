@@ -1,3 +1,4 @@
+//거래처 관리
 import React, { useState, useEffect } from 'react';
 import Pagination from '../component/Pagination';
 import '../css/Pagination.css';

@@ -19,6 +19,7 @@ const WebcamBarcodeScanner = () => {
                 const code = jsQR(imageData.data, imageData.width, imageData.height);
                 if (code) {
                     if (code.data !== barcode) {
+                        setBarcode(code.data);
                         console.log(code.data);
                     }
                 }
