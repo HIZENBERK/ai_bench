@@ -4,6 +4,22 @@
     font-family: Arial, sans-serif;
 }
 
+/* select css */
+.selectid {
+    width: 210px;
+    height: 39px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+.selectClient {
+    width: 210px;
+    height: 39px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    margin-left: 70px;
+}
+
 /* 페이지 제목 */
 .procurement-page-container h2 {
     text-align: center;

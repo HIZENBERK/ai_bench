@@ -118,17 +118,19 @@ const ProcurementPage = () => {
     }
 
     const handleRegisterNavigation = async () => {
+        console.log(selectedPartCode,  OrderDate,ETA, selectedClientOption,  OrderWeight, OrderPrice);
         try {
             const response = await axios.post('http://localhost:8000/api/order/', {
-                Part: selectedPartCode,
-                OrderDate: OrderDate ? format(OrderDate, 'yyyy-MM-dd') : null,
-                OrderWorker: authState.empNo,
-                ETA: ETA ? format(ETA, 'yyyy-MM-dd') : null,
-                Client: selectedClientOption,
-                OrderWeight: OrderWeight,
-                OrderPrice: OrderPrice.replace(/,/g, ''), // 천 단위 구분자를 제거한 후 전송
-                OrderSituation: '발주완료'
+                    Part: selectedPartCode,
+                    OrderDate: OrderDate ? format(OrderDate, 'yyyy-MM-dd') : null,
+                    OrderWorker: authState.empNo,
+                    ETA: ETA ? format(ETA, 'yyyy-MM-dd') : null,
+                    Client: selectedClientOption,
+                    OrderWeight: OrderWeight,
+                    OrderPrice: OrderPrice.replace(/,/g, ''), // 천 단위 구분자를 제거한 후 전송
+                    OrderSituation: '발주완료'
             });
+
             console.log(response);
             fetchSearchResults().then(r => null);
             setSelectedPartCode('');
@@ -191,10 +193,20 @@ const ProcurementPage = () => {
     };
 
     const handleDropdownClickPart = () => {
-        if (!isPartOpen) {
+        console.log(isPartOpen)
+        if (isPartOpen) {
             fetchPartOptions();
         }
         setIsPartOpen(!isPartOpen);
+    };
+
+    const handlePartChange = (event) => {
+        console.log(event.target.value)
+        setSelectedPartOption(event.target.value);
+    };
+
+    const handleClientChange = (event) => {
+        setSelectedClientOption(event.target.value);
     };
 
     const handleDropdownClickClient = () => {
@@ -205,12 +217,14 @@ const ProcurementPage = () => {
     };
 
     const handlePartOptionClick = (option) => {
+        console.log(option.name)
         setSelectedPartOption(option.name);
         setSelectedPartCode(option.code);
         setIsPartOpen(false);
     };
 
     const handleClientOptionClick = (option) => {
+        console.log(option.ClientName);
         setSelectedClientOption(option.ClientName);
         setIsClientOpen(false);
     };
@@ -277,40 +291,61 @@ const ProcurementPage = () => {
                     <label htmlFor="expectedDeliveryDate">입고 예정일</label>
                     <Datepicker id="expectedDeliveryDate" selectedDate={ETA} onChangeDate={handleDateChange} />
                 </div>
+
                 <div className="input-container">
                     <label htmlFor="part">부위</label>
-                    <input type="text" id="part" value={selectedPartOption} onClick={handleDropdownClickPart} readOnly />
-                    {isPartOpen && (
-                        <ul style={{ position: 'relative', top: '100%', backgroundColor: 'white', border: '1px solid #ccc', listStyle: 'none', margin: 0, padding: 0, zIndex: 0 }}>
+                        <select id="Part" className="selectid" value={selectedPartOption} onChange={handlePartChange} onClick={handleDropdownClickPart}>
                             {partOptions.map((option, index) => (
-                                <li key={index} onClick={() => handlePartOptionClick(option)} style={{ padding: '8px', cursor: 'pointer' }}>
-                                    {option.name}
-                                </li>
+                                <option key={index}  >
+                                    {option.name} <span hidden>{option.code}</span>
+                                </option>
                             ))}
-                        </ul>
-                    )}
+                        </select>
+
+                    {/*<label htmlFor="part">부위</label>*/}
+                    {/*<input type="text" id="part" value={selectedPartOption} onClick={handleDropdownClickPart} readOnly/>*/}
+                    {/*{isPartOpen && (*/}
+                    {/*    <ul style={{position: 'relative', top: '100%', backgroundColor: 'white', border: '1px solid #ccc', listStyle: 'none', margin: 0, padding: 0, zIndex: 0}}>*/}
+                    {/*        {partOptions.map((option, index) => (*/}
+                    {/*            <li key={index} onClick={() => handlePartOptionClick(option)}*/}
+                    {/*                style={{padding: '8px', cursor: 'pointer'}}>*/}
+                    {/*                {option.name}*/}
+                    {/*            </li>*/}
+                    {/*        ))}*/}
+                    {/*    </ul>*/}
+                    {/*)}*/}
+
                     <div className="input-client">
                         <label htmlFor="client">거래처</label>
-                        <input type="text" id="client" value={selectedClientOption} onClick={handleDropdownClickClient} readOnly />
+                        <select id="client" className="selectClient" value={selectedClientOption} onChange={handleClientChange} onClick={handleDropdownClickClient}>
+                            {clientOptions.map((option, index) => (
+                                <option key={index} >
+                                    {/*onClick={() => handleClientOptionClick(option)}*/}
+                                    {option.ClientName}
+                                </option>
+                            ))}
+                        </select>
+
+                        {/*}
+                        <input type="text" id="client" value={selectedClientOption} onClick={handleDropdownClickClient}
+                               readOnly/>
                         {isClientOpen && (
-                            <ul style={{ position: 'relative', backgroundColor: 'white', border: '1px solid #ccc', listStyle: 'none', margin: 0, padding: 0 }}>
+                            <ul style={{position: 'relative', backgroundColor: 'white', border: '1px solid #ccc', listStyle: 'none', margin: 0, padding: 0}}>
                                 {clientOptions.map((option, index) => (
-                                    <li key={index} onClick={() => handleClientOptionClick(option)} style={{ padding: '8px', cursor: 'pointer' }}>
+                                    <li key={index} onClick={() => handleClientOptionClick(option)}
+                                        style={{padding: '8px', cursor: 'pointer'}}>
                                         {option.ClientName}
                                     </li>
                                 ))}
                             </ul>
-                        )}</div>
+                        )}*/}
+
+                    </div>
                 </div>
                 <div className="input-container">
                     <label htmlFor="orderAmount">발주금액</label>
-                    <div style={{ position: 'relative' }}>
-                        <input
-                            type="text"
-                            id="orderAmount"
-                            value={OrderPrice}
-                            onChange={handlePriceChange}
-                            style={{ paddingRight: '30px' }} // 오른쪽에 여백 추가
+                    <div style={{position: 'relative'}}>
+                        <input type="text" id="orderAmount" value={OrderPrice} onChange={handlePriceChange} style={{ paddingRight: '30px' }} // 오른쪽에 여백 추가
                         />
                         <span style={{
                             position: 'absolute',
