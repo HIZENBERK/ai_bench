@@ -196,9 +196,12 @@ const ProcurementPage = () => {
         fetchPartOptions();
     };
 
+    const [filteredData, setFilteredData] = useState('')
+
     const handlePartChange = (event) => {
         setSelectedPartOption(event.target.value);
         setSelectedPartCode(event.target.value);
+        setFilteredData({...filteredData, selectedPartCode})
     };
 
     const handleClientChange = (event) => {
