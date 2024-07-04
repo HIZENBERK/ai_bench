@@ -15,6 +15,7 @@ const ProcessingPage = () => {
     const [resultsPerPage, setResultsPerPage] = useState(30);
     const [SearchOption, setSearchOption] = useState('')
     const [TextForSearch, setTextForSearch] = useState('')
+
     const handleSearchOption = (event) => {
         setSearchOption(event.target.value);
     }
@@ -156,9 +157,12 @@ const ProcessingPage = () => {
             console.error('데이터 생성 에러:', error);
         }
     };
+
+    // 작업일자
     const ProductDay = () => {
         const today = new Date();
-        const FormattedDate = `${today.getFullYear()}년 ${today.getMonth() + 1}월 ${today.getDate()}일`;
+        const ProductDay = `${today.getFullYear()}년 ${today.getMonth() + 1}월 ${today.getDate()}일`;
+        return ProductDay;
     }
 
 
@@ -223,11 +227,6 @@ const ProcessingPage = () => {
                                 </option>
                             ))}
                     </select>
-
-                    <div>
-                        <
-                    </div>
-
 
 
                 {/*<input type="text" id="rawMaterialNumber" value={selectedRawMaterialNumberOption} onClick={handleDropdownClickRawMaterialNumber}/>*/}
@@ -335,7 +334,7 @@ const ProcessingPage = () => {
                                 <td>{result.MeterialNo}</td>
                                 <td>{result.SlaugtherDate}</td>
                                 <td>{result.UnitPrice}</td>
-                                <td>{result.ProductDay}</td>
+                                <td>{result.ProductDate ? format(new Date(result.ProductDate), 'yyyy년 MM월 dd일 HH시 mm분 ss초') : null}</td>
                                 <td>{result.ProductWorker}</td>
                                 <td>{result.WeightAfterWork}</td>
                                 <td>{result.LossWeight}</td>

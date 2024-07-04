@@ -1,5 +1,5 @@
 //메인
-import React from "react";
+import React, {useState} from "react";
 import DataTable from "../component/DataTable";
 import BarChart from "../component/BarChart";
 import BarChart1 from "../component/BarChart1";
@@ -16,17 +16,18 @@ const headers = [
 
 
 const items = [
-    { part: '채끝', usage: '구이', product: '안심 스테이크 200g', quantity: '5' },
-    { part: '채끝', usage: '구이', product: '안심 스테이크 200g', quantity: '5' },
-    { part: '채끝', usage: '네모등심', product: '안심 스테이크 200g', quantity: '5' },
-    { part: '차돌박이', usage: '볶음밥,찌개', product: '안심 스테이크 200g', quantity: '5' },
-    { part: '차돌박이', usage: '구이', product: '안심 스테이크 200g', quantity: '5' },
-    { part: '부채살', usage: '구이', product: '안심 스테이크 200g', quantity: '5' },
-    { part: '부채살', usage: '불고기', product: '안심 스테이크 200g', quantity: '5' },
-    { part: '부채살', usage: '구이', product: '안심 스테이크 200g', quantity: '5' },
-    { part: '부채살', usage: '구이', product: '안심 스테이크 200g', quantity: '5' },
-    { part: '소갈비', usage: '구이', product: '폭립 200g', quantity: '3' }
+    {part: '채끝', usage: '구이', product: '안심 스테이크 200g', quantity: '5' },
+    {part: '채끝', usage: '구이', product: '안심 스테이크 200g', quantity: '5' },
+    {part: '채끝', usage: '네모등심', product: '안심 스테이크 200g', quantity: '5' },
+    {part: '차돌박이', usage: '볶음밥,찌개', product: '안심 스테이크 200g', quantity: '5' },
+    {part: '차돌박이', usage: '구이', product: '안심 스테이크 200g', quantity: '5' },
+    {part: '부채살', usage: '구이', product: '안심 스테이크 200g', quantity: '5' },
+    {part: '부채살', usage: '불고기', product: '안심 스테이크 200g', quantity: '5' },
+    {part: '부채살', usage: '구이', product: '안심 스테이크 200g', quantity: '5' },
+    {part: '부채살', usage: '구이', product: '안심 스테이크 200g', quantity: '5' },
+    {part: '소갈비', usage: '구이', product: '폭립 200g', quantity: '3' }
 ];
+
 
 const headers2 = [
     { text: '', value: 'month' },
@@ -81,9 +82,9 @@ const Main = () => (
         <div className="container">
             <div className="table-item">
                 <div className="box">
-                    <DataTable 
-                        headers={headers} 
-                        items={items} 
+                    <DataTable
+                        headers={headers}
+                        items={items}
                     />
                 </div>
             </div>
@@ -115,9 +116,9 @@ const Main = () => (
         <div className="container">
             <div className="table-item">
                 <div className="box">
-                    <DataTable 
-                        headers={headers3} 
-                        items={items3} 
+                    <DataTable
+                        headers={headers3}
+                        items={items3}
                     />
                 </div>
             </div>

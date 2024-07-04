@@ -133,13 +133,15 @@ const ProcurementPage = () => {
 
             console.log(response);
             fetchSearchResults().then(r => null);
-            setSelectedPartCode('');
-            setSelectedPartOption('');
+            // setSelectedPartCode('');
+            // setSelectedPartOption('');
             setOrderDate('');
             setETA('');
-            setSelectedClientOption('');
+            // setSelectedClientOption('');
             setOrderWeight('');
             setOrderPrice('');
+
+
         } catch (error) {
             console.error('데이터 생성 에러:', error);
         }
@@ -192,20 +194,19 @@ const ProcurementPage = () => {
         setFilteredResults(filteredData);
     };
 
-    const handleDropdownClickPart = () => {
+    const handleDropdownClickPart = (e) => {
+        setSelectedPartOption(e.target.value);
+        setSelectedPartCode(e.target.value);
         fetchPartOptions();
     };
 
-    const [filteredData, setFilteredData] = useState('')
-
     const handlePartChange = (event) => {
-        setSelectedPartOption(event.target.value);
-        setSelectedPartCode(event.target.value);
-        setFilteredData({...filteredData, selectedPartCode})
+
     };
 
     const handleClientChange = (event) => {
         setSelectedClientOption(event.target.value);
+        fetchClientOptions();
     };
 
     const handleDropdownClickClient = () => {
@@ -292,13 +293,14 @@ const ProcurementPage = () => {
 
                 <div className="input-container">
                     <label htmlFor="part">부위</label>
-                        <select id="Part" className="selectid" onChange={handlePartChange} onClick={handleDropdownClickPart}>
-                            {partOptions.map((option, index) => (
-                                <option key={index}  value={option.code}>
-                                    {option.name}
-                                </option>
-                            ))}
-                        </select>
+                    <select id="Part" className="selectid" onClick={handleDropdownClickPart}>
+                        <option value="" disabled selected>부위를 선택하세요.</option>
+                        {partOptions.map((option, index) => (
+                            <option key={index} value={option.code}>
+                                {option.name}
+                            </option>
+                        ))}
+                    </select>
 
                     {/*<label htmlFor="part">부위</label>*/}
                     {/*<input type="text" id="part" value={selectedPartOption} onClick={handleDropdownClickPart} readOnly/>*/}
@@ -315,9 +317,11 @@ const ProcurementPage = () => {
 
                     <div className="input-client">
                         <label htmlFor="client">거래처</label>
-                        <select id="client" className="selectClient" value={selectedClientOption} onChange={handleClientChange} onClick={handleDropdownClickClient}>
+                        <select id="client" className="selectClient"
+                                onChange={handleClientChange} onClick={handleDropdownClickClient}>
+                            <option value="" disabled selected>거래처를 선택하세요. </option>
                             {clientOptions.map((option, index) => (
-                                <option key={index} >
+                                <option key={index} value={option.ClientName}>
                                     {/*onClick={() => handleClientOptionClick(option)}*/}
                                     {option.ClientName}
                                 </option>
