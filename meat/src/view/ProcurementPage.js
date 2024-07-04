@@ -193,16 +193,12 @@ const ProcurementPage = () => {
     };
 
     const handleDropdownClickPart = () => {
-        console.log(isPartOpen)
-        if (isPartOpen) {
-            fetchPartOptions();
-        }
-        setIsPartOpen(!isPartOpen);
+        fetchPartOptions();
     };
 
     const handlePartChange = (event) => {
-        console.log(event.target.value)
         setSelectedPartOption(event.target.value);
+        setSelectedPartCode(event.target.value);
     };
 
     const handleClientChange = (event) => {
@@ -217,7 +213,6 @@ const ProcurementPage = () => {
     };
 
     const handlePartOptionClick = (option) => {
-        console.log(option.name)
         setSelectedPartOption(option.name);
         setSelectedPartCode(option.code);
         setIsPartOpen(false);
@@ -294,10 +289,10 @@ const ProcurementPage = () => {
 
                 <div className="input-container">
                     <label htmlFor="part">부위</label>
-                        <select id="Part" className="selectid" value={selectedPartOption} onChange={handlePartChange} onClick={handleDropdownClickPart}>
+                        <select id="Part" className="selectid" onChange={handlePartChange} onClick={handleDropdownClickPart}>
                             {partOptions.map((option, index) => (
-                                <option key={index}  >
-                                    {option.name} <span hidden>{option.code}</span>
+                                <option key={index}  value={option.code}>
+                                    {option.name}
                                 </option>
                             ))}
                         </select>
