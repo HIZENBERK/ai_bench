@@ -156,6 +156,13 @@ const ProcessingPage = () => {
             console.error('데이터 생성 에러:', error);
         }
     };
+    const ProductDay = () => {
+        const today = new Date();
+        const FormattedDate = `${today.getFullYear()}년 ${today.getMonth() + 1}월 ${today.getDate()}일`;
+    }
+
+
+
     const fetchRawMaterialNumberOptions = async () => {
         try {
             const response = await axios.get('http://localhost:8000/api/stockInfo/'); // Replace with actual URL for parts
@@ -198,29 +205,50 @@ const ProcessingPage = () => {
         }
     };
 
+    const handleRawMaterial = (event) => {
+        setSelectedRawMaterialNumberOption(event.target.value);
+    };
+
     return (
         <div>
             <div className="processing-page-container">
                 <h2>2차가공 페이지</h2>
                 <div className="input-container">
                     <label htmlFor="rawMaterialNumber">원료 번호</label>
-                    <input type="text" id="rawMaterialNumber" value={selectedRawMaterialNumberOption} onClick={handleDropdownClickRawMaterialNumber}/>
-                    {isRawMaterialNumberOpen && (
-                        <ul style={{ position: 'relative', top:'100%', backgroundColor: 'white', border: '1px solid #ccc', listStyle: 'none', margin: 0, padding: 0, zIndex: 0 }}>
+                    <select className="selectid" id="rawMaterialNumber" onClick={handleDropdownClickRawMaterialNumber}
+                            onChange={handleRawMaterial}>
                             {rawMaterialNumberOptions.map((option, index) => (
-                                <li key={index} onClick={() => handleRawMaterialNumberOptionClick(option)} style={{ padding: '8px', cursor: 'pointer' }}>
+                                <option key={index}>
                                     {option.StockNo}
-                                </li>
+                                </option>
                             ))}
-                        </ul>
-                    )}
+                    </select>
+
+                    <div>
+                        <
+                    </div>
+
+
+
+                {/*<input type="text" id="rawMaterialNumber" value={selectedRawMaterialNumberOption} onClick={handleDropdownClickRawMaterialNumber}/>*/}
+                {/*    {isRawMaterialNumberOpen && (*/}
+                {/*        <ul style={{ position: 'relative', top:'100%', backgroundColor: 'white', border: '1px solid #ccc', listStyle: 'none', margin: 0, padding: 0, zIndex: 0 }}>*/}
+                {/*            {rawMaterialNumberOptions.map((option, index) => (*/}
+                {/*                <li key={index} onClick={() => handleRawMaterialNumberOptionClick(option)} style={{ padding: '8px', cursor: 'pointer' }}>*/}
+                {/*                    {option.StockNo}*/}
+                {/*                </li>*/}
+                {/*            ))}*/}
+                {/*        </ul>*/}
+                {/*    )}*/}
                     <button>조회</button>
                 </div>
+
                 <div className="input-container">
                     <div className="loss-label">
                     <label htmlFor="loss">로스</label>
                     <input type="text" id="loss" value={loss} onChange={(e) => setLoss(e.target.value)}/></div>
                 </div>
+
                 <div className="input-container">
                     <label htmlFor="worker">작업자</label>
                     <text id="ordererID">{empNo}</text>
@@ -228,6 +256,7 @@ const ProcessingPage = () => {
                     <label htmlFor="unitPrice">단가</label>
                     <input type="text" id="unitPrice" value={unitPrice} onChange={(e) => setUnitPrice(e.target.value)}/></div>
                 </div>
+
                 <div className="input-container">
                     <label htmlFor="finalWeight">작업 후 중량</label>
                     <input type="text" id="finalWeight" value={finalWeight} onChange={(e) => setFinalWeight(e.target.value)}/>
@@ -235,6 +264,7 @@ const ProcessingPage = () => {
                     <label htmlFor="discountRate">할인율</label>
                     <input type="text" id="discountRate" value={discountRate} onChange={(e) => setDiscountRate(e.target.value)}/></div>
                 </div>
+
                 <button onClick={handleRegisterNavigation} className="register-button">등록</button>
             </div>
             <div className="processing-page-container">
@@ -283,7 +313,7 @@ const ProcessingPage = () => {
                             <th>로스</th>
                             <th>단가</th>
                             <th>할인율</th>
-                            <th>제품번호</th>
+                            <th>원료번호</th>
                             <th>상태</th>
                             <th>수정</th>
                         </tr>
@@ -305,7 +335,7 @@ const ProcessingPage = () => {
                                 <td>{result.MeterialNo}</td>
                                 <td>{result.SlaugtherDate}</td>
                                 <td>{result.UnitPrice}</td>
-                                <td>{result.ProductDate}</td>
+                                <td>{result.ProductDay}</td>
                                 <td>{result.ProductWorker}</td>
                                 <td>{result.WeightAfterWork}</td>
                                 <td>{result.LossWeight}</td>

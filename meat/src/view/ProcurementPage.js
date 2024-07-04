@@ -117,6 +117,7 @@ const ProcurementPage = () => {
         setSearchOption(event.target.value);
     }
 
+
     const handleRegisterNavigation = async () => {
         console.log(selectedPartCode,  OrderDate,ETA, selectedClientOption,  OrderWeight, OrderPrice);
         try {
@@ -192,6 +193,8 @@ const ProcurementPage = () => {
         setFilteredResults(filteredData);
     };
 
+
+
     const handleDropdownClickPart = () => {
         console.log(isPartOpen)
         if (isPartOpen) {
@@ -200,9 +203,12 @@ const ProcurementPage = () => {
         setIsPartOpen(!isPartOpen);
     };
 
+    const [filteredData, setFilteredData] = useState('')
+
     const handlePartChange = (event) => {
         console.log(event.target.value)
         setSelectedPartOption(event.target.value);
+        setFilteredData({...filteredData, selectedPartCode})
     };
 
     const handleClientChange = (event) => {
@@ -296,8 +302,8 @@ const ProcurementPage = () => {
                     <label htmlFor="part">부위</label>
                         <select id="Part" className="selectid" value={selectedPartOption} onChange={handlePartChange} onClick={handleDropdownClickPart}>
                             {partOptions.map((option, index) => (
-                                <option key={index}  >
-                                    {option.name} <span hidden>{option.code}</span>
+                                <option key={index} value={option.value}>
+                                    {option.name}
                                 </option>
                             ))}
                         </select>
