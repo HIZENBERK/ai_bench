@@ -1,5 +1,5 @@
 //재고 현황 페이지
-import React, { useState } from 'react';
+import React, {useEffect, useState} from 'react';
 import Pagination from '../component/Pagination';
 import '../css/ProductInventoryPage.css';
 import '../component/WebcamBarcodeScanner';
@@ -399,6 +399,7 @@ const ProductInventoryPage = () => {
         },
     ]);
 
+    const [filteredResults, setFilteredResults] = useState(inventoryResults);
     const [currentPage, setCurrentPage] = useState(1);
     const [resultsPerPage, setResultsPerPage] = useState(10);
 
@@ -413,54 +414,43 @@ const ProductInventoryPage = () => {
 
     const indexOfLastResult = currentPage * resultsPerPage;
     const indexOfFirstResult = indexOfLastResult - resultsPerPage;
-    const currentResults = inventoryResults.slice(indexOfFirstResult, indexOfLastResult);
+    const currentResults = filteredResults.slice(indexOfFirstResult, indexOfLastResult);
 
     const handleEditClick = (index) => {
         console.log(`Edit button clicked for index ${index}`);
         // 여기서 원하는 편집 동작을 추가할 수 있습니다.
     };
 
+    // const handleScanComplete = (scannedData) => {
+    //     const {productNumber} = scannedData;
+    //     const filtered = inventoryResults.filter(result =>
+    //     result.productNumber === productNumber
+    //     );
+    //     setFilteredResults(filtered);
+    // };
+
+    const handleScanComplete = (scannedData) => {
+        const {productNumber, salesDeadline, consumptionDeadline, worker} = scannedData;
+        const filtered = inventoryResults.filter(result =>
+            result.productNumber === productNumber &&
+            result.salesDeadline === salesDeadline &&
+            result.consumptionDeadline === consumptionDeadline &&
+            result.worker === worker
+        );
+        setFilteredResults(filtered);
+    };
+
+
+    useEffect(() => {
+        setFilteredResults(inventoryResults);
+    }, [inventoryResults]);
+
     return (
         <div className="product-inventory-page-container">
             <h2>재고 현황 페이지</h2>
-
-            <div className="input-section">
-                <div className="input-group">
-                    <label>
-                        <input type="checkbox" /> 제품번호
-                    </label>
-                    <input type="text" placeholder="QR 인식" />
-                    <WebcamBarcodeScanner />
-                </div>
+            <div>
+            <WebcamBarcodeScanner onScanComplete={handleScanComplete}/>
             </div>
-
-            <div className="input-section">
-                <div className="input-group">
-                    <label>
-                        <input type="checkbox" /> 제품번호
-                    </label>
-                    <input type="text" />
-                </div>
-                <div className="input-group">
-                    <label>
-                        <input type="checkbox" /> 판매기한
-                    </label>
-                    <input type="text" />
-                </div>
-                <div className="input-group">
-                    <label>
-                        <input type="checkbox" /> 소비기한
-                    </label>
-                    <input type="text" />
-                </div>
-                <div className="input-group">
-                    <label>
-                        <input type="checkbox" /> 작업자
-                    </label>
-                    <input type="text" />
-                </div>
-            </div>
-
             <div className="dropdown-container">
                 <label htmlFor="resultsPerPage">한 페이지에 볼 리스트 개수:</label>
                 <select id="resultsPerPage" value={resultsPerPage} onChange={handleResultsPerPageChange}>

@@ -2,8 +2,8 @@
 import React, { useState, useEffect } from 'react';
 import Pagination from '../component/Pagination';
 import '../css/Pagination.css';
-import axios from "axios"; // Make sure the path is correct
-
+import axios from "axios";
+import {Button, Dialog} from "@mui/material";
 
 const OthersCustomerPage = () => {
     const [data, setData] = useState([]);
@@ -12,6 +12,10 @@ const OthersCustomerPage = () => {
     const [resultsPerPage, setResultsPerPage] = useState(10);
     const [ClientType, setClientType] = useState(''); // 상태 이름 변경
     const [ClientName, setClientName] = useState(''); // 상태 이름 변경
+    const [EditModal, setEditModal] = useState('');
+    const [DeleteModal, setDeleteModal] = useState('');
+    const [BusinessRegistrationNumber, setBusinessRegistrationNumber] = useState('');
+    const [selectedClient, setSelectClient] = useState('');
 
     // 데이터 API에서 가져오기
     useEffect(() => {
@@ -72,9 +76,38 @@ const OthersCustomerPage = () => {
     };
 
     // 수정 핸들러
+    // const handleEdit = (clientId) => {
+    //     // 기능 추가 해야함
+    // };
+
     const handleEdit = (clientId) => {
-        // 기능 추가 해야함
+        setEditModal(true);
+        setSelectClient(clientId);
     };
+
+    const handleDelete = (clientId) => {
+        setDeleteModal(true);
+        setBusinessRegistrationNumber(clientId);
+    };
+
+    const confirmDelete = async () => {
+        try {
+            const response = await axios.post('http://localhost:8000/api/Client/'
+            , {
+                Method: 'delete',
+                BusinessRegistrationNumber: BusinessRegistrationNumber
+                });
+            console.log(response);
+            fetchData();
+            setClientType('');
+            setClientName('');
+            alert("삭제되었습니다.");
+            setDeleteModal(false);
+        } catch (error) {
+            console.error('데이터 삭제 에러.', error);
+        }
+    };
+
     return (
         <div>
             <div className="procurement-page-container">
@@ -121,6 +154,7 @@ const OthersCustomerPage = () => {
                             <th>최종 거래일</th>
                             <th>납입/ 납품 정보</th>
                             <th>수정</th>
+                            <th>삭제</th>
                         </tr>
                         </thead>
                         <tbody>
@@ -138,7 +172,8 @@ const OthersCustomerPage = () => {
                                 <td>{client.FirstTradeDate}</td>
                                 <td>{client.LastTradeDate}</td>
                                 <td>{client.Payment_Delivery}</td>
-                                <td><button onClick={() => handleEdit(client.ID)}>수정/삭제</button></td>
+                                <td><button onClick={() => handleEdit(client)}>수정</button></td>
+                                <td><button onClick={() => handleDelete(client.BusinessRegistrationNumber)}>삭제</button></td>
                             </tr>
                         ))}
                         </tbody>
@@ -148,6 +183,165 @@ const OthersCustomerPage = () => {
                         totalPages={Math.ceil(filteredClients.length / resultsPerPage)}
                         onPageChange={handlePageChange}
                     />
+
+                    {/* 모달 오픈 */}
+                    <Dialog open={DeleteModal} onClose={() => setDeleteModal(false)}>
+                        <div className="modal-overlay">
+                            <div className="modal-content">
+                                <h4>삭제하시겠습니까?</h4>
+                                <div className="findBtn">
+                                    <Button className="yesbtn" variant="outlined" color="secondary" onClick={confirmDelete}>
+                                        예
+                                    </Button>
+                                    <Button className="yesbtn" variant="outlined" color="primary" onClick={() => setDeleteModal(false)}>
+                                        아니오
+                                    </Button>
+                                </div>
+                            </div>
+                        </div>
+                    </Dialog>
+
+                    <Dialog open={EditModal} onClose={() => setEditModal(false)}>
+                        <div className="modal-overlay">
+                            <div className="modal-customer">
+                                <h2>거래처 관리 수정</h2>
+                                <div className="editbtn1">
+                                    <button className="editbtn"
+                                            onClick={async () => {
+                                                try {
+                                                    const response= await  axios.post('http://localhost:8000/api/Client/', {
+                                                        Method: 'update',
+                                                        ClientType: selectedClient.ClientType,
+                                                        ClientName: selectedClient.ClientName,
+                                                        RepresentativeName: selectedClient.RepresentativeName,
+                                                        BusinessRegistrationNumber: selectedClient.BusinessRegistrationNumber,
+                                                        ClientAddress: selectedClient.ClientAddress,
+                                                        ClientPhone: selectedClient.ClientPhone,
+                                                        PersonInCharge: selectedClient.PersonInCharge,
+                                                        PersonInChargePhone: selectedClient.PersonInChargePhone,
+                                                        FirstTradeDate: selectedClient.FirstTradeDate,
+                                                        LastTradeDate: selectedClient.LastTradeDate,
+                                                        Payment_Delivery: selectedClient.Payment_Delivery,
+                                                    });
+                                                    alert('수정되었습니다.')
+                                                    fetchData();
+                                                    setEditModal(false);
+                                                    } catch (error) {
+                                                    console.error('수정실패.')
+                                                    alert('수정실패');
+                                                }
+                                            }}
+                                            >저장</button>
+                                    <button className="editbtn" onClick={() => setEditModal(false)}>취소</button>
+                                </div>
+                                {selectedClient && (
+                                    <>
+                                        <div className="allEdit">
+                                        <div className="input-container">
+                                            <div className="edit">
+                                            <label>거래처 유형: {selectedClient.ClientType}</label>
+                                            </div>
+                                            <div className="updateinput">
+                                                <div className="left">
+                                                    <label>거래처 이름:</label>
+                                                </div>
+                                                <div className="right">
+                                                    <input type="text"
+                                                           value={selectedClient.ClientName}
+                                                           onChange={event => setSelectClient({
+                                                           ...selectedClient,
+                                                           ClientName: event.target.value })}
+                                                    />
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div className="input-container">
+                                            <div className="edit">
+                                                <label>대표자명 : {selectedClient.RepresentativeName}</label>
+                                            </div>
+                                            <div className="updateinput">
+                                                <div className="left">
+                                                    <label>사업자 번호 :</label>
+                                                </div>
+                                                <div className="right">
+                                                    <input type="text"
+                                                           value={selectedClient.BusinessRegistrationNumber}
+                                                           onChange={e => setSelectClient( {
+                                                               ...selectedClient,
+                                                               BusinessRegistrationNumber: e.target.value })}
+                                                    />
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div className="input-container">
+                                            <div className="edit">
+                                                <label>사업장 주소 : {selectedClient.ClientAddress}</label>
+                                            </div>
+                                            <div className="updateinput">
+                                                <div className="left">
+                                                    <label>사업자 연락처 :</label>
+                                                </div>
+                                                <div className="right">
+                                                    <input type="text"
+                                                           value={selectedClient.ClientAddress}
+                                                           onChange={e => setSelectClient({
+                                                               ClientPhone: e.target.value
+                                                           })}
+                                                    />
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div className="input-container">
+                                            <div className="edit">
+                                                <label>담당자명 (직급) : {selectedClient.PersonInCharge}</label>
+                                            </div>
+                                            <div className="updateinput">
+                                                <div className="left">
+                                                    <label>담당자 연락처 : </label>
+                                                </div>
+                                                <div className="right">
+                                                    <input type="text"
+                                                           value={selectedClient.ClientPhone}
+                                                           onChange={e => setSelectClient({
+                                                               PersonInChargePhone: e.target.value
+                                                           })}
+                                                    />
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div className="input-container">
+                                            <div className="edit">
+                                                <label>최초 거래일 : {selectedClient.FirstTradeDate}</label>
+                                            </div>
+                                            <div className="updateinput">
+                                                <div className="left">
+                                                    <label>납입/ 납품정보 :</label>
+                                                </div>
+                                                <div className="right">
+                                                    <input type="text"
+                                                           value={selectedClient.Payment_Delivery}
+                                                           onChange={e => setSelectClient({
+                                                               ...selectedClient,
+                                                               Payment_Delivery: e.target.value
+                                                           })}
+                                                    />
+                                                </div>
+                                            </div>
+                                        </div>
+                                            <div className="input-container">
+                                                <div className="edit">
+                                                <label>최종 거래일 : {selectedClient.LastTradeDate}</label>
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                    </>
+                                )}
+                            </div>
+                        </div>
+                    </Dialog>
+
+
                 </div>
             </div>
         </div>

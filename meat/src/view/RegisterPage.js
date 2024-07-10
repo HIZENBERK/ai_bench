@@ -291,6 +291,7 @@ const RegisterPage = () => {
                         value={field.productName}
                         onChange={event => handleInputChange(index, event)}
                     />
+                        <div>
                     <label htmlFor={`price-${index}`}>가격</label>
                     <input
                         type="text"
@@ -299,8 +300,11 @@ const RegisterPage = () => {
                         value={field.price}
                         onChange={event => handleInputChange(index, event)}
                     />
+
                     <button onClick={() => handleRemoveField(index)}>-</button>
-                </div></div>
+                        </div>
+                        </div>
+                    </div>
             ))}
             {/* buttons for adding/removing search fields and initiating search */}
             <div className="button">

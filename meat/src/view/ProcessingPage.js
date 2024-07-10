@@ -7,6 +7,7 @@ import {useAuth} from "../component/AuthContext";
 // import Datepicker from "../component/DatePicker";
 import {format} from "date-fns";
 //import {format} from "date-fns"; // Ensure this path is correct
+import { Button, Dialog, DialogContent } from "@mui/material";
 
 const ProcessingPage = () => {
     const [processingResults,setProcessingResults] = useState([]);
@@ -15,6 +16,11 @@ const ProcessingPage = () => {
     const [resultsPerPage, setResultsPerPage] = useState(30);
     const [SearchOption, setSearchOption] = useState('')
     const [TextForSearch, setTextForSearch] = useState('')
+    const [DeleteModal, setDeleteModal] = useState('');
+    const [EditModal, setEditModal] = useState('');
+    const [ProductNo, setProductNo] = useState('');
+    const [selectedProduct, setSelectedProduct] = useState('');
+
 
     const handleSearchOption = (event) => {
         setSearchOption(event.target.value);
@@ -106,6 +112,7 @@ const ProcessingPage = () => {
     useEffect(() => {
         fetchSearchResults();
     }, []);
+
     const { authState } = useAuth();
     let empNo = '';
     try {
@@ -158,15 +165,6 @@ const ProcessingPage = () => {
         }
     };
 
-    // 작업일자
-    const ProductDay = () => {
-        const today = new Date();
-        const ProductDay = `${today.getFullYear()}년 ${today.getMonth() + 1}월 ${today.getDate()}일`;
-        return ProductDay;
-    }
-
-
-
     const fetchRawMaterialNumberOptions = async () => {
         try {
             const response = await axios.get('http://localhost:8000/api/stockInfo/'); // Replace with actual URL for parts
@@ -188,25 +186,59 @@ const ProcessingPage = () => {
         setIsRawMaterialNumberOpen(false);
     };
 
-    const handleDelete = async (ProductNo) => {
-        console.log(ProductNo);
+    // const handleDelete = async (ProductNo) => {
+    //     console.log(ProductNo);
+    //     try {
+    //         const response = await axios.post('http://localhost:8000/api/product/'
+    //         ,{
+    //             Method: 'delete',
+    //             ProductNo: ProductNo
+    //         });
+    //         console.log(response);
+    //         fetchSearchResults();
+    //         setWorkingDay('');
+    //         setSelectedRawMaterialNumberOption('')
+    //         setFinalWeight('');
+    //         setLoss('');
+    //         setUnitPrice('');
+    //         setDiscountRate('');
+    //     } catch (error) {
+    //         console.error('데이터 삭제 에러:', error);
+    //     }
+    // };
+
+    //2차 가공 삭제버튼 모달
+    const handleDelete = (ProductNo) => {
+        setDeleteModal(true);
+        setProductNo(ProductNo);
+    };
+
+    const confirmDelete = async () => {
         try {
-            const response = await axios.post('http://localhost:8000/api/product/'
+            const response = await axios.post(`http://localhost:8000/api/product/`
             ,{
                 Method: 'delete',
                 ProductNo: ProductNo
-            });
+                });
             console.log(response);
             fetchSearchResults();
             setWorkingDay('');
-            setSelectedRawMaterialNumberOption('')
+            setSelectedRawMaterialNumberOption('');
             setFinalWeight('');
             setLoss('');
             setUnitPrice('');
             setDiscountRate('');
+            alert("삭제되었습니다.");
+            setDeleteModal(false);
         } catch (error) {
             console.error('데이터 삭제 에러:', error);
         }
+    };
+
+    //2차 가공 수정 모달
+    const handleEdit = (product) => {
+        setEditModal(true);
+        setSelectedProduct(product);
     };
 
     const handleRawMaterial = (event) => {
@@ -343,7 +375,7 @@ const ProcessingPage = () => {
                                 <td>{result.ProductNo}</td>
                                 <td>{result.ProductSituation}</td>
                                 <td>
-                                    <button onClick={() => handleDelete(result.ProductNo)}>수정</button>
+                                    <button onClick={() => handleEdit(result)}>수정</button>
                                     /
                                     <button onClick={() => handleDelete(result.ProductNo)}>삭제</button>
                                 </td>
@@ -356,6 +388,279 @@ const ProcessingPage = () => {
                     totalPages={Math.ceil(processingResults.length / resultsPerPage)}
                     onPageChange={handlePageChange}
                 />
+
+                {/* 모달 오픈 */}
+                <Dialog open={DeleteModal} onClose={() => setDeleteModal(false)}>
+                        <div className="modal-overlay">
+                            <div className="modal-content">
+                                <h4>삭제하시겠습니까?</h4>
+                                <div className="findBtn">
+                                    <Button className="yesbtn" variant="outlined" color="secondary" onClick={confirmDelete}>
+                                        예
+                                    </Button>
+                                    <Button className="yesbtn" variant="outlined" color="primary" onClick={() => setDeleteModal(false)}>
+                                        아니오
+                                    </Button>
+                                </div>
+                            </div>
+                        </div>
+                </Dialog>
+
+                <Dialog open={EditModal} onClose={() => setEditModal(false)}>
+                    <div className="modal-overlay">
+                        <div className="modal-edit">
+                            <h2>2차가공 수정</h2>
+                            <h3>원료번호: {selectedProduct.ProductNo}</h3>
+                            <div className="editbtn1">
+                            <button className="editbtn"
+                                    onClick={async () => {
+                                        try {
+                                            const response = await axios.post('http://localhost:8000/api/product/', {
+                                                Method: 'update',
+                                                ProductNo: selectedProduct.ProductNo,
+                                                RealWeight: selectedProduct.RealWeight,
+                                                RealPrice: selectedProduct.RealPrice,
+                                                MeterialNo: selectedProduct.MeterialNo,
+                                                SlaugtherDate: selectedProduct.SlaugtherDate,
+                                                UnitPrice: selectedProduct.UnitPrice,
+                                                ProductDate: selectedProduct.ProductDate,
+                                                ProductWorker: selectedProduct.ProductWorker,
+                                                WeightAfterWork: selectedProduct.WeightAfterWork,
+                                                LossWeight: selectedProduct.LossWeight,
+                                                ProductPrice: selectedProduct.ProductPrice,
+                                                DiscountRate: selectedProduct.DiscountRate,
+                                            });
+                                            alert('수정되었습니다.');
+                                            fetchSearchResults();
+                                            setEditModal(false);
+                                        } catch (error) {
+                                            console.error('수정 에러:', error);
+                                            alert('수정 실패.');
+                                        }
+                                    }}
+                            >
+                                저장
+                            </button>
+                            <button className="editbtn" onClick={() => setEditModal(false)}>취소</button>
+                            </div>
+                                {selectedProduct && (
+                                <>
+                                    <div className="allEdit">
+                                    <div className="input-container">
+                                        <div className="edit">
+                                        <label>발주일시 : {selectedProduct.OrderDate}</label>
+                                        </div>
+                                        <div className="updateinput">
+                                            <div className="left">
+                                                <label>실중량 :</label>
+                                            </div>
+                                            <div className="right">
+                                                <input
+                                                type="text"
+                                                value={selectedProduct.RealWeight}
+                                                onChange={(e) => setSelectedProduct({
+                                                    ...selectedProduct,
+                                                    RealWeight: e.target.value
+                                                })}
+                                            />
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div className="input-container">
+                                        <div className="edit">
+                                        <label>거래처(번호) : {selectedProduct.Client}</label>
+                                        </div>
+                                            <div className="updateinput">
+                                                <div className="left">
+                                                    <label>실 매입가 :</label>
+                                                </div>
+                                            <div className="right">
+                                                <input
+                                                    type="text"
+                                                    value={selectedProduct.RealPrice}
+                                                    onChange={(e) => setSelectedProduct({
+                                                        ...selectedProduct,
+                                                        RealPrice: e.target.value
+                                                    })}
+                                                />
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div className="input-container">
+                                        <div className="edit">
+                                        <label>발주중량(KG) : {selectedProduct.OrderWeight}</label>
+                                        </div>
+                                            <div className="updateinput">
+                                                <div className="left">
+                                                    <label>이력번호 :</label>
+                                                </div>
+                                            <div className="right">
+                                                <input
+                                                    type="text"
+                                                    value={selectedProduct.MeterialNo}
+                                                    onChange={(e) => setSelectedProduct({
+                                                        ...selectedProduct,
+                                                        MeterialNo: e.target.value
+                                                    })}
+                                                />
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div className="input-container">
+                                        <div className="edit">
+                                        <label>부위 : {selectedProduct.Part}</label>
+                                        </div>
+                                            <div className="updateinput">
+                                                <div className="left">
+                                                    <label>도축일 :</label>
+                                                </div>
+                                                <div className="right">
+                                                <input
+                                                    type="text"
+                                                    value={selectedProduct.SlaugtherDate}
+                                                    onChange={(e) => setSelectedProduct({
+                                                        ...selectedProduct,
+                                                        SlaugtherDate: e.target.value
+                                                    })}
+                                                />
+                                                </div>
+                                        </div>
+                                    </div>
+
+                                    <div className="input-container">
+                                        <div className="edit">
+                                        <label>발주금액 : {selectedProduct.OrderPrice}</label>
+                                        </div>
+                                            <div className="updateinput">
+                                                <div className="left">
+                                                    <label>입고단가 :</label>
+                                                </div>
+                                                <div className="right">
+                                                <input
+                                                    type="text"
+                                                    value={selectedProduct.UnitPrice}
+                                                    onChange={(e) => setSelectedProduct({
+                                                        ...selectedProduct,
+                                                        UnitPrice: e.target.value
+                                                    })}
+                                                />
+                                                </div>
+                                        </div>
+                                    </div>
+
+                                    <div className="input-container">
+                                        <div className="edit">
+                                        <label>입고일시 : {selectedProduct.StockDate}</label>
+                                        </div>
+                                            <div className="updateinput">
+                                                <div className="left">
+                                                    <label>단가 :</label>
+                                                </div>
+                                                <div className="right">
+                                                <input
+                                                    type="text"
+                                                    value={selectedProduct.ProductPrice}
+                                                    onChange={(e) => setSelectedProduct({
+                                                        ...selectedProduct,
+                                                        ProductPrice: e.target.value
+                                                    })}
+                                                />
+                                                </div>
+                                        </div>
+                                    </div>
+
+                                    <div className="input-container">
+                                        <div className="edit">
+                                        <label>입고자명 : {selectedProduct.StockWorker}</label>
+                                        </div>
+                                            <div className="updateinput">
+                                                <div className="left">
+                                                    <label>작업자 :</label>
+                                                </div>
+                                                <div className="right">
+                                                <input
+                                                    type="text"
+                                                    value={selectedProduct.ProductWorker}
+                                                    onChange={(e) => setSelectedProduct({
+                                                        ...selectedProduct,
+                                                        ProductWorker: e.target.value
+                                                    })}
+                                                />
+                                                </div>
+                                        </div>
+                                    </div>
+
+                                    <div className="input-container">
+                                        <div className="edit">
+                                        <label>입고품목 : {selectedProduct.Stockitem}</label>
+                                        </div>
+                                            <div className="updateinput">
+                                                <div className="left">
+                                                    <label>작업 후 중량 :</label>
+                                                </div>
+                                                <div className="right">
+                                                <input
+                                                    type="text"
+                                                    value={selectedProduct.WeightAfterWork}
+                                                    onChange={(e) => setSelectedProduct({
+                                                        ...selectedProduct,
+                                                        WeightAfterWork: e.target.value
+                                                    })}
+                                                />
+                                                </div>
+                                        </div>
+                                    </div>
+
+                                    <div className="input-container">
+                                        <div className="edit">
+                                        <label>작업일 : {selectedProduct.ProductDate ? format(new Date(selectedProduct.ProductDate), 'yyyy년 MM월 dd일 HH시 mm분 ss초') : null}</label>
+                                        </div>
+                                            <div className="updateinput">
+                                                <div className="left">
+                                                    <label>로스 :</label>
+                                                </div>
+                                                <div className="right">
+                                                <input
+                                                    type="text"
+                                                    value={selectedProduct.LossWeight}
+                                                    onChange={(e) => setSelectedProduct({
+                                                        ...selectedProduct,
+                                                        LossWeight: e.target.value
+                                                    })}
+                                                />
+                                                </div>
+                                        </div>
+                                    </div>
+
+                                    <div className="input-container">
+                                        <div className="edit">
+                                        <label>상태 : {selectedProduct.ProductSituation}</label>
+                                        </div>
+                                            <div className="updateinput">
+                                                <div className="left">
+                                                    <label>할인율 :</label>
+                                                </div>
+                                                <div className="right">
+                                                <input
+                                                type="text"
+                                                value={selectedProduct.DiscountRate}
+                                                onChange={(e) => setSelectedProduct({
+                                                    ...selectedProduct,
+                                                    DiscountRate: e.target.value
+                                                })}
+                                            />
+                                                </div>
+                                        </div>
+                                    </div>
+                                    </div>
+                                </>
+                            )}
+                        </div>
+                    </div>
+                </Dialog>
             </div>
         </div>
     );

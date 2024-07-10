@@ -17,6 +17,19 @@
     margin-bottom: 20px;
 }
 
+.qrscan {
+    display: inline-block;
+    margin: 0 auto;
+    width: 100%;
+}
+
+.qrscan1 {
+    display: flex;
+    justify-content: center;
+    align-items: end;
+    text-align: center;
+}
+
 .input-group {
     display: flex;
     align-items: center;
@@ -29,11 +42,13 @@
     align-items: center;
 }
 
-.input-group input[type="text"] {
+.input-group input[type="text"]{
     padding: 5px;
     border: 1px solid #ccc;
     border-radius: 4px;
 }
+
+
 
 .dropdown-container {
     display: flex;

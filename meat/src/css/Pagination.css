@@ -16,7 +16,6 @@ select option[value=""][disabled]{
     display: none;
 }
 
-
 .selectClient {
     width: 210px;
     height: 39px;
@@ -25,8 +24,98 @@ select option[value=""][disabled]{
     margin-left: 70px;
 }
 
-.procurement-page-container{
+/* 모달 */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start; /* 수직 정렬을 상단으로 변경 */
+    padding-top: 50px; /* 상단 여백을 추가하여 약간 아래로 내림 */
+    z-index: 1000;
+    background-color: rgba(0,0,0,0.5);
+    margin:0;
+}
 
+.modal-content {
+    background-color: white;
+    padding: 20px;
+    border-radius: 5px;
+    width: 240px;
+    text-align: center;
+    box-sizing: border-box;
+}
+
+.modal-customer {
+    width: 1000px;
+    height: 500px;
+    background-color: white;
+    display: inline-block;
+}
+
+.modal-edit {
+    width: 1000px;
+    height: 700px;
+    background-color: white;
+    overflow: scroll;
+    display: inline-block;
+}
+
+/* 수정 */
+.edit {
+    margin-left: 10%;
+    width: 37%;
+    float: left;
+}
+
+.updateinput {
+    float: right;
+    width: 30%;
+}
+
+.left {
+    float: left;
+    width: 45%;
+}
+
+.right {
+    float: right;
+    width: 55%;
+}
+
+.editbtn {
+    padding: 5px;
+    margin-left: 10px;
+}
+
+.editbtn1 {
+    text-align: right;
+}
+
+.modal-edit > h3 {
+    margin-left: 10px;
+}
+
+.modal-customer > h2 {
+    text-align: center;
+    font-size: 40px;
+    border-bottom: 1px solid #ccc;
+    color:darkcyan;
+}
+
+.modal-edit > h2 {
+    text-align: center;
+    font-size: 40px;
+    border-bottom: 1px solid #ccc;
+    color: darkcyan;
+}
+
+.allEdit {
+    width: 100%;
+    padding: 30px;
 }
 
 /* 페이지 제목 */
@@ -48,7 +137,6 @@ select option[value=""][disabled]{
     flex-wrap: wrap;
     gap: 20px;
     margin-bottom: 15px;
-
 }
 
 .input-container input[type="text"],
@@ -57,7 +145,6 @@ select option[value=""][disabled]{
     padding: 8px;
     border: 1px solid #ccc;
     border-radius: 4px;
-
 }
 
 /* 드롭다운 스타일 */
