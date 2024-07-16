@@ -105,6 +105,7 @@ const ProcurementPage = () => {
             console.log(ETA);
         }
     };
+
     const handlePageChange = (pageNumber) => {
         setCurrentPage(pageNumber);
     };

@@ -8,6 +8,9 @@ import {useAuth} from "../component/AuthContext";
 import {format} from "date-fns";
 //import {format} from "date-fns"; // Ensure this path is correct
 import { Button, Dialog, DialogContent } from "@mui/material";
+import DeleteModal from '../component/DeleteModal';
+import ProSearch from "../component/ProSearch";
+
 
 const ProcessingPage = () => {
     const [processingResults,setProcessingResults] = useState([]);
@@ -16,73 +19,73 @@ const ProcessingPage = () => {
     const [resultsPerPage, setResultsPerPage] = useState(30);
     const [SearchOption, setSearchOption] = useState('')
     const [TextForSearch, setTextForSearch] = useState('')
-    const [DeleteModal, setDeleteModal] = useState('');
+    const [DeleteModalOpen, setDeleteModalOpen] = useState(false);
     const [EditModal, setEditModal] = useState('');
     const [ProductNo, setProductNo] = useState('');
     const [selectedProduct, setSelectedProduct] = useState('');
 
 
-    const handleSearchOption = (event) => {
-        setSearchOption(event.target.value);
-    }
-
-    const handleSearch = () => {
-        const lowerCasedFilter = TextForSearch.toLowerCase();
-        const filteredData = searchResults.filter(item => {
-            switch (SearchOption) {
-                case '발주일시':
-                    return item.OrderDate.toLowerCase().includes(lowerCasedFilter);
-                case '입고일시':
-                    return item.StockDate.toLowerCase().includes(lowerCasedFilter);
-                case '작업일':
-                    return item.ProductDate.toLowerCase().includes(lowerCasedFilter);
-                case '거래처':
-                    return item.Client.toLowerCase().includes(lowerCasedFilter);
-                case '부위':
-                    return item.Part.toLowerCase().includes(lowerCasedFilter);
-                case '제품번호':
-                    return item.ProductNo.toLowerCase().includes(lowerCasedFilter);
-                case '상태':
-                    return item.ProductSituation.toLowerCase().includes(lowerCasedFilter);
-                default:
-                    return false;
-            }
-        });
-        setProcessingResults(filteredData);
-    };
-
-    const handleSearch2 = (searchValue) => {
-        console.log(searchValue);
-        setTextForSearch(searchValue);
-        const lowerCasedFilter = searchValue.toLowerCase();
-        const filteredData = searchResults.filter(item => {
-            switch (SearchOption) {
-                case '발주일시':
-                    return item.OrderDate.toLowerCase().includes(lowerCasedFilter);
-                case '입고일시':
-                    return item.StockDate.toLowerCase().includes(lowerCasedFilter);
-                case '작업일':
-                    return item.ProductDate.toLowerCase().includes(lowerCasedFilter);
-                case '거래처':
-                    return item.Client.toLowerCase().includes(lowerCasedFilter);
-                case '부위':
-                    return item.Part.toLowerCase().includes(lowerCasedFilter);
-                case '제품번호':
-                    return item.ProductNo.toLowerCase().includes(lowerCasedFilter);
-                case '상태':
-                    return item.ProductSituation.toLowerCase().includes(lowerCasedFilter);
-                default:
-                    return false;
-            }
-        });
-        setProcessingResults(filteredData);
-    };
+    // const handleSearchOption = (event) => {
+    //     setSearchOption(event.target.value);
+    // }
+    //
+    // const handleSearch = () => {
+    //     const lowerCasedFilter = TextForSearch.toLowerCase();
+    //     const filteredData = searchResults.filter(item => {
+    //         switch (SearchOption) {
+    //             case '발주일시':
+    //                 return item.OrderDate.toLowerCase().includes(lowerCasedFilter);
+    //             case '입고일시':
+    //                 return item.StockDate.toLowerCase().includes(lowerCasedFilter);
+    //             case '작업일':
+    //                 return item.ProductDate.toLowerCase().includes(lowerCasedFilter);
+    //             case '거래처':
+    //                 return item.Client.toLowerCase().includes(lowerCasedFilter);
+    //             case '부위':
+    //                 return item.Part.toLowerCase().includes(lowerCasedFilter);
+    //             case '제품번호':
+    //                 return item.ProductNo.toLowerCase().includes(lowerCasedFilter);
+    //             case '상태':
+    //                 return item.ProductSituation.toLowerCase().includes(lowerCasedFilter);
+    //             default:
+    //                 return false;
+    //         }
+    //     });
+    //     setProcessingResults(filteredData);
+    // };
+    //
+    // const handleSearch2 = (searchValue) => {
+    //     console.log(searchValue);
+    //     setTextForSearch(searchValue);
+    //     const lowerCasedFilter = searchValue.toLowerCase();
+    //     const filteredData = searchResults.filter(item => {
+    //         switch (SearchOption) {
+    //             case '발주일시':
+    //                 return item.OrderDate.toLowerCase().includes(lowerCasedFilter);
+    //             case '입고일시':
+    //                 return item.StockDate.toLowerCase().includes(lowerCasedFilter);
+    //             case '작업일':
+    //                 return item.ProductDate.toLowerCase().includes(lowerCasedFilter);
+    //             case '거래처':
+    //                 return item.Client.toLowerCase().includes(lowerCasedFilter);
+    //             case '부위':
+    //                 return item.Part.toLowerCase().includes(lowerCasedFilter);
+    //             case '제품번호':
+    //                 return item.ProductNo.toLowerCase().includes(lowerCasedFilter);
+    //             case '상태':
+    //                 return item.ProductSituation.toLowerCase().includes(lowerCasedFilter);
+    //             default:
+    //                 return false;
+    //         }
+    //     });
+    //     setProcessingResults(filteredData);
+    // };
 
     const indexOfLastResult = currentPage * resultsPerPage;
     const indexOfFirstResult = indexOfLastResult - resultsPerPage;
     const currentResults = processingResults.slice(indexOfFirstResult, indexOfLastResult);
 
-    const [workingDay, setWorkingDay] = useState('')
+    const [workingDay, setWorkingDay] = useState('');
     const [loss, setLoss] = useState('');
     const [unitPrice, setUnitPrice] = useState('');
     const [finalWeight, setFinalWeight] = useState('');
@@ -155,7 +158,7 @@ const ProcessingPage = () => {
             console.log(response);
             fetchSearchResults();
             setWorkingDay('');
-            setSelectedRawMaterialNumberOption('')
+            // setSelectedRawMaterialNumberOption('')
             setFinalWeight('');
             setLoss('');
             setUnitPrice('');
@@ -209,7 +212,7 @@ const ProcessingPage = () => {
 
     //2차 가공 삭제버튼 모달
     const handleDelete = (ProductNo) => {
-        setDeleteModal(true);
+        setDeleteModalOpen(true);
         setProductNo(ProductNo);
     };
 
@@ -229,7 +232,7 @@ const ProcessingPage = () => {
             setUnitPrice('');
             setDiscountRate('');
             alert("삭제되었습니다.");
-            setDeleteModal(false);
+            setDeleteModalOpen(false);
         } catch (error) {
             console.error('데이터 삭제 에러:', error);
         }
@@ -253,8 +256,9 @@ const ProcessingPage = () => {
                     <label htmlFor="rawMaterialNumber">원료 번호</label>
                     <select className="selectid" id="rawMaterialNumber" onClick={handleDropdownClickRawMaterialNumber}
                             onChange={handleRawMaterial}>
+                            <option value="" disabled selected>원료번호를 선택하세요.</option>
                             {rawMaterialNumberOptions.map((option, index) => (
-                                <option key={index}>
+                                <option key={index} selected>
                                     {option.StockNo}
                                 </option>
                             ))}
@@ -307,20 +311,23 @@ const ProcessingPage = () => {
                         <option value="30">30</option>
                     </select>
                 </div>
-                <div className="input-container">
-                    <select id="SearchOption" value={SearchOption} onChange={handleSearchOption}>
-                        <option value={'발주일시'}>발주일시</option>
-                        <option value={'입고일시'}>입고일시</option>
-                        <option value={'거래처'}>거래처</option>
-                        <option value={'부위'}>부위</option>
-                        <option value={'작업일'}>작업일</option>
-                        <option value={'제품번호'}>제품번호</option>
-                        <option value={'상태'}>상태</option>
-                    </select>
-                    <input type="text" id="TextForSearch" value={TextForSearch}
-                           onChange={(e) => handleSearch2(e.target.value)}/>
-                    <button onClick={handleSearch}>조회</button>
-                </div>
+
+                <ProSearch processingResults={setProcessingResults} />
+
+                {/*<div className="input-container">*/}
+                {/*    <select id="SearchOption" value={SearchOption} onChange={handleSearchOption}>*/}
+                {/*        <option value={'발주일시'}>발주일시</option>*/}
+                {/*        <option value={'입고일시'}>입고일시</option>*/}
+                {/*        <option value={'거래처'}>거래처</option>*/}
+                {/*        <option value={'부위'}>부위</option>*/}
+                {/*        <option value={'작업일'}>작업일</option>*/}
+                {/*        <option value={'제품번호'}>제품번호</option>*/}
+                {/*        <option value={'상태'}>상태</option>*/}
+                {/*    </select>*/}
+                {/*    <input type="text" id="TextForSearch" value={TextForSearch}*/}
+                {/*           onChange={(e) => handleSearch2(e.target.value)}/>*/}
+                {/*    <button onClick={handleSearch}>조회</button>*/}
+                {/*</div>*/}
                 <table className="table-container">
                     <thead>
                         <tr>
@@ -390,21 +397,12 @@ const ProcessingPage = () => {
                 />
 
                 {/* 모달 오픈 */}
-                <Dialog open={DeleteModal} onClose={() => setDeleteModal(false)}>
-                        <div className="modal-overlay">
-                            <div className="modal-content">
-                                <h4>삭제하시겠습니까?</h4>
-                                <div className="findBtn">
-                                    <Button className="yesbtn" variant="outlined" color="secondary" onClick={confirmDelete}>
-                                        예
-                                    </Button>
-                                    <Button className="yesbtn" variant="outlined" color="primary" onClick={() => setDeleteModal(false)}>
-                                        아니오
-                                    </Button>
-                                </div>
-                            </div>
-                        </div>
-                </Dialog>
+                <DeleteModal
+                    open={DeleteModalOpen}
+                    onClose={() => setDeleteModalOpen(false)}
+                    onConfirm={confirmDelete}>
+                </DeleteModal>
+
 
                 <Dialog open={EditModal} onClose={() => setEditModal(false)}>
                     <div className="modal-overlay">
@@ -442,6 +440,7 @@ const ProcessingPage = () => {
                                 저장
                             </button>
                             <button className="editbtn" onClick={() => setEditModal(false)}>취소</button>
+
                             </div>
                                 {selectedProduct && (
                                 <>

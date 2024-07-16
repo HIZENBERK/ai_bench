@@ -9,7 +9,7 @@ const Datepicker = ({ selectedDate, onChangeDate, id }) => {
             locale={ko}
             selected={selectedDate}
             onChange={(date) => onChangeDate(date, id)}
-            dateFormat={"yyyy-MM-dd"}
+            dateFormat={"YYYY-MM-DD"}
         />
     );
 };

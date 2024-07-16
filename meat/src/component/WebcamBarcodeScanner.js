@@ -4,13 +4,12 @@ import jsQR from 'jsqr';
 import QRCode from 'qrcode.react';
 import '../css/ProductInventoryPage.css';
 
-const WebcamBarcodeScanner = ({ onScanComplete }) => {
+const WebcamBarcodeScanner = ({ onScanComplete, onInputChange }) => {
     const [productNumber, setProductNumber] = useState('');
-    const [salesDeadline, setSalesDeadline] = useState('');
-    const [consumptionDeadline, setConsumptionDeadline] = useState('');
-    const [worker, setWorker] = useState('');
     const webcamRef = useRef(null);
     const [scannedData, setScannedData] = useState(null);
+    const [salesDeadline, setSalesDeadline] = useState('');
+    const [consumptionDeadline, setConsumptionDeadline] = useState('');
 
     const isValidJSON = (str) => {
         try {
@@ -37,10 +36,6 @@ const WebcamBarcodeScanner = ({ onScanComplete }) => {
                         setScannedData(code.data);
                         const parsedData = JSON.parse(code.data);
                         setProductNumber(parsedData.productNumber);
-                        setSalesDeadline(parsedData.salesDeadline);
-                        setConsumptionDeadline(parsedData.consumptionDeadline);
-                        setWorker(parsedData.worker);
-                        console.log(code.data);
                         onScanComplete(parsedData);
                     }
                 }
@@ -52,6 +47,21 @@ const WebcamBarcodeScanner = ({ onScanComplete }) => {
     useEffect(() => {
         captureFrame();
     }, []);
+
+    const handleInputChange = (e) => {
+        const {id, value} = e.target;
+        onInputChange(id, value);
+    };
+
+    const handleDateChange = (date, id) => {
+        if (id === 'salesDeadline') {
+            setSalesDeadline(date);
+            console.log(salesDeadline);
+        } else if (id === 'consumptionDeadline') {
+            setConsumptionDeadline(date);
+            console.log(consumptionDeadline);
+        }
+    }
 
     return (
         <div>
@@ -67,10 +77,7 @@ const WebcamBarcodeScanner = ({ onScanComplete }) => {
 
                     <QRCode
                         value={JSON.stringify({
-                            productNumber: "PRD002",
-                            salesDeadline: "2024-11-01",
-                            consumptionDeadline: "2025-02-01",
-                            worker: "Jane Smith"
+                            productNumber: "PRD001"
                         })}
                         width="200"
                         height="200"
@@ -80,10 +87,11 @@ const WebcamBarcodeScanner = ({ onScanComplete }) => {
             <div className="input-section">
                 <div className="input-group">
                     <label>
-                        <input type="checkbox" />제품번호
+                        <input type="checkbox" name="productNumber" onChange={handleInputChange} /> 제품번호
                     </label>
                     <input
                         type="text"
+                        name="productNumber"
                         readOnly
                         placeholder="QR 인식"
                         value={productNumber}
@@ -91,46 +99,31 @@ const WebcamBarcodeScanner = ({ onScanComplete }) => {
                     />
                 </div>
             </div>
-
             <div className="input-section">
                 <div className="input-group">
                     <label>
-                        <input type="checkbox" />제품번호
+                        <input type="checkbox" /> 제품번호
                     </label>
-                    <input type="text" />
+                    <input type="text" id="productNumber" onChange={handleInputChange} />
                 </div>
                 <div className="input-group">
                     <label>
-                        <input type="checkbox" />판매기한
+                        <input type="checkbox" /> 판매기한
                     </label>
-                    <input
-                        type="text"
-                        readOnly
-                        value={salesDeadline}
-                        onChange={(e) => setSalesDeadline(e.target.value)}
-                    />
+                    <input type="date" id="salesDeadline" placeholder="판매기한" aria-required="true" onChange={handleInputChange} />
+                    {/*<Datepicker id="salesDeadline" name="salesDeadline" selectedDate={salesDeadline} onChange={handleInputChange} onChangeDate={handleDateChange} />*/}
                 </div>
                 <div className="input-group">
                     <label>
-                        <input type="checkbox" />소비기한
+                        <input type="checkbox" /> 소비기한
                     </label>
-                    <input
-                        type="text"
-                        readOnly
-                        value={consumptionDeadline}
-                        onChange={(e) => setConsumptionDeadline(e.target.value)}
-                    />
+                    <input type="date" placeholder="날짜를 선택해주세요" id="consumptionDeadline" onChange={handleInputChange} />
                 </div>
                 <div className="input-group">
                     <label>
                         <input type="checkbox" /> 작업자
                     </label>
-                    <input
-                        type="text"
-                        readOnly
-                        value={worker}
-                        onChange={(e) => setWorker(e.target.value)}
-                    />
+                    <input type="text" id="worker" onChange={handleInputChange} />
                 </div>
             </div>
         </div>

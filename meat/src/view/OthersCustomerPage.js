@@ -4,6 +4,7 @@ import Pagination from '../component/Pagination';
 import '../css/Pagination.css';
 import axios from "axios";
 import {Button, Dialog} from "@mui/material";
+import DeleteModal from "../component/DeleteModal";
 
 const OthersCustomerPage = () => {
     const [data, setData] = useState([]);
@@ -12,9 +13,20 @@ const OthersCustomerPage = () => {
     const [resultsPerPage, setResultsPerPage] = useState(10);
     const [ClientType, setClientType] = useState(''); // 상태 이름 변경
     const [ClientName, setClientName] = useState(''); // 상태 이름 변경
-    const [EditModal, setEditModal] = useState('');
-    const [DeleteModal, setDeleteModal] = useState('');
+    const [RepresentativeName, setRepresentativeName] = useState('');
     const [BusinessRegistrationNumber, setBusinessRegistrationNumber] = useState('');
+    const [ClientAddress, setClientAddress] = useState('');
+    const [ClientPhone, setClientPhone] = useState('');
+    const [PersonInCharge, setPersonInCharge] = useState('');
+    const [PersonInChargePhone, setPersonInChargePhone] = useState('');
+    const [FirstTradeDate, setFirstTradeDate] = useState('');
+    const [LastTradeDate, setLastTradeDate] = useState('');
+    const [Payment_Delivery, setPayment_Delivery] = useState('');
+
+
+
+    const [EditModal, setEditModal] = useState('');
+    const [DeleteModalOpen, setDeleteModalOpen] = useState('');
     const [selectedClient, setSelectClient] = useState('');
 
     // 데이터 API에서 가져오기
@@ -85,9 +97,9 @@ const OthersCustomerPage = () => {
         setSelectClient(clientId);
     };
 
-    const handleDelete = (clientId) => {
-        setDeleteModal(true);
-        setBusinessRegistrationNumber(clientId);
+    const handleDelete = (BusinessRegistrationNumber) => {
+        setDeleteModalOpen(true);
+        setBusinessRegistrationNumber(BusinessRegistrationNumber);
     };
 
     const confirmDelete = async () => {
@@ -100,9 +112,17 @@ const OthersCustomerPage = () => {
             console.log(response);
             fetchData();
             setClientType('');
+            setRepresentativeName('');
+            setClientAddress('');
             setClientName('');
+            setClientPhone('');
+            setPersonInCharge('');
+            setPersonInChargePhone('');
+            setFirstTradeDate('');
+            setLastTradeDate('');
+            setPayment_Delivery('');
             alert("삭제되었습니다.");
-            setDeleteModal(false);
+            setDeleteModalOpen(false);
         } catch (error) {
             console.error('데이터 삭제 에러.', error);
         }
@@ -185,21 +205,7 @@ const OthersCustomerPage = () => {
                     />
 
                     {/* 모달 오픈 */}
-                    <Dialog open={DeleteModal} onClose={() => setDeleteModal(false)}>
-                        <div className="modal-overlay">
-                            <div className="modal-content">
-                                <h4>삭제하시겠습니까?</h4>
-                                <div className="findBtn">
-                                    <Button className="yesbtn" variant="outlined" color="secondary" onClick={confirmDelete}>
-                                        예
-                                    </Button>
-                                    <Button className="yesbtn" variant="outlined" color="primary" onClick={() => setDeleteModal(false)}>
-                                        아니오
-                                    </Button>
-                                </div>
-                            </div>
-                        </div>
-                    </Dialog>
+                    <DeleteModal open={DeleteModalOpen} onClose={() => setDeleteModalOpen(false)} onConfirm={confirmDelete}></DeleteModal>
 
                     <Dialog open={EditModal} onClose={() => setEditModal(false)}>
                         <div className="modal-overlay">
@@ -283,10 +289,10 @@ const OthersCustomerPage = () => {
                                                 </div>
                                                 <div className="right">
                                                     <input type="text"
-                                                           value={selectedClient.ClientAddress}
-                                                           onChange={e => setSelectClient({
-                                                               ClientPhone: e.target.value
-                                                           })}
+                                                           value={selectedClient.ClientPhone}
+                                                           onChange={(e) => setSelectClient({
+                                                               ...selectedClient,
+                                                               ClientPhone: e.target.value })}
                                                     />
                                                 </div>
                                             </div>
@@ -301,8 +307,9 @@ const OthersCustomerPage = () => {
                                                 </div>
                                                 <div className="right">
                                                     <input type="text"
-                                                           value={selectedClient.ClientPhone}
-                                                           onChange={e => setSelectClient({
+                                                           value={selectedClient.PersonInChargePhone}
+                                                           onChange={(e) => setSelectClient({
+                                                               ...selectedClient,
                                                                PersonInChargePhone: e.target.value
                                                            })}
                                                     />
@@ -320,7 +327,7 @@ const OthersCustomerPage = () => {
                                                 <div className="right">
                                                     <input type="text"
                                                            value={selectedClient.Payment_Delivery}
-                                                           onChange={e => setSelectClient({
+                                                           onChange={(e) => setSelectClient({
                                                                ...selectedClient,
                                                                Payment_Delivery: e.target.value
                                                            })}
