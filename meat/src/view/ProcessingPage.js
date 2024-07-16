@@ -11,7 +11,6 @@ import { Button, Dialog, DialogContent } from "@mui/material";
 import DeleteModal from '../component/DeleteModal';
 import ProSearch from "../component/ProSearch";
 
-
 const ProcessingPage = () => {
     const [processingResults,setProcessingResults] = useState([]);
     const [searchResults, setSearchResults] = useState([]);
@@ -312,7 +311,7 @@ const ProcessingPage = () => {
                     </select>
                 </div>
 
-                <ProSearch processingResults={setProcessingResults} />
+                <ProSearch setProcessingResults={setProcessingResults} />
 
                 {/*<div className="input-container">*/}
                 {/*    <select id="SearchOption" value={SearchOption} onChange={handleSearchOption}>*/}

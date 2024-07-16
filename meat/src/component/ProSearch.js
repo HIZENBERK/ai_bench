@@ -2,7 +2,9 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import '../css/Pagination.css';
 
-const ProSearch = (setProcessingResults) => {
+
+const ProSearch = ({setProcessingResults}) => {
+    //const [processingResults, setProcessingResults] = useState('')
     const [TextForSearch, setTextForSearch] = useState('');
     const [SearchOption, setSearchOption] = useState('');
     const [searchResults, setSearchResults] = useState([]);
