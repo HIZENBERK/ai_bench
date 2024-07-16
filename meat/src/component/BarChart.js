@@ -13,15 +13,15 @@ const BarChart = ({ data }) => {
             {
                 label: '주문 중량',
                 data: data.map(item => item.month_order_weight),
-                backgroundColor: 'rgba(75, 192, 192, 0.2)',
-                borderColor: 'rgba(75, 192, 192, 1)',
+                backgroundColor: 'rgba(0, 0, 128, 0.8)',
+                borderColor: 'rgba(0, 0, 128, 1)',
                 borderWidth: 1,
             },
             {
                 label: '실중량',
                 data: data.map(item => item.month_real_weight),
-                backgroundColor: 'rgba(255, 99, 132, 0.2)',
-                borderColor: 'rgba(255, 99, 132, 1)',
+                backgroundColor: 'rgba(255, 140, 0, 0.8)',
+                borderColor: 'rgba(255, 140, 0, 1)',
                 borderWidth: 1,
             },
             {
@@ -29,8 +29,8 @@ const BarChart = ({ data }) => {
                 type: 'line',
                 data: data.map(item => (item.month_real_weight)),
                 fill: true,
-                borderColor: 'rgba(75, 192, 192, 1)',
-                backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                backgroundColor: 'rgba(0, 100, 0, 0.8)',
+                borderColor: 'rgba(0, 100, 0, 1)',
                 borderWidth: 2,
                 pointRadius: 0,
                 trendlineLinear: {

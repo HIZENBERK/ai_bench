@@ -1,3 +1,4 @@
+//메뉴 사이드 바
 import React from 'react';
 import { Outlet, Link } from 'react-router-dom';
 import '../css/App.css';
@@ -33,7 +34,7 @@ const menu = [
         text: '결산',
         children: [
             { text: '금액', path: '/settlement/money' },
-            { text: '매입 명세', path: '/settlement/purchase' },
+            { text: '매입 명세', path: '/settlement/details' },
             { text: '매출 명세', path: '/settlement/sales' },
         ],
     },
@@ -42,7 +43,7 @@ const menu = [
         children: [
             { text: '거래처 관리', path: '/others/customer' },
             { text: '기타비용', path: '/others/costs' },
-            { text: '지용/제품 추가', path: '/others/addproduct' },
+            { text: '지육/제품 추가', path: '/others/addproduct' },
         ],
     },
 ];

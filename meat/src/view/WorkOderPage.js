@@ -1,3 +1,4 @@
+//작업지시서
 import React, { useState } from 'react';
 import '../css/WorkOrderPage.css';
 
@@ -20,11 +21,11 @@ function SearchBar({ recentSearches, removeSearchItem }) {
           </div>
         ))}
       </div>
+      <div className="rectangle1"></div> {/* 첫 번째 직사각형 네모 */}
+      <div className="rectangle2"></div> {/* 두 번째 직사각형 네모 */}
     </div>
   );
 }
-
-
 
 function WorkOrderPage() {
   const [recentSearches, setRecentSearches] = useState([

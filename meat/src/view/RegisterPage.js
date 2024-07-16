@@ -1,3 +1,4 @@
+//주문 등록 페이지
 import React, { useState } from "react";
 import Pagination from '../component/Pagination'; // Make sure the path is correct
 import '../css/Pagination.css'; // Ensure this path is correct
@@ -256,13 +257,14 @@ const RegisterPage = () => {
     return (
         <div>
             <div className="processing-page-container">
-                <h2>제품등록 페이지</h2>
+                <h2>주문등록 페이지</h2>
                 {/* input fields for product registration */}
                 <div className="input-container">
                     <label htmlFor="workingDay">등록일(요일)</label>
                     <input type="text" id="workingDay" />
                     <label htmlFor="category">구분</label>
                     <input type="text" id="category" />
+                    
                 </div>
                 <div className="input-container">
                     <label htmlFor="customer">주문자</label>
@@ -280,6 +282,7 @@ const RegisterPage = () => {
             {/* search fields */}
             {searchFields.map((field, index) => (
                 <div className="input-container" key={index}>
+                    <div className="input-product">
                     <label htmlFor={`productName-${index}`}>제품명</label>
                     <input
                         type="text"
@@ -288,6 +291,7 @@ const RegisterPage = () => {
                         value={field.productName}
                         onChange={event => handleInputChange(index, event)}
                     />
+                        <div>
                     <label htmlFor={`price-${index}`}>가격</label>
                     <input
                         type="text"
@@ -296,12 +300,17 @@ const RegisterPage = () => {
                         value={field.price}
                         onChange={event => handleInputChange(index, event)}
                     />
+
                     <button onClick={() => handleRemoveField(index)}>-</button>
-                </div>
+                        </div>
+                        </div>
+                    </div>
             ))}
             {/* buttons for adding/removing search fields and initiating search */}
+            <div className="button">
             <button onClick={handleAddField}>+</button>
             <button onClick={handleSearch}>검색</button>
+            </div>
             <div className="total-price-container">
                 <h3>가격 합계: {totalPrice}</h3>
             </div>

@@ -1,39 +1,98 @@
-import React, { useState } from "react";
+//2차가공
+import React, {useEffect, useState} from "react";
 import Pagination from '../component/Pagination';
-import '../css/Pagination.css'; // Ensure this path is correct
+import '../css/Pagination.css';
+import axios from "axios";
+import {useAuth} from "../component/AuthContext";
+// import Datepicker from "../component/DatePicker";
+import {format} from "date-fns";
+//import {format} from "date-fns"; // Ensure this path is correct
+import { Button, Dialog, DialogContent } from "@mui/material";
+import DeleteModal from '../component/DeleteModal';
+import ProSearch from "../component/ProSearch";
 
 const ProcessingPage = () => {
-    const [processingResults] = useState([
-        { no: 1, orderDateTime: "2023-06-01 10:30", customerNumber: "Customer A (001)", orderWeight: 150.5, part: "Part A", orderAmount: 2000, arrivalDateTime: "2023-06-05 14:00", receiver: "Receiver A", item: "Item A", actualWeight: 148.5, actualPurchasePrice: 1980, historyNumber: "HIST123456", slaughterDate: "2023-06-01", unitPrice: 13.33, workingDay: "Monday", worker: "Worker A", finalWeight: 145.0, loss: 3.5, discountRate: 0.1, productNumber: "PROD123456", status: "Pending", edit: "Edit" },
-        { no: 2, orderDateTime: "2023-06-02 11:00", customerNumber: "Customer B (002)", orderWeight: 75.0, part: "Part B", orderAmount: 1000, arrivalDateTime: "2023-06-06 15:00", receiver: "Receiver B", item: "Item B", actualWeight: 74.5, actualPurchasePrice: 990, historyNumber: "HIST123457", slaughterDate: "2023-06-02", unitPrice: 13.27, workingDay: "Tuesday", worker: "Worker B", finalWeight: 73.0, loss: 1.5, discountRate: 0.2, productNumber: "PROD123457", status: "Shipped", edit: "Edit" },
-        { no: 3, orderDateTime: "2023-06-03 12:00", customerNumber: "Customer C (003)", orderWeight: 120.0, part: "Part C", orderAmount: 1800, arrivalDateTime: "2023-06-07 13:00", receiver: "Receiver C", item: "Item C", actualWeight: 119.0, actualPurchasePrice: 1785, historyNumber: "HIST123458", slaughterDate: "2023-06-03", unitPrice: 15.00, workingDay: "Wednesday", worker: "Worker C", finalWeight: 117.0, loss: 2.0, discountRate: 0.15, productNumber: "PROD123458", status: "Delivered", edit: "Edit" },
-        { no: 4, orderDateTime: "2023-06-04 14:00", customerNumber: "Customer D (004)", orderWeight: 90.0, part: "Part D", orderAmount: 1500, arrivalDateTime: "2023-06-08 16:00", receiver: "Receiver D", item: "Item D", actualWeight: 89.0, actualPurchasePrice: 1485, historyNumber: "HIST123459", slaughterDate: "2023-06-04", unitPrice: 16.67, workingDay: "Thursday", worker: "Worker D", finalWeight: 87.0, loss: 3.0, discountRate: 0.1, productNumber: "PROD123459", status: "Cancelled", edit: "Edit" },
-        { no: 5, orderDateTime: "2023-06-05 15:00", customerNumber: "Customer E (005)", orderWeight: 110.0, part: "Part E", orderAmount: 1700, arrivalDateTime: "2023-06-09 17:00", receiver: "Receiver E", item: "Item E", actualWeight: 108.0, actualPurchasePrice: 1665, historyNumber: "HIST123460", slaughterDate: "2023-06-05", unitPrice: 15.45, workingDay: "Friday", worker: "Worker E", finalWeight: 106.0, loss: 2.0, discountRate: 0.12, productNumber: "PROD123460", status: "In Process", edit: "Edit" },
-        { no: 6, orderDateTime: "2023-06-06 16:00", customerNumber: "Customer F (006)", orderWeight: 130.0, part: "Part F", orderAmount: 1950, arrivalDateTime: "2023-06-10 18:00", receiver: "Receiver F", item: "Item F", actualWeight: 129.0, actualPurchasePrice: 1925, historyNumber: "HIST123461", slaughterDate: "2023-06-06", unitPrice: 15.00, workingDay: "Saturday", worker: "Worker F", finalWeight: 127.0, loss: 2.0, discountRate: 0.1, productNumber: "PROD123461", status: "Completed", edit: "Edit" },
-        { no: 7, orderDateTime: "2023-06-07 17:00", customerNumber: "Customer G (007)", orderWeight: 100.0, part: "Part G", orderAmount: 1400, arrivalDateTime: "2023-06-11 19:00", receiver: "Receiver G", item: "Item G", actualWeight: 99.0, actualPurchasePrice: 1386, historyNumber: "HIST123462", slaughterDate: "2023-06-07", unitPrice: 14.00, workingDay: "Sunday", worker: "Worker G", finalWeight: 97.0, loss: 2.0, discountRate: 0.1, productNumber: "PROD123462", status: "Pending", edit: "Edit" },
-        { no: 8, orderDateTime: "2023-06-08 18:00", customerNumber: "Customer H (008)", orderWeight: 105.0, part: "Part H", orderAmount: 1500, arrivalDateTime: "2023-06-12 20:00", receiver: "Receiver H", item: "Item H", actualWeight: 104.0, actualPurchasePrice: 1485, historyNumber: "HIST123463", slaughterDate: "2023-06-08", unitPrice: 14.28, workingDay: "Monday", worker: "Worker H", finalWeight: 102.0, loss: 2.0, discountRate: 0.15, productNumber: "PROD123463", status: "Shipped", edit: "Edit" },
-        { no: 9, orderDateTime: "2023-06-09 19:00", customerNumber: "Customer I (009)", orderWeight: 95.0, part: "Part I", orderAmount: 1400, arrivalDateTime: "2023-06-13 21:00", receiver: "Receiver I", item: "Item I", actualWeight: 94.0, actualPurchasePrice: 1386, historyNumber: "HIST123464", slaughterDate: "2023-06-09", unitPrice: 14.74, workingDay: "Tuesday", worker: "Worker I", finalWeight: 92.0, loss: 2.0, discountRate: 0.2, productNumber: "PROD123464", status: "Delivered", edit: "Edit" },
-        { no: 10, orderDateTime: "2023-06-10 20:00", customerNumber: "Customer J (010)", orderWeight: 85.0, part: "Part J", orderAmount: 1200, arrivalDateTime: "2023-06-14 22:00", receiver: "Receiver J", item: "Item J", actualWeight: 84.0, actualPurchasePrice: 1188, historyNumber: "HIST123465", slaughterDate: "2023-06-10", unitPrice: 14.12, workingDay: "Wednesday", worker: "Worker J", finalWeight: 82.0, loss: 2.0, discountRate: 0.1, productNumber: "PROD123465", status: "Cancelled", edit: "Edit" },
-        { no: 11, orderDateTime: "2023-06-11 21:00", customerNumber: "Customer K (011)", orderWeight: 90.0, part: "Part K", orderAmount: 1300, arrivalDateTime: "2023-06-15 23:00", receiver: "Receiver K", item: "Item K", actualWeight: 89.0, actualPurchasePrice: 1287, historyNumber: "HIST123466", slaughterDate: "2023-06-11", unitPrice: 14.33, workingDay: "Thursday", worker: "Worker K", finalWeight: 87.0, loss: 2.0, discountRate: 0.12, productNumber: "PROD123466", status: "In Process", edit: "Edit" },
-        { no: 12, orderDateTime: "2023-06-12 22:00", customerNumber: "Customer L (012)", orderWeight: 115.0, part: "Part L", orderAmount: 1700, arrivalDateTime: "2023-06-16 00:00", receiver: "Receiver L", item: "Item L", actualWeight: 114.0, actualPurchasePrice: 1683, historyNumber: "HIST123467", slaughterDate: "2023-06-12", unitPrice: 14.78, workingDay: "Friday", worker: "Worker L", finalWeight: 112.0, loss: 2.0, discountRate: 0.15, productNumber: "PROD123467", status: "Completed", edit: "Edit" },
-        { no: 13, orderDateTime: "2023-06-13 23:00", customerNumber: "Customer M (013)", orderWeight: 125.0, part: "Part M", orderAmount: 1900, arrivalDateTime: "2023-06-17 01:00", receiver: "Receiver M", item: "Item M", actualWeight: 124.0, actualPurchasePrice: 1881, historyNumber: "HIST123468", slaughterDate: "2023-06-13", unitPrice: 15.20, workingDay: "Saturday", worker: "Worker M", finalWeight: 122.0, loss: 2.0, discountRate: 0.2, productNumber: "PROD123468", status: "Pending", edit: "Edit" },
-        { no: 14, orderDateTime: "2023-06-14 00:00", customerNumber: "Customer N (014)", orderWeight: 135.0, part: "Part N", orderAmount: 2000, arrivalDateTime: "2023-06-18 02:00", receiver: "Receiver N", item: "Item N", actualWeight: 134.0, actualPurchasePrice: 1980, historyNumber: "HIST123469", slaughterDate: "2023-06-14", unitPrice: 14.81, workingDay: "Sunday", worker: "Worker N", finalWeight: 132.0, loss: 2.0, discountRate: 0.18, productNumber: "PROD123469", status: "Shipped", edit: "Edit" },
-        { no: 15, orderDateTime: "2023-06-15 01:00", customerNumber: "Customer O (015)", orderWeight: 140.0, part: "Part O", orderAmount: 2100, arrivalDateTime: "2023-06-19 03:00", receiver: "Receiver O", item: "Item O", actualWeight: 139.0, actualPurchasePrice: 2079, historyNumber: "HIST123470", slaughterDate: "2023-06-15", unitPrice: 15.00, workingDay: "Monday", worker: "Worker O", finalWeight: 137.0, loss: 2.0, discountRate: 0.1, productNumber: "PROD123470", status: "Delivered", edit: "Edit" },
-        { no: 16, orderDateTime: "2023-06-16 02:00", customerNumber: "Customer P (016)", orderWeight: 145.0, part: "Part P", orderAmount: 2200, arrivalDateTime: "2023-06-20 04:00", receiver: "Receiver P", item: "Item P", actualWeight: 144.0, actualPurchasePrice: 2178, historyNumber: "HIST123471", slaughterDate: "2023-06-16", unitPrice: 15.17, workingDay: "Tuesday", worker: "Worker P", finalWeight: 142.0, loss: 2.0, discountRate: 0.15, productNumber: "PROD123471", status: "Cancelled", edit: "Edit" },
-        { no: 17, orderDateTime: "2023-06-17 03:00", customerNumber: "Customer Q (017)", orderWeight: 150.0, part: "Part Q", orderAmount: 2300, arrivalDateTime: "2023-06-21 05:00", receiver: "Receiver Q", item: "Item Q", actualWeight: 149.0, actualPurchasePrice: 2277, historyNumber: "HIST123472", slaughterDate: "2023-06-17", unitPrice: 15.33, workingDay: "Wednesday", worker: "Worker Q", finalWeight: 147.0, loss: 2.0, discountRate: 0.2, productNumber: "PROD123472", status: "In Process", edit: "Edit" },
-        { no: 18, orderDateTime: "2023-06-18 04:00", customerNumber: "Customer R (018)", orderWeight: 155.0, part: "Part R", orderAmount: 2400, arrivalDateTime: "2023-06-22 06:00", receiver: "Receiver R", item: "Item R", actualWeight: 154.0, actualPurchasePrice: 2376, historyNumber: "HIST123473", slaughterDate: "2023-06-18", unitPrice: 15.48, workingDay: "Thursday", worker: "Worker R", finalWeight: 152.0, loss: 2.0, discountRate: 0.12, productNumber: "PROD123473", status: "Completed", edit: "Edit" },
-        { no: 19, orderDateTime: "2023-06-19 05:00", customerNumber: "Customer S (019)", orderWeight: 160.0, part: "Part S", orderAmount: 2500, arrivalDateTime: "2023-06-23 07:00", receiver: "Receiver S", item: "Item S", actualWeight: 159.0, actualPurchasePrice: 2475, historyNumber: "HIST123474", slaughterDate: "2023-06-19", unitPrice: 15.63, workingDay: "Friday", worker: "Worker S", finalWeight: 157.0, loss: 2.0, discountRate: 0.1, productNumber: "PROD123474", status: "Pending", edit: "Edit" },
-        { no: 20, orderDateTime: "2023-06-20 06:00", customerNumber: "Customer T (020)", orderWeight: 165.0, part: "Part T", orderAmount: 2600, arrivalDateTime: "2023-06-24 08:00", receiver: "Receiver T", item: "Item T", actualWeight: 164.0, actualPurchasePrice: 2574, historyNumber: "HIST123475", slaughterDate: "2023-06-20", unitPrice: 15.76, workingDay: "Saturday", worker: "Worker T", finalWeight: 162.0, loss: 2.0, discountRate: 0.18, productNumber: "PROD123475", status: "Shipped", edit: "Edit" },
-        // Add more data as required (up to 20 items)
-    ]);
-
+    const [processingResults,setProcessingResults] = useState([]);
+    const [searchResults, setSearchResults] = useState([]);
     const [currentPage, setCurrentPage] = useState(1);
-    const [resultsPerPage, setResultsPerPage] = useState(10);
+    const [resultsPerPage, setResultsPerPage] = useState(30);
+    const [SearchOption, setSearchOption] = useState('')
+    const [TextForSearch, setTextForSearch] = useState('')
+    const [DeleteModalOpen, setDeleteModalOpen] = useState(false);
+    const [EditModal, setEditModal] = useState('');
+    const [ProductNo, setProductNo] = useState('');
+    const [selectedProduct, setSelectedProduct] = useState('');
+
+
+    // const handleSearchOption = (event) => {
+    //     setSearchOption(event.target.value);
+    // }
+    //
+    // const handleSearch = () => {
+    //     const lowerCasedFilter = TextForSearch.toLowerCase();
+    //     const filteredData = searchResults.filter(item => {
+    //         switch (SearchOption) {
+    //             case '발주일시':
+    //                 return item.OrderDate.toLowerCase().includes(lowerCasedFilter);
+    //             case '입고일시':
+    //                 return item.StockDate.toLowerCase().includes(lowerCasedFilter);
+    //             case '작업일':
+    //                 return item.ProductDate.toLowerCase().includes(lowerCasedFilter);
+    //             case '거래처':
+    //                 return item.Client.toLowerCase().includes(lowerCasedFilter);
+    //             case '부위':
+    //                 return item.Part.toLowerCase().includes(lowerCasedFilter);
+    //             case '제품번호':
+    //                 return item.ProductNo.toLowerCase().includes(lowerCasedFilter);
+    //             case '상태':
+    //                 return item.ProductSituation.toLowerCase().includes(lowerCasedFilter);
+    //             default:
+    //                 return false;
+    //         }
+    //     });
+    //     setProcessingResults(filteredData);
+    // };
+    //
+    // const handleSearch2 = (searchValue) => {
+    //     console.log(searchValue);
+    //     setTextForSearch(searchValue);
+    //     const lowerCasedFilter = searchValue.toLowerCase();
+    //     const filteredData = searchResults.filter(item => {
+    //         switch (SearchOption) {
+    //             case '발주일시':
+    //                 return item.OrderDate.toLowerCase().includes(lowerCasedFilter);
+    //             case '입고일시':
+    //                 return item.StockDate.toLowerCase().includes(lowerCasedFilter);
+    //             case '작업일':
+    //                 return item.ProductDate.toLowerCase().includes(lowerCasedFilter);
+    //             case '거래처':
+    //                 return item.Client.toLowerCase().includes(lowerCasedFilter);
+    //             case '부위':
+    //                 return item.Part.toLowerCase().includes(lowerCasedFilter);
+    //             case '제품번호':
+    //                 return item.ProductNo.toLowerCase().includes(lowerCasedFilter);
+    //             case '상태':
+    //                 return item.ProductSituation.toLowerCase().includes(lowerCasedFilter);
+    //             default:
+    //                 return false;
+    //         }
+    //     });
+    //     setProcessingResults(filteredData);
+    // };
 
     const indexOfLastResult = currentPage * resultsPerPage;
     const indexOfFirstResult = indexOfLastResult - resultsPerPage;
     const currentResults = processingResults.slice(indexOfFirstResult, indexOfLastResult);
 
+    const [workingDay, setWorkingDay] = useState('');
+    const [loss, setLoss] = useState('');
+    const [unitPrice, setUnitPrice] = useState('');
+    const [finalWeight, setFinalWeight] = useState('');
+    const [discountRate, setDiscountRate] = useState('');
+
+    const [isRawMaterialNumberOpen, setIsRawMaterialNumberOpen] = useState(false);
+    const [rawMaterialNumberOptions, setRawMaterialNumberOptions] = useState([]);
+    const [selectedRawMaterialNumberOption ,setSelectedRawMaterialNumberOption] = useState('')
     const handlePageChange = (pageNumber) => {
         setCurrentPage(pageNumber);
     };
@@ -42,6 +101,151 @@ const ProcessingPage = () => {
         setResultsPerPage(parseInt(e.target.value));
         setCurrentPage(1);
     };
+    const fetchSearchResults = async () => {
+        try {
+            const response = await axios.get('http://localhost:8000/api/product/');
+            console.log(response.data);
+            setSearchResults(response.data); // 초기 데이터 설정
+            setProcessingResults(response.data);
+        } catch (error) {
+            console.error('데이터 가져오기 에러:', error);
+        }
+    };
+    useEffect(() => {
+        fetchSearchResults();
+    }, []);
+
+    const { authState } = useAuth();
+    let empNo = '';
+    try {
+        empNo = authState.empNo;
+    } catch (e) {}
+    // const handleDateChange = (date) =>{
+    //     const currentTime = new Date();
+    //     const selectedDateWithTime = new Date(
+    //         date.getFullYear(),
+    //         date.getMonth(),
+    //         date.getDate(),
+    //         currentTime.getHours(),
+    //         currentTime.getMinutes(),
+    //         currentTime.getSeconds()
+    //     ); // 선택된 날짜에 현재 시분초를 추가합니다.
+    //     setWorkingDay(selectedDateWithTime);
+    //     console.log(workingDay)
+    // };
+    const handleRegisterNavigation = async () => {
+        console.log(
+            selectedRawMaterialNumberOption,
+            workingDay ? format(workingDay, "yyyy-MM-dd'T'HH:mm:ss") : null,
+            finalWeight,
+            loss,
+            unitPrice,
+            discountRate
+        )
+        try {
+            const response = await axios.post('http://localhost:8000/api/product/',{
+                Method: 'post',
+                StockNo: selectedRawMaterialNumberOption,
+                ProductWorker: authState.empNo,
+                WeightAfterWork: finalWeight,
+                LossWeight: loss,
+                ProductPrice: unitPrice,
+                DiscountRate: discountRate,
+                ProductSituation: '제품 생성',
+                Quantity:1,
+            });
+            console.log(response);
+            fetchSearchResults();
+            setWorkingDay('');
+            // setSelectedRawMaterialNumberOption('')
+            setFinalWeight('');
+            setLoss('');
+            setUnitPrice('');
+            setDiscountRate('');
+        } catch (error) {
+            console.error('데이터 생성 에러:', error);
+        }
+    };
+
+    const fetchRawMaterialNumberOptions = async () => {
+        try {
+            const response = await axios.get('http://localhost:8000/api/stockInfo/'); // Replace with actual URL for parts
+            console.log(response.data);
+            setRawMaterialNumberOptions(response.data);
+        } catch (error) {
+            console.error('Error fetching part data:', error);
+        }
+    };
+    const handleDropdownClickRawMaterialNumber = () => {
+        if (!isRawMaterialNumberOpen) {
+            fetchRawMaterialNumberOptions().then(r => null);
+        }
+        setIsRawMaterialNumberOpen(!isRawMaterialNumberOpen);
+    };
+
+    const handleRawMaterialNumberOptionClick = (option) => {
+        setSelectedRawMaterialNumberOption(option.StockNo);
+        setIsRawMaterialNumberOpen(false);
+    };
+
+    // const handleDelete = async (ProductNo) => {
+    //     console.log(ProductNo);
+    //     try {
+    //         const response = await axios.post('http://localhost:8000/api/product/'
+    //         ,{
+    //             Method: 'delete',
+    //             ProductNo: ProductNo
+    //         });
+    //         console.log(response);
+    //         fetchSearchResults();
+    //         setWorkingDay('');
+    //         setSelectedRawMaterialNumberOption('')
+    //         setFinalWeight('');
+    //         setLoss('');
+    //         setUnitPrice('');
+    //         setDiscountRate('');
+    //     } catch (error) {
+    //         console.error('데이터 삭제 에러:', error);
+    //     }
+    // };
+
+    //2차 가공 삭제버튼 모달
+    const handleDelete = (ProductNo) => {
+        setDeleteModalOpen(true);
+        setProductNo(ProductNo);
+    };
+
+    const confirmDelete = async () => {
+        try {
+            const response = await axios.post(`http://localhost:8000/api/product/`
+            ,{
+                Method: 'delete',
+                ProductNo: ProductNo
+                });
+            console.log(response);
+            fetchSearchResults();
+            setWorkingDay('');
+            setSelectedRawMaterialNumberOption('');
+            setFinalWeight('');
+            setLoss('');
+            setUnitPrice('');
+            setDiscountRate('');
+            alert("삭제되었습니다.");
+            setDeleteModalOpen(false);
+        } catch (error) {
+            console.error('데이터 삭제 에러:', error);
+        }
+    };
+
+    //2차 가공 수정 모달
+    const handleEdit = (product) => {
+        setEditModal(true);
+        setSelectedProduct(product);
+    };
+
+    const handleRawMaterial = (event) => {
+        setSelectedRawMaterialNumberOption(event.target.value);
+    };
 
     return (
         <div>
@@ -49,27 +253,53 @@ const ProcessingPage = () => {
                 <h2>2차가공 페이지</h2>
                 <div className="input-container">
                     <label htmlFor="rawMaterialNumber">원료 번호</label>
-                    <input type="text" id="rawMaterialNumber"/>
+                    <select className="selectid" id="rawMaterialNumber" onClick={handleDropdownClickRawMaterialNumber}
+                            onChange={handleRawMaterial}>
+                            <option value="" disabled selected>원료번호를 선택하세요.</option>
+                            {rawMaterialNumberOptions.map((option, index) => (
+                                <option key={index} selected>
+                                    {option.StockNo}
+                                </option>
+                            ))}
+                    </select>
+
+
+                {/*<input type="text" id="rawMaterialNumber" value={selectedRawMaterialNumberOption} onClick={handleDropdownClickRawMaterialNumber}/>*/}
+                {/*    {isRawMaterialNumberOpen && (*/}
+                {/*        <ul style={{ position: 'relative', top:'100%', backgroundColor: 'white', border: '1px solid #ccc', listStyle: 'none', margin: 0, padding: 0, zIndex: 0 }}>*/}
+                {/*            {rawMaterialNumberOptions.map((option, index) => (*/}
+                {/*                <li key={index} onClick={() => handleRawMaterialNumberOptionClick(option)} style={{ padding: '8px', cursor: 'pointer' }}>*/}
+                {/*                    {option.StockNo}*/}
+                {/*                </li>*/}
+                {/*            ))}*/}
+                {/*        </ul>*/}
+                {/*    )}*/}
                     <button>조회</button>
                 </div>
+
                 <div className="input-container">
-                    <label htmlFor="workingDay">작업일(요일)</label>
-                    <input type="text" id="workingDay"/>
+                    <div className="loss-label">
                     <label htmlFor="loss">로스</label>
-                    <input type="text" id="loss"/>
+                    <input type="text" id="loss" value={loss} onChange={(e) => setLoss(e.target.value)}/></div>
                 </div>
+
                 <div className="input-container">
                     <label htmlFor="worker">작업자</label>
-                    <input type="text" id="worker"/>
+                    <text id="ordererID">{empNo}</text>
+                    <div className="unitPrice-label">
                     <label htmlFor="unitPrice">단가</label>
-                    <input type="text" id="unitPrice"/>
+                    <input type="text" id="unitPrice" value={unitPrice} onChange={(e) => setUnitPrice(e.target.value)}/></div>
                 </div>
+
                 <div className="input-container">
                     <label htmlFor="finalWeight">작업 후 중량</label>
-                    <input type="text" id="finalWeight"/>
+                    <input type="text" id="finalWeight" value={finalWeight} onChange={(e) => setFinalWeight(e.target.value)}/>
+                    <div className="discountRate-label">
                     <label htmlFor="discountRate">할인율</label>
-                    <input type="text" id="discountRate"/>
+                    <input type="text" id="discountRate" value={discountRate} onChange={(e) => setDiscountRate(e.target.value)}/></div>
                 </div>
+
+                <button onClick={handleRegisterNavigation} className="register-button">등록</button>
             </div>
             <div className="processing-page-container">
                 <div className="dropdown-container">
@@ -80,12 +310,24 @@ const ProcessingPage = () => {
                         <option value="30">30</option>
                     </select>
                 </div>
-                <div className="input-container">
-                    <label htmlFor="orderDateTimeSearch">컬럼별 조회 목록</label>
-                    <input type="text" id="orderDateTimeSearch"/>
-                    <button>조회</button>
-                </div>
-                <table className="results-table">
+
+                <ProSearch setProcessingResults={setProcessingResults} />
+
+                {/*<div className="input-container">*/}
+                {/*    <select id="SearchOption" value={SearchOption} onChange={handleSearchOption}>*/}
+                {/*        <option value={'발주일시'}>발주일시</option>*/}
+                {/*        <option value={'입고일시'}>입고일시</option>*/}
+                {/*        <option value={'거래처'}>거래처</option>*/}
+                {/*        <option value={'부위'}>부위</option>*/}
+                {/*        <option value={'작업일'}>작업일</option>*/}
+                {/*        <option value={'제품번호'}>제품번호</option>*/}
+                {/*        <option value={'상태'}>상태</option>*/}
+                {/*    </select>*/}
+                {/*    <input type="text" id="TextForSearch" value={TextForSearch}*/}
+                {/*           onChange={(e) => handleSearch2(e.target.value)}/>*/}
+                {/*    <button onClick={handleSearch}>조회</button>*/}
+                {/*</div>*/}
+                <table className="table-container">
                     <thead>
                         <tr>
                             <th>순번</th>
@@ -108,7 +350,7 @@ const ProcessingPage = () => {
                             <th>로스</th>
                             <th>단가</th>
                             <th>할인율</th>
-                            <th>제품번호</th>
+                            <th>원료번호</th>
                             <th>상태</th>
                             <th>수정</th>
                         </tr>
@@ -116,29 +358,33 @@ const ProcessingPage = () => {
                     <tbody>
                         {currentResults.map((result, index) => (
                             <tr key={index}>
-                                <td>{result.no}</td>
-                                <td>{result.orderDateTime}</td>
-                                <td>{result.customerNumber}</td>
-                                <td>{result.orderWeight}</td>
-                                <td>{result.part}</td>
-                                <td>{result.orderAmount}</td>
-                                <td>{result.arrivalDateTime}</td>
-                                <td>{result.receiver}</td>
-                                <td>{result.item}</td>
-                                <td>{result.actualWeight}</td>
-                                <td>{result.actualPurchasePrice}</td>
-                                <td>{result.historyNumber}</td>
-                                <td>{result.slaughterDate}</td>
-                                <td>{result.unitPrice}</td>
-                                <td>{result.workingDay}</td>
-                                <td>{result.worker}</td>
-                                <td>{result.finalWeight}</td>
-                                <td>{result.loss}</td>
-                                <td>{result.unitPrice}</td>
-                                <td>{result.discountRate}</td>
-                                <td>{result.productNumber}</td>
-                                <td>{result.status}</td>
-                                <td>{result.edit}</td>
+                                <td>{index+1}</td>
+                                <td>{result.OrderDate}</td>
+                                <td>{result.Client}</td>
+                                <td>{result.OrderWeight}</td>
+                                <td>{result.Part}</td>
+                                <td>{result.OrderPrice}</td>
+                                <td>{result.StockDate}</td>
+                                <td>{result.StockWorker}</td>
+                                <td>{result.Stockitem}</td>
+                                <td>{result.RealWeight}</td>
+                                <td>{result.RealPrice}</td>
+                                <td>{result.MeterialNo}</td>
+                                <td>{result.SlaugtherDate}</td>
+                                <td>{result.UnitPrice}</td>
+                                <td>{result.ProductDate ? format(new Date(result.ProductDate), 'yyyy년 MM월 dd일 HH시 mm분 ss초') : null}</td>
+                                <td>{result.ProductWorker}</td>
+                                <td>{result.WeightAfterWork}</td>
+                                <td>{result.LossWeight}</td>
+                                <td>{result.ProductPrice}</td>
+                                <td>{result.DiscountRate}</td>
+                                <td>{result.ProductNo}</td>
+                                <td>{result.ProductSituation}</td>
+                                <td>
+                                    <button onClick={() => handleEdit(result)}>수정</button>
+                                    /
+                                    <button onClick={() => handleDelete(result.ProductNo)}>삭제</button>
+                                </td>
                             </tr>
                         ))}
                     </tbody>
@@ -148,6 +394,271 @@ const ProcessingPage = () => {
                     totalPages={Math.ceil(processingResults.length / resultsPerPage)}
                     onPageChange={handlePageChange}
                 />
+
+                {/* 모달 오픈 */}
+                <DeleteModal
+                    open={DeleteModalOpen}
+                    onClose={() => setDeleteModalOpen(false)}
+                    onConfirm={confirmDelete}>
+                </DeleteModal>
+
+
+                <Dialog open={EditModal} onClose={() => setEditModal(false)}>
+                    <div className="modal-overlay">
+                        <div className="modal-edit">
+                            <h2>2차가공 수정</h2>
+                            <h3>원료번호: {selectedProduct.ProductNo}</h3>
+                            <div className="editbtn1">
+                            <button className="editbtn"
+                                    onClick={async () => {
+                                        try {
+                                            const response = await axios.post('http://localhost:8000/api/product/', {
+                                                Method: 'update',
+                                                ProductNo: selectedProduct.ProductNo,
+                                                RealWeight: selectedProduct.RealWeight,
+                                                RealPrice: selectedProduct.RealPrice,
+                                                MeterialNo: selectedProduct.MeterialNo,
+                                                SlaugtherDate: selectedProduct.SlaugtherDate,
+                                                UnitPrice: selectedProduct.UnitPrice,
+                                                ProductDate: selectedProduct.ProductDate,
+                                                ProductWorker: selectedProduct.ProductWorker,
+                                                WeightAfterWork: selectedProduct.WeightAfterWork,
+                                                LossWeight: selectedProduct.LossWeight,
+                                                ProductPrice: selectedProduct.ProductPrice,
+                                                DiscountRate: selectedProduct.DiscountRate,
+                                            });
+                                            alert('수정되었습니다.');
+                                            fetchSearchResults();
+                                            setEditModal(false);
+                                        } catch (error) {
+                                            console.error('수정 에러:', error);
+                                            alert('수정 실패.');
+                                        }
+                                    }}
+                            >
+                                저장
+                            </button>
+                            <button className="editbtn" onClick={() => setEditModal(false)}>취소</button>
+
+                            </div>
+                                {selectedProduct && (
+                                <>
+                                    <div className="allEdit">
+                                    <div className="input-container">
+                                        <div className="edit">
+                                        <label>발주일시 : {selectedProduct.OrderDate}</label>
+                                        </div>
+                                        <div className="updateinput">
+                                            <div className="left">
+                                                <label>실중량 :</label>
+                                            </div>
+                                            <div className="right">
+                                                <input
+                                                type="text"
+                                                value={selectedProduct.RealWeight}
+                                                onChange={(e) => setSelectedProduct({
+                                                    ...selectedProduct,
+                                                    RealWeight: e.target.value
+                                                })}
+                                            />
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div className="input-container">
+                                        <div className="edit">
+                                        <label>거래처(번호) : {selectedProduct.Client}</label>
+                                        </div>
+                                            <div className="updateinput">
+                                                <div className="left">
+                                                    <label>실 매입가 :</label>
+                                                </div>
+                                            <div className="right">
+                                                <input
+                                                    type="text"
+                                                    value={selectedProduct.RealPrice}
+                                                    onChange={(e) => setSelectedProduct({
+                                                        ...selectedProduct,
+                                                        RealPrice: e.target.value
+                                                    })}
+                                                />
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div className="input-container">
+                                        <div className="edit">
+                                        <label>발주중량(KG) : {selectedProduct.OrderWeight}</label>
+                                        </div>
+                                            <div className="updateinput">
+                                                <div className="left">
+                                                    <label>이력번호 :</label>
+                                                </div>
+                                            <div className="right">
+                                                <input
+                                                    type="text"
+                                                    value={selectedProduct.MeterialNo}
+                                                    onChange={(e) => setSelectedProduct({
+                                                        ...selectedProduct,
+                                                        MeterialNo: e.target.value
+                                                    })}
+                                                />
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div className="input-container">
+                                        <div className="edit">
+                                        <label>부위 : {selectedProduct.Part}</label>
+                                        </div>
+                                            <div className="updateinput">
+                                                <div className="left">
+                                                    <label>도축일 :</label>
+                                                </div>
+                                                <div className="right">
+                                                <input
+                                                    type="text"
+                                                    value={selectedProduct.SlaugtherDate}
+                                                    onChange={(e) => setSelectedProduct({
+                                                        ...selectedProduct,
+                                                        SlaugtherDate: e.target.value
+                                                    })}
+                                                />
+                                                </div>
+                                        </div>
+                                    </div>
+
+                                    <div className="input-container">
+                                        <div className="edit">
+                                        <label>발주금액 : {selectedProduct.OrderPrice}</label>
+                                        </div>
+                                            <div className="updateinput">
+                                                <div className="left">
+                                                    <label>입고단가 :</label>
+                                                </div>
+                                                <div className="right">
+                                                <input
+                                                    type="text"
+                                                    value={selectedProduct.UnitPrice}
+                                                    onChange={(e) => setSelectedProduct({
+                                                        ...selectedProduct,
+                                                        UnitPrice: e.target.value
+                                                    })}
+                                                />
+                                                </div>
+                                        </div>
+                                    </div>
+
+                                    <div className="input-container">
+                                        <div className="edit">
+                                        <label>입고일시 : {selectedProduct.StockDate}</label>
+                                        </div>
+                                            <div className="updateinput">
+                                                <div className="left">
+                                                    <label>단가 :</label>
+                                                </div>
+                                                <div className="right">
+                                                <input
+                                                    type="text"
+                                                    value={selectedProduct.ProductPrice}
+                                                    onChange={(e) => setSelectedProduct({
+                                                        ...selectedProduct,
+                                                        ProductPrice: e.target.value
+                                                    })}
+                                                />
+                                                </div>
+                                        </div>
+                                    </div>
+
+                                    <div className="input-container">
+                                        <div className="edit">
+                                        <label>입고자명 : {selectedProduct.StockWorker}</label>
+                                        </div>
+                                            <div className="updateinput">
+                                                <div className="left">
+                                                    <label>작업자 :</label>
+                                                </div>
+                                                <div className="right">
+                                                <input
+                                                    type="text"
+                                                    value={selectedProduct.ProductWorker}
+                                                    onChange={(e) => setSelectedProduct({
+                                                        ...selectedProduct,
+                                                        ProductWorker: e.target.value
+                                                    })}
+                                                />
+                                                </div>
+                                        </div>
+                                    </div>
+
+                                    <div className="input-container">
+                                        <div className="edit">
+                                        <label>입고품목 : {selectedProduct.Stockitem}</label>
+                                        </div>
+                                            <div className="updateinput">
+                                                <div className="left">
+                                                    <label>작업 후 중량 :</label>
+                                                </div>
+                                                <div className="right">
+                                                <input
+                                                    type="text"
+                                                    value={selectedProduct.WeightAfterWork}
+                                                    onChange={(e) => setSelectedProduct({
+                                                        ...selectedProduct,
+                                                        WeightAfterWork: e.target.value
+                                                    })}
+                                                />
+                                                </div>
+                                        </div>
+                                    </div>
+
+                                    <div className="input-container">
+                                        <div className="edit">
+                                        <label>작업일 : {selectedProduct.ProductDate ? format(new Date(selectedProduct.ProductDate), 'yyyy년 MM월 dd일 HH시 mm분 ss초') : null}</label>
+                                        </div>
+                                            <div className="updateinput">
+                                                <div className="left">
+                                                    <label>로스 :</label>
+                                                </div>
+                                                <div className="right">
+                                                <input
+                                                    type="text"
+                                                    value={selectedProduct.LossWeight}
+                                                    onChange={(e) => setSelectedProduct({
+                                                        ...selectedProduct,
+                                                        LossWeight: e.target.value
+                                                    })}
+                                                />
+                                                </div>
+                                        </div>
+                                    </div>
+
+                                    <div className="input-container">
+                                        <div className="edit">
+                                        <label>상태 : {selectedProduct.ProductSituation}</label>
+                                        </div>
+                                            <div className="updateinput">
+                                                <div className="left">
+                                                    <label>할인율 :</label>
+                                                </div>
+                                                <div className="right">
+                                                <input
+                                                type="text"
+                                                value={selectedProduct.DiscountRate}
+                                                onChange={(e) => setSelectedProduct({
+                                                    ...selectedProduct,
+                                                    DiscountRate: e.target.value
+                                                })}
+                                            />
+                                                </div>
+                                        </div>
+                                    </div>
+                                    </div>
+                                </>
+                            )}
+                        </div>
+                    </div>
+                </Dialog>
             </div>
         </div>
     );

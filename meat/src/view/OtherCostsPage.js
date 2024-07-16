@@ -1,3 +1,4 @@
+//기타 비용
 import React, { useState, useEffect } from 'react';
 import Pagination from '../component/Pagination';
 import '../css/Pagination.css'; // Make sure the path is correct
@@ -259,7 +260,7 @@ const OthersAddProductPage = () => {
                     </select>
                 </div>
                 {currentResults.length > 0 ? (
-                    <table className="results-table">
+                    <table className="table-container">
                         <thead>
                             <tr>
                                 <th>No.</th>

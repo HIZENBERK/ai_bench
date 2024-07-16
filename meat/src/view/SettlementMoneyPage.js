@@ -1,3 +1,4 @@
+//결산 > 금액 페이지
 import React, { useState } from "react";
 import Pagination from '../component/Pagination'; // Ensure this path is correct
 import '../css/Pagination.css';
@@ -60,7 +61,7 @@ const OthersProductPage = () => {
                         <option value="30">30</option>
                     </select>
             <div className="procurement-page-container">
-                <table className="results-table">
+                <table className="table-container">
                     <thead>
                         <tr>
                             <th>이력번호</th>
