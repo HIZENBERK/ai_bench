@@ -235,65 +235,68 @@ const ProSearch = ({ setProcessingResults, setFilteredResults, setIncomingResult
 
     return (
         <div className="input-container">
-            {setProcessingResults != null ?
-                <select id="SearchOption" value={SearchOption} onChange={handleSearchOption}>
-                    <option value={'발주일시'}>발주일시</option>
-                    <option value={'입고일시'}>입고일시</option>
-                    <option value={'거래처'}>거래처</option>
-                    <option value={'부위'}>부위</option>
-                    <option value={'작업일'}>작업일</option>
-                    <option value={'원료번호'}>원료번호</option>
-                    <option value={'상태'}>상태</option>
-                </select>
-            : null}
-
-            {setFilteredResults != null ?
-                <select id="SearchOption" value={SearchOption} onChange={handleSearchOption}>
-                    <option value={'발주일시'}>발주일시</option>
-                    <option value={'입고예정일'}>입고예정일</option>
-                    <option value={'거래처'}>거래처</option>
-                    <option value={'부위'}>부위</option>
-                    <option value={'작업일'}>작업일</option>
-                    <option value={'발주번호'}>발주번호</option>
-                    <option value={'상태'}>상태</option>
-                </select>
-            : null}
-
-            {setIncomingResults != null ?
-                <select id="SearchOption" value={SearchOption} onChange={handleSearchOption}>
-                    <option value={'발주일시'}>발주일시</option>
-                    <option value={'입고예정일'}>입고예정일</option>
-                    <option value={'거래처'}>거래처</option>
-                    <option value={'입고번호'}>입고번호</option>
-                </select>
-            : null}
 
             {/* 2차 가공 검색 */}
             {setProcessingResults != null ?
-                <div>
-                    <input type="text" id="TextForSearch" value={TextForSearch}
-                           onChange={(e) => handleSearch2(e.target.value)}/>
-                    <button onClick={handleSearch}>조회</button>
+                <div className="selectInput">
+                    <select id="SearchOption" value={SearchOption} onChange={handleSearchOption}>
+                        <option value={'발주일시'}>발주일시</option>
+                        <option value={'입고일시'}>입고일시</option>
+                        <option value={'거래처'}>거래처</option>
+                        <option value={'부위'}>부위</option>
+                        <option value={'작업일'}>작업일</option>
+                        <option value={'원료번호'}>원료번호</option>
+                        <option value={'상태'}>상태</option>
+                    </select>
+                    <div className="textInput">
+                        <input type="text" id="TextForSearch" value={TextForSearch}
+                               onChange={(e) => handleSearch2(e.target.value)}/>
+                        <button onClick={handleSearch}>조회</button>
+                    </div>
                 </div>
                 : null}
-
+            
             {/* 발주 검색 */}
             {setFilteredResults != null ?
-                <div>
-                    <input type="text" id="TextForSearch1" value={TextForSearch1}
-                           onChange={(e) => handleSearch4(e.target.value)} />
-                    <button onClick={handleSearch3}>조회</button>
+                <div className="selectInput">
+                    <select id="SearchOption" value={SearchOption} onChange={handleSearchOption}>
+                        <option value={'발주일시'}>발주일시</option>
+                        <option value={'입고예정일'}>입고예정일</option>
+                        <option value={'거래처'}>거래처</option>
+                        <option value={'부위'}>부위</option>
+                        <option value={'작업일'}>작업일</option>
+                        <option value={'발주번호'}>발주번호</option>
+                        <option value={'상태'}>상태</option>
+                    </select>
+                    <div className="textInput">
+                        <input type="text" id="TextForSearch1" value={TextForSearch1}
+                               onChange={(e) => handleSearch4(e.target.value)}/>
+                        <button onClick={handleSearch3}>조회</button>
+                    </div>
                 </div>
-            : null}
+                : null}
 
             {/*입고 검색*/}
             {setIncomingResults != null ?
-                <div>
-                    <input type="text" id="TextForSearch2" value={TextForSearch2}
-                           onChange={(e) => handleSearch6(e.target.value)} />
-                    <button onClick={handleSearch5}>조회</button>
+                <div className="selectInput">
+                    <select id="SearchOption" value={SearchOption} onChange={handleSearchOption}>
+                        <option value={'발주일시'}>발주일시</option>
+                        <option value={'입고예정일'}>입고예정일</option>
+                        <option value={'거래처'}>거래처</option>
+                        <option value={'입고번호'}>입고번호</option>
+                    </select>
+                    <div className="textInput">
+                        <input type="text" id="TextForSearch2" value={TextForSearch2}
+                               onChange={(e) => handleSearch6(e.target.value)}/>
+                        <button onClick={handleSearch5}>조회</button>
+                    </div>
                 </div>
                 : null}
+
+
+
+
+
 
         </div>
     );

@@ -24,6 +24,16 @@ select option[value=""][disabled]{
     margin-left: 70px;
 }
 
+.selectInput {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+.textInput {
+    margin-left: 15px;
+}
+
 /* 모달 */
 .modal-overlay {
     position: fixed;
