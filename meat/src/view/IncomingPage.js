@@ -7,8 +7,10 @@ import Datepicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import axios from "axios";
 import { useAuth } from "../component/AuthContext";
+import ProSearch from "../component/ProSearch";
 
 const IncomingPage = () => {
+    const [incomingResults, setIncomingResults] = useState([]);
     const [searchResults, setSearchResults] = useState([]);
     const [filteredResults, setFilteredResults] = useState([]);
     const [selectedOrderNumber, setSelectedOrderNumber] = useState('');
@@ -37,8 +39,6 @@ const IncomingPage = () => {
     const userJob = authState.job; // 직급
     const userPosition = authState.position; // 직위
 
-    
-
     let empNo = 'admin';
     try {
         empNo = authState.empNo;
@@ -61,9 +61,9 @@ const IncomingPage = () => {
     }, [userJob, userPosition]);
 
 
-    useEffect(() => {
-        handleSearch();
-    }, [textForSearch, searchOption, searchResults]);
+    // useEffect(() => {
+    //     handleSearch();
+    // }, [textForSearch, searchOption, searchResults]);
 
     const fetchInitialData = async () => {
         try {
@@ -71,10 +71,12 @@ const IncomingPage = () => {
                 axios.get('http://localhost:8000/api/order/'),
                 axios.get('http://localhost:8000/api/stock/')
             ]);
+            console.log(orderResponse.data , stockResponse.data);
             setOrderNumbers(orderResponse.data);
             const combinedResults = mergeData(stockResponse.data, orderResponse.data);
             setSearchResults(combinedResults);
             setFilteredResults(combinedResults);
+            setIncomingResults(combinedResults);
         } catch (error) {
             console.error('데이터 가져오기 에러:', error);
         }
@@ -106,34 +108,34 @@ const IncomingPage = () => {
         setCurrentPage(1);
     };
 
-    const handleSearchOptionChange = (event) => {
-        setSearchOption(event.target.value);
-    };
-
-    const handleSearch = () => {
-        if (!textForSearch) {
-            setFilteredResults(searchResults);
-            return;
-        }
-
-        const filtered = searchResults.filter(result => {
-            switch (searchOption) {
-                case '발주일시':
-                    return result.order.OrderDate?.includes(textForSearch);
-                case '입고 예정일':
-                    return result.order.ETA?.includes(textForSearch);
-                case '거래처(번호)':
-                    return result.order.Client?.includes(textForSearch);
-                case '입고 번호':
-                    return result.OrderNo?.includes(textForSearch);
-                default:
-                    return false;
-            }
-        });
-
-        setFilteredResults(filtered);
-        setCurrentPage(1);
-    };
+    // const handleSearchOptionChange = (event) => {
+    //     setSearchOption(event.target.value);
+    // };
+    //
+    // const handleSearch = () => {
+    //     if (!textForSearch) {
+    //         setFilteredResults(searchResults);
+    //         return;
+    //     }
+    //
+    //     const filtered = searchResults.filter(result => {
+    //         switch (searchOption) {
+    //             case '발주일시':
+    //                 return result.order.OrderDate?.includes(textForSearch);
+    //             case '입고 예정일':
+    //                 return result.order.ETA?.includes(textForSearch);
+    //             case '거래처(번호)':
+    //                 return result.order.Client?.includes(textForSearch);
+    //             case '입고 번호':
+    //                 return result.OrderNo?.includes(textForSearch);
+    //             default:
+    //                 return false;
+    //         }
+    //     });
+    //
+    //     setFilteredResults(filtered);
+    //     setCurrentPage(1);
+    // };
 
     const handleRegisterNavigation = async () => {
         try {
@@ -226,15 +228,19 @@ const IncomingPage = () => {
                     </select>
                 </div>
                 <div className="input-container">
-                    <label htmlFor="orderDateTimeSearch">컬럼별 조회 목록</label>
-                    <select id="searchOption" value={searchOption} onChange={handleSearchOptionChange}>
-                        <option value="발주일시">발주일시</option>
-                        <option value="입고 예정일">입고 예정일</option>
-                        <option value="거래처(번호)">거래처(번호)</option>
-                        <option value="입고 번호">입고 번호</option>
-                    </select>
-                    <input type="text" id="textForSearch" value={textForSearch} onChange={(e) => setTextForSearch(e.target.value)} />
-                    <button onClick={handleSearch}>조회</button>
+                    {/*<label htmlFor="orderDateTimeSearch">컬럼별 조회 목록</label>*/}
+                    {/*<select id="searchOption" value={searchOption} onChange={handleSearchOptionChange}>*/}
+                    {/*    <option value="발주일시">발주일시</option>*/}
+                    {/*    <option value="입고 예정일">입고 예정일</option>*/}
+                    {/*    <option value="거래처(번호)">거래처(번호)</option>*/}
+                    {/*    <option value="입고 번호">입고 번호</option>*/}
+                    {/*</select>*/}
+                    {/*<input type="text" id="textForSearch" value={textForSearch} onChange={(e) => setTextForSearch(e.target.value)} />*/}
+                    {/*<button onClick={handleSearch}>조회</button>*/}
+
+                    <ProSearch setIncomingResults={setIncomingResults}/>
+
+
                 </div>
                 <table className="table-container">
                     <thead>

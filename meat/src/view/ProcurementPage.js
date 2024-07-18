@@ -7,6 +7,7 @@ import Datepicker from "../component/DatePicker";
 import { useAuth } from "../component/AuthContext";
 import axios from "axios";
 import { format } from "date-fns";
+import ProSearch from "../component/ProSearch";
 
 const ProcurementPage = () => {
 
@@ -48,6 +49,10 @@ const ProcurementPage = () => {
             console.error('데이터 가져오기 에러:', error);
         }
     };
+
+    useEffect(() => {
+        fetchSearchResults();
+    }, []);
 
     const navigate = useNavigate();
     const { authState } = useAuth();
@@ -148,52 +153,7 @@ const ProcurementPage = () => {
         }
     };
 
-    const handleSearch = () => {
-        const lowerCasedFilter = TextForSearch.toLowerCase();
-        const filteredData = searchResults.filter(item => {
-            switch (SearchOption) {
-                case '발주일시':
-                    return item.OrderDate.toLowerCase().includes(lowerCasedFilter);
-                case '입고예정일':
-                    return item.ETA.toLowerCase().includes(lowerCasedFilter);
-                case '거래처':
-                    return item.Client.toLowerCase().includes(lowerCasedFilter);
-                case '상태':
-                    return item.OrderSituation.toLowerCase().includes(lowerCasedFilter);
-                case '발주번호':
-                    return item.OrderNo.toLowerCase().includes(lowerCasedFilter);
-                case '부위':
-                    return item.Part.toLowerCase().includes(lowerCasedFilter);
-                default:
-                    return false;
-            }
-        });
-        setFilteredResults(filteredData);
-    };
-    const handleSearch2 = (searchValue) => {
-        console.log(searchValue);
-        setTextForSearch(searchValue);
-        const lowerCasedFilter = searchValue.toLowerCase();
-        const filteredData = searchResults.filter(item => {
-            switch (SearchOption) {
-                case '발주일시':
-                    return item.OrderDate.toLowerCase().includes(lowerCasedFilter);
-                case '입고예정일':
-                    return item.ETA.toLowerCase().includes(lowerCasedFilter);
-                case '거래처':
-                    return item.Client.toLowerCase().includes(lowerCasedFilter);
-                case '상태':
-                    return item.OrderSituation.toLowerCase().includes(lowerCasedFilter);
-                case '발주번호':
-                    return item.OrderNo.toLowerCase().includes(lowerCasedFilter);
-                case '부위':
-                    return item.Part.toLowerCase().includes(lowerCasedFilter);
-                default:
-                    return false;
-            }
-        });
-        setFilteredResults(filteredData);
-    };
+
 
     const handleDropdownClickPart = (e) => {
         setSelectedPartOption(e.target.value);
@@ -369,20 +329,9 @@ const ProcurementPage = () => {
                         <option value={50}>50</option>
                     </select>
                 </div>
-                <div className="input-container">
-                    {/*<label htmlFor="orderDateTimeSearch">컬럼별 조회 목록</label>*/}
-                    <select id="resultsPerPage" value={SearchOption} onChange={handleSearchOption}>
-                        <option value={'발주일시'}>발주일시</option>
-                        <option value={'입고예정일'}>입고예정일</option>
-                        <option value={'거래처'}>거래처</option>
-                        <option value={'상태'}>상태</option>
-                        <option value={'발주번호'}>발주번호</option>
-                        <option value={'부위'}>부위</option>
-                    </select>
-                    <input type="text" id="orderDateTimeSearch" value={TextForSearch}
-                        onChange={(e) => handleSearch2(e.target.value)} />
-                    <button onClick={handleSearch}>조회</button>
-                </div>
+
+                <ProSearch setFilteredResults={setFilteredResults} />
+
                 <div className="procurement-page-container">
                     <table className="table-container">
                         <thead>

@@ -24,62 +24,6 @@ const ProcessingPage = () => {
     const [selectedProduct, setSelectedProduct] = useState('');
 
 
-    // const handleSearchOption = (event) => {
-    //     setSearchOption(event.target.value);
-    // }
-    //
-    // const handleSearch = () => {
-    //     const lowerCasedFilter = TextForSearch.toLowerCase();
-    //     const filteredData = searchResults.filter(item => {
-    //         switch (SearchOption) {
-    //             case '발주일시':
-    //                 return item.OrderDate.toLowerCase().includes(lowerCasedFilter);
-    //             case '입고일시':
-    //                 return item.StockDate.toLowerCase().includes(lowerCasedFilter);
-    //             case '작업일':
-    //                 return item.ProductDate.toLowerCase().includes(lowerCasedFilter);
-    //             case '거래처':
-    //                 return item.Client.toLowerCase().includes(lowerCasedFilter);
-    //             case '부위':
-    //                 return item.Part.toLowerCase().includes(lowerCasedFilter);
-    //             case '제품번호':
-    //                 return item.ProductNo.toLowerCase().includes(lowerCasedFilter);
-    //             case '상태':
-    //                 return item.ProductSituation.toLowerCase().includes(lowerCasedFilter);
-    //             default:
-    //                 return false;
-    //         }
-    //     });
-    //     setProcessingResults(filteredData);
-    // };
-    //
-    // const handleSearch2 = (searchValue) => {
-    //     console.log(searchValue);
-    //     setTextForSearch(searchValue);
-    //     const lowerCasedFilter = searchValue.toLowerCase();
-    //     const filteredData = searchResults.filter(item => {
-    //         switch (SearchOption) {
-    //             case '발주일시':
-    //                 return item.OrderDate.toLowerCase().includes(lowerCasedFilter);
-    //             case '입고일시':
-    //                 return item.StockDate.toLowerCase().includes(lowerCasedFilter);
-    //             case '작업일':
-    //                 return item.ProductDate.toLowerCase().includes(lowerCasedFilter);
-    //             case '거래처':
-    //                 return item.Client.toLowerCase().includes(lowerCasedFilter);
-    //             case '부위':
-    //                 return item.Part.toLowerCase().includes(lowerCasedFilter);
-    //             case '제품번호':
-    //                 return item.ProductNo.toLowerCase().includes(lowerCasedFilter);
-    //             case '상태':
-    //                 return item.ProductSituation.toLowerCase().includes(lowerCasedFilter);
-    //             default:
-    //                 return false;
-    //         }
-    //     });
-    //     setProcessingResults(filteredData);
-    // };
-
     const indexOfLastResult = currentPage * resultsPerPage;
     const indexOfFirstResult = indexOfLastResult - resultsPerPage;
     const currentResults = processingResults.slice(indexOfFirstResult, indexOfLastResult);
@@ -313,20 +257,6 @@ const ProcessingPage = () => {
 
                 <ProSearch setProcessingResults={setProcessingResults} />
 
-                {/*<div className="input-container">*/}
-                {/*    <select id="SearchOption" value={SearchOption} onChange={handleSearchOption}>*/}
-                {/*        <option value={'발주일시'}>발주일시</option>*/}
-                {/*        <option value={'입고일시'}>입고일시</option>*/}
-                {/*        <option value={'거래처'}>거래처</option>*/}
-                {/*        <option value={'부위'}>부위</option>*/}
-                {/*        <option value={'작업일'}>작업일</option>*/}
-                {/*        <option value={'제품번호'}>제품번호</option>*/}
-                {/*        <option value={'상태'}>상태</option>*/}
-                {/*    </select>*/}
-                {/*    <input type="text" id="TextForSearch" value={TextForSearch}*/}
-                {/*           onChange={(e) => handleSearch2(e.target.value)}/>*/}
-                {/*    <button onClick={handleSearch}>조회</button>*/}
-                {/*</div>*/}
                 <table className="table-container">
                     <thead>
                         <tr>
@@ -372,7 +302,7 @@ const ProcessingPage = () => {
                                 <td>{result.MeterialNo}</td>
                                 <td>{result.SlaugtherDate}</td>
                                 <td>{result.UnitPrice}</td>
-                                <td>{result.ProductDate ? format(new Date(result.ProductDate), 'yyyy년 MM월 dd일 HH시 mm분 ss초') : null}</td>
+                                <td>{result.ProductDate ? format(new Date(result.ProductDate), 'yyyy-MM-dd') : null}</td>
                                 <td>{result.ProductWorker}</td>
                                 <td>{result.WeightAfterWork}</td>
                                 <td>{result.LossWeight}</td>
