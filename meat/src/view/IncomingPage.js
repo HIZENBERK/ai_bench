@@ -31,7 +31,7 @@ const IncomingPage = () => {
     
     const indexOfLastResult = currentPage * resultsPerPage;
     const indexOfFirstResult = indexOfLastResult - resultsPerPage;
-    const currentResults = filteredResults.slice(indexOfFirstResult, indexOfLastResult);
+    const currentResults = incomingResults.slice(indexOfFirstResult, indexOfLastResult);
 
 
     const navigate = useNavigate();
@@ -265,7 +265,8 @@ const IncomingPage = () => {
                         </tr>
                     </thead>
                     <tbody>
-                        {currentResults.map((result, index) => (
+                        {
+                            currentResults.map((result, index) => (
                             <tr key={index}>
                                 <td>{index + 1}</td>
                                 <td>{result.order?.OrderDate || '-'}</td>
