@@ -5,8 +5,10 @@ import '../css/Pagination.css';
 import axios from "axios";
 import {Button, Dialog} from "@mui/material";
 import DeleteModal from "../component/DeleteModal";
+import OtherSearch from "../component/OtherSearch";
 
 const OthersCustomerPage = () => {
+    const [customerSearch, setCustomerSearch] = useState([]);
     const [data, setData] = useState([]);
     const [filteredClients, setFilteredClients] = useState([]);
     const [currentPage, setCurrentPage] = useState(1);
@@ -37,6 +39,7 @@ const OthersCustomerPage = () => {
                 console.log(response.data);
                 setData(response.data);
                 setFilteredClients(response.data);
+                setCustomerSearch(response.data);
                 setCurrentPage(1);
             } catch (error) {
                 console.error('데이터 가져오기 에러:', error);
@@ -46,19 +49,19 @@ const OthersCustomerPage = () => {
     }, []);
 
     // 검색 필터링 함수
-    const handleSearch = () => {
-        if (ClientType === '' && ClientName === '') {
-            fetchData();
-            return;
-        }
-        const results = data.filter(client =>
-            (ClientType && client.ClientType.toLowerCase().includes(ClientType.toLowerCase())) ||
-            (ClientName && client.ClientName.toLowerCase().includes(ClientName.toLowerCase()))
-        );
-        setFilteredClients(results);
-        console.log(results);
-        setCurrentPage(1); // 첫 페이지로 리셋
-    };
+    // const handleSearch = () => {
+    //     if (ClientType === '' && ClientName === '') {
+    //         fetchData();
+    //         return;
+    //     }
+    //     const results = data.filter(client =>
+    //         (ClientType && client.ClientType.toLowerCase().includes(ClientType.toLowerCase())) ||
+    //         (ClientName && client.ClientName.toLowerCase().includes(ClientName.toLowerCase()))
+    //     );
+    //     setFilteredClients(results);
+    //     console.log(results);
+    //     setCurrentPage(1); // 첫 페이지로 리셋
+    // };
     // 데이터 API 다시 불러오기
     const fetchData = async () => {
         try {
@@ -66,6 +69,7 @@ const OthersCustomerPage = () => {
             console.log(response.data);
             setData(response.data);
             setFilteredClients(response.data);
+            setCustomerSearch(response.data);
             setCurrentPage(1);
         } catch (error) {
             console.error('데이터 가져오기 에러:', error);
@@ -74,7 +78,7 @@ const OthersCustomerPage = () => {
     // 페이징 계산
     const indexOfLastResult = currentPage * resultsPerPage;
     const indexOfFirstResult = indexOfLastResult - resultsPerPage;
-    const currentResults = filteredClients.slice(indexOfFirstResult, indexOfLastResult);
+    const currentResults = customerSearch.slice(indexOfFirstResult, indexOfLastResult);
 
     // 페이지 변경 핸들러
     const handlePageChange = (pageNumber) => {
@@ -132,25 +136,28 @@ const OthersCustomerPage = () => {
         <div>
             <div className="procurement-page-container">
                 <h2>거래처 관리 페이지</h2>
-                <div className="input-container">
-                    <label htmlFor="ClientType">유형</label>
-                    <input
-                        type="text"
-                        id="ClientType"
-                        value={ClientType}
-                        onChange={(e) => setClientType(e.target.value)} // 상태 업데이트 함수 변경
-                    />
-                    <label htmlFor="ClientName">거래처명</label>
-                    <div className="product-search-container">
-                        <input
-                            type="text"
-                            id="ClientName"
-                            value={ClientName}
-                            onChange={(e) => setClientName(e.target.value)} // 상태 업데이트 함수 변경
-                        />
-                        <button onClick={handleSearch}>검색</button>
-                    </div>
-                </div>
+                {/*<div className="input-container">*/}
+                {/*    <label htmlFor="ClientType">유형</label>*/}
+                {/*    <input*/}
+                {/*        type="text"*/}
+                {/*        id="ClientType"*/}
+                {/*        value={ClientType}*/}
+                {/*        onChange={(e) => setClientType(e.target.value)} // 상태 업데이트 함수 변경*/}
+                {/*    />*/}
+                {/*    <label htmlFor="ClientName">거래처명</label>*/}
+                {/*    <div className="product-search-container">*/}
+                {/*        <input*/}
+                {/*            type="text"*/}
+                {/*            id="ClientName"*/}
+                {/*            value={ClientName}*/}
+                {/*            onChange={(e) => setClientName(e.target.value)} // 상태 업데이트 함수 변경*/}
+                {/*        />*/}
+                {/*        <button onClick={handleSearch}>검색</button>*/}
+                {/*    </div>*/}
+                {/*</div>*/}
+
+                <OtherSearch setCustomerSearch={setCustomerSearch} />
+
                 <div className="procurement-page-container">
                     <label htmlFor="resultsPerPage">현재페이지에 볼 리스트 개수</label>
                     <select id="resultsPerPage" value={resultsPerPage} onChange={handleResultsPerPageChange}>

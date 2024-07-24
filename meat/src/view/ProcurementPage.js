@@ -50,10 +50,6 @@ const ProcurementPage = () => {
         }
     };
 
-    useEffect(() => {
-        fetchSearchResults();
-    }, []);
-
     const navigate = useNavigate();
     const { authState } = useAuth();
     const userJob = authState.job; // 직급
@@ -119,9 +115,7 @@ const ProcurementPage = () => {
         setResultsPerPage(parseInt(event.target.value));
         setCurrentPage(1); // Reset to the first page
     };
-    const handleSearchOption = (event) => {
-        setSearchOption(event.target.value);
-    }
+
 
     const handleRegisterNavigation = async () => {
         console.log(selectedPartCode,  OrderDate,ETA, selectedClientOption,  OrderWeight, OrderPrice);
@@ -146,8 +140,6 @@ const ProcurementPage = () => {
             // setSelectedClientOption('');
             setOrderWeight('');
             setOrderPrice('');
-
-
         } catch (error) {
             console.error('데이터 생성 에러:', error);
         }
@@ -161,9 +153,6 @@ const ProcurementPage = () => {
         fetchPartOptions();
     };
 
-    const handlePartChange = (event) => {
-
-    };
 
     const handleClientChange = (event) => {
         setSelectedClientOption(event.target.value);
@@ -204,6 +193,10 @@ const ProcurementPage = () => {
         };
     }, []);
 
+    useEffect(() => {
+        fetchSearchResults();
+    }, []);
+
     const formatPrice = (price) => {
         const number = parseFloat(price.replace(/,/g, '')); // 천 단위 구분자 제거
         if (isNaN(number)) return '';
@@ -224,18 +217,56 @@ const ProcurementPage = () => {
         <div>
             <div className="procurement-page-container">
                 <h2>발주 등록 페이지</h2>
-                <div className="input-container">
-                    <label htmlFor="orderDateTime">발주일시</label>
-                    <Datepicker id="orderDateTime" selectedDate={OrderDate} onChangeDate={handleDateChange} />
-                    <div className="input-totalQuantity">
-                        <label htmlFor="totalQuantity">발주중량</label></div>
-                        <div style={{ position: 'relative' }}>
+                <div className="procurement-left">
+                    <div className="input-container">
+                        <label htmlFor="orderDateTime">발주일시</label>
+                        <Datepicker id="orderDateTime" selectedDate={OrderDate} onChangeDate={handleDateChange}/>
+                    </div>
+
+                    <div className="input-container">
+                        <label htmlFor="ordererID">발주자(사번)명</label>
+                        <text id="ordererID">{empNo}</text>
+                    </div>
+
+                    <div className="input-container">
+                        <label htmlFor="part">부위</label>
+                        <select id="Part" className="selectid" onClick={handleDropdownClickPart}>
+                            <option value="" disabled selected>부위를 선택하세요.</option>
+                            {partOptions.map((option, index) => (
+                                <option key={index} value={option.code}>
+                                    {option.name}
+                                </option>
+                            ))}
+                        </select>
+                    </div>
+
+                    <div className="input-container">
+                        <label htmlFor="orderAmount">발주금액</label>
+                        <div style={{position: 'relative'}}>
+                            <input type="text" id="orderAmount" value={OrderPrice} onChange={handlePriceChange}
+                                   style={{paddingRight: '30px'}} // 오른쪽에 여백 추가
+                            />
+                            <span style={{
+                                position: 'absolute',
+                                right: '10px',
+                                top: '50%',
+                                transform: 'translateY(-50%)'
+                            }}>원</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div className="procurement-right">
+                    <div className="input-container">
+                        <div className="input-totalQuantity">
+                            <label htmlFor="totalQuantity">발주중량</label></div>
+                        <div style={{position: 'relative'}}>
                             <input
                                 type="text"
                                 id="totalQuantity"
                                 value={OrderWeight}
                                 onChange={(e) => setOrderWeight(e.target.value)}
-                                style={{ paddingRight: '30px' }} // 오른쪽에 여백 추가
+                                style={{paddingRight: '30px'}} // 오른쪽에 여백 추가
                             />
                             <span style={{
                                 position: 'absolute',
@@ -244,82 +275,33 @@ const ProcurementPage = () => {
                                 transform: 'translateY(-50%)'
                             }}>kg</span>
                         </div>
-                </div>
-                <div className="input-container">
-                    <label htmlFor="ordererID">발주자(사번)명</label>
-                    <text id="ordererID">{empNo}</text>
-                    <label htmlFor="expectedDeliveryDate">입고 예정일</label>
-                    <Datepicker id="expectedDeliveryDate" selectedDate={ETA} onChangeDate={handleDateChange} />
-                </div>
-
-                <div className="input-container">
-                    <label htmlFor="part">부위</label>
-                    <select id="Part" className="selectid" onClick={handleDropdownClickPart}>
-                        <option value="" disabled selected>부위를 선택하세요.</option>
-                        {partOptions.map((option, index) => (
-                            <option key={index} value={option.code}>
-                                {option.name}
-                            </option>
-                        ))}
-                    </select>
-
-                    {/*<label htmlFor="part">부위</label>*/}
-                    {/*<input type="text" id="part" value={selectedPartOption} onClick={handleDropdownClickPart} readOnly/>*/}
-                    {/*{isPartOpen && (*/}
-                    {/*    <ul style={{position: 'relative', top: '100%', backgroundColor: 'white', border: '1px solid #ccc', listStyle: 'none', margin: 0, padding: 0, zIndex: 0}}>*/}
-                    {/*        {partOptions.map((option, index) => (*/}
-                    {/*            <li key={index} onClick={() => handlePartOptionClick(option)}*/}
-                    {/*                style={{padding: '8px', cursor: 'pointer'}}>*/}
-                    {/*                {option.name}*/}
-                    {/*            </li>*/}
-                    {/*        ))}*/}
-                    {/*    </ul>*/}
-                    {/*)}*/}
-
-                    <div className="input-client">
-                        <label htmlFor="client">거래처</label>
-                        <select id="client" className="selectClient"
-                                onChange={handleClientChange} onClick={handleDropdownClickClient}>
-                            <option value="" disabled selected>거래처를 선택하세요. </option>
-                            {clientOptions.map((option, index) => (
-                                <option key={index} value={option.ClientName}>
-                                    {/*onClick={() => handleClientOptionClick(option)}*/}
-                                    {option.ClientName}
-                                </option>
-                            ))}
-                        </select>
-
-                        {/*}
-                        <input type="text" id="client" value={selectedClientOption} onClick={handleDropdownClickClient}
-                               readOnly/>
-                        {isClientOpen && (
-                            <ul style={{position: 'relative', backgroundColor: 'white', border: '1px solid #ccc', listStyle: 'none', margin: 0, padding: 0}}>
-                                {clientOptions.map((option, index) => (
-                                    <li key={index} onClick={() => handleClientOptionClick(option)}
-                                        style={{padding: '8px', cursor: 'pointer'}}>
-                                        {option.ClientName}
-                                    </li>
-                                ))}
-                            </ul>
-                        )}*/}
-
                     </div>
-                </div>
-                <div className="input-container">
-                    <label htmlFor="orderAmount">발주금액</label>
-                    <div style={{position: 'relative'}}>
-                        <input type="text" id="orderAmount" value={OrderPrice} onChange={handlePriceChange} style={{ paddingRight: '30px' }} // 오른쪽에 여백 추가
-                        />
-                        <span style={{
-                            position: 'absolute',
-                            right: '10px',
-                            top: '50%',
-                            transform: 'translateY(-50%)'
-                        }}>원</span>
+
+                    <div className="input-container">
+                        <label htmlFor="expectedDeliveryDate">입고 예정일</label>
+                        <Datepicker id="expectedDeliveryDate" selectedDate={ETA} onChangeDate={handleDateChange}/>
+                    </div>
+
+                    <div className="input-container">
+                        <div className="input-client">
+                            <label htmlFor="client">거래처</label>
+                            <select id="client" className="selectClient"
+                                    onChange={handleClientChange} onClick={handleDropdownClickClient}>
+                                <option value="" disabled selected>거래처를 선택하세요.</option>
+                                {clientOptions.map((option, index) => (
+                                    <option key={index} value={option.ClientName}>
+                                        {/*onClick={() => handleClientOptionClick(option)}*/}
+                                        {option.ClientName}
+                                    </option>
+                                ))}
+                            </select>
+                        </div>
                     </div>
                 </div>
                 <button onClick={handleRegisterNavigation} className="register-button">등록</button>
+
             </div>
+
             <div className="procurement-page-container">
                 <div className="results-per-page">
                     <label htmlFor="resultsPerPage">한페이지에 볼 리스트 개수:</label>

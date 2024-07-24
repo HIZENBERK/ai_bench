@@ -75,7 +75,7 @@ const IncomingPage = () => {
             setOrderNumbers(orderResponse.data);
             const combinedResults = mergeData(stockResponse.data, orderResponse.data);
             setSearchResults(combinedResults);
-            setFilteredResults(combinedResults);
+            //setFilteredResults(combinedResults);
             setIncomingResults(combinedResults);
         } catch (error) {
             console.error('데이터 가져오기 에러:', error);
@@ -172,49 +172,74 @@ const IncomingPage = () => {
         <div>
             <div className="procurement-page-container">
                 <h2>입고 등록 페이지</h2>
-                <div className="input-container">
-                    <label htmlFor="purchaseOrderNumber">발주번호</label>
-                    <select id="purchaseOrderNumber" value={selectedOrderNumber} onChange={handleOrderNumberChange}>
-                        <option value="">발주번호 선택</option>
-                        {orderNumbers.map((order, index) => (
-                            <option key={index} value={order.OrderNo}>{order.OrderNo}</option>
-                        ))}
-                    </select>
-                    <label htmlFor="item" className="item-label">입고품목</label>
-                    <input type="text" id="item" value={stockItem} onChange={(e) => setStockItem(e.target.value)} />
+                <div className="procurement-left">
+                    <div className="input-container">
+                        <label htmlFor="purchaseOrderNumber">발주번호</label>
+                        <select id="purchaseOrderNumber" className="selectid" value={selectedOrderNumber}
+                                onChange={handleOrderNumberChange}>
+                            <option value="">발주번호 선택</option>
+                            {orderNumbers.map((order, index) => (
+                                <option key={index} value={order.OrderNo}>{order.OrderNo}</option>
+                            ))}
+                        </select>
+                    </div>
+
+                    <div className="input-container">
+                        <label htmlFor="arrivalDateTime">입고일시</label>
+                        <Datepicker
+                            id="arrivalDateTime"
+                            selected={arrivalDateTime}
+                            onChange={(date) => setArrivalDateTime(date)}
+                            dateFormat="yyyy-MM-dd"
+                        />
+                    </div>
+
+                    <div className="input-container">
+                        <label htmlFor="receiver">입고자 명</label>
+                        <text id="stockID">{empNo}</text>
+                    </div>
+
+                    <div className="input-container">
+                        <label htmlFor="actualWeight">실 중량</label>
+                        <input type="text" id="actualWeight" value={actualWeight}
+                               onChange={(e) => setActualWeight(e.target.value)}/>
+                    </div>
+
+                    <div className="input-container">
+                        <label htmlFor="actualPurchasePrice">실 매입가</label>
+                        <input type="text" id="actualPurchasePrice" value={actualPurchasePrice}
+                               onChange={(e) => setActualPurchasePrice(e.target.value)}/>
+                    </div>
                 </div>
-                <div className="input-container">
-                    <label htmlFor="arrivalDateTime">입고일시</label>
-                    <Datepicker
-                        id="arrivalDateTime"
-                        selected={arrivalDateTime}
-                        onChange={(date) => setArrivalDateTime(date)}
-                        dateFormat="yyyy-MM-dd"
-                    />
-                    <label htmlFor="meterialNo" className="meterialNo-label">이력번호</label>
-                    <input type="text" id="meterialNo" value={meterialNo} onChange={(e) => setMeterialNo(e.target.value)} />
-                </div>
-                <div className="input-container">
-                    <label htmlFor="receiver">입고자 명</label>
-                    <text id="stockID">{empNo}</text>
-                    <div className="unitPrice1-label">
-                    <label htmlFor="unitPrice">입고단가</label>
-                    <input type="text" id="unitPrice1" value={unitPrice} onChange={(e) => setUnitPrice(e.target.value)} /></div>
-                </div>
-                <div className="input-container">
-                    <label htmlFor="actualWeight">실 중량</label>
-                    <input type="text" id="actualWeight" value={actualWeight} onChange={(e) => setActualWeight(e.target.value)} />
-                    <label htmlFor="slaughterDate" className="slaughterDate-labal">도축일</label>
-                    <Datepicker
-                        id="slaughterDate"
-                        selected={slaughter}
-                        onChange={(date) => setSlaughter(date)}
-                        dateFormat="yyyy-MM-dd"
-                    />
-                </div>
-                <div className="input-container">
-                    <label htmlFor="actualPurchasePrice">실 매입가</label>
-                    <input type="text" id="actualPurchasePrice" value={actualPurchasePrice} onChange={(e) => setActualPurchasePrice(e.target.value)} />
+
+                <div className="procurement-right">
+                    <div className="input-container">
+                        <label htmlFor="item" className="item-label">입고품목</label>
+                        <input type="text" id="item" value={stockItem} onChange={(e) => setStockItem(e.target.value)}/>
+                    </div>
+
+                    <div className="input-container">
+                        <label htmlFor="meterialNo" className="meterialNo-label">이력번호</label>
+                        <input type="text" id="meterialNo" value={meterialNo}
+                               onChange={(e) => setMeterialNo(e.target.value)}/>
+                    </div>
+
+                    <div className="input-container">
+                            <label htmlFor="unitPrice">입고단가</label>
+                            <input type="text" id="unitPrice1" value={unitPrice}
+                                   onChange={(e) => setUnitPrice(e.target.value)}/>
+
+                    </div>
+
+                    <div className="input-container">
+                        <label htmlFor="slaughterDate" className="slaughterDate-labal">도축일</label>
+                        <Datepicker
+                            id="slaughterDate"
+                            selected={slaughter}
+                            onChange={(date) => setSlaughter(date)}
+                            dateFormat="yyyy-MM-dd"
+                        />
+                    </div>
                 </div>
                 <button onClick={handleRegisterNavigation} className="register-button">등록</button>
             </div>
@@ -228,18 +253,8 @@ const IncomingPage = () => {
                     </select>
                 </div>
                 <div className="input-container">
-                    {/*<label htmlFor="orderDateTimeSearch">컬럼별 조회 목록</label>*/}
-                    {/*<select id="searchOption" value={searchOption} onChange={handleSearchOptionChange}>*/}
-                    {/*    <option value="발주일시">발주일시</option>*/}
-                    {/*    <option value="입고 예정일">입고 예정일</option>*/}
-                    {/*    <option value="거래처(번호)">거래처(번호)</option>*/}
-                    {/*    <option value="입고 번호">입고 번호</option>*/}
-                    {/*</select>*/}
-                    {/*<input type="text" id="textForSearch" value={textForSearch} onChange={(e) => setTextForSearch(e.target.value)} />*/}
-                    {/*<button onClick={handleSearch}>조회</button>*/}
 
                     <ProSearch setIncomingResults={setIncomingResults}/>
-
 
                 </div>
                 <table className="table-container">

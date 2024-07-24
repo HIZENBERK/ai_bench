@@ -59,21 +59,6 @@ const ProSearch = ({ setProcessingResults, setFilteredResults, setIncomingResult
         });
     };
 
-    // const fetchInitialData = async () => {
-    //     try {
-    //         const [orderResponse, stockResponse] = await Promise.all([
-    //             axios.get('http://localhost:8000/api/order/'),
-    //             axios.get('http://localhost:8000/api/stock/')
-    //         ]);
-    //         setOrderNumbers(orderResponse.data);
-    //         const combinedResults = mergeData(stockResponse.data, orderResponse.data);
-    //         setSearchResults2(combinedResults);
-    //         setIncomingResults(combinedResults);
-    //     } catch (error) {
-    //
-    //     }
-    // };
-
     const handleSearchOption = (event) => {
         setSearchOption(event.target.value);
     };
@@ -231,8 +216,6 @@ const ProSearch = ({ setProcessingResults, setFilteredResults, setIncomingResult
     }, []);
 
 
-
-
     return (
         <div className="input-container">
 
@@ -255,7 +238,7 @@ const ProSearch = ({ setProcessingResults, setFilteredResults, setIncomingResult
                     </div>
                 </div>
                 : null}
-            
+
             {/* 발주 검색 */}
             {setFilteredResults != null ?
                 <div className="selectInput">
@@ -292,12 +275,6 @@ const ProSearch = ({ setProcessingResults, setFilteredResults, setIncomingResult
                     </div>
                 </div>
                 : null}
-
-
-
-
-
-
         </div>
     );
 }

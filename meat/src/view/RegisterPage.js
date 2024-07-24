@@ -1,5 +1,5 @@
 //주문 등록 페이지
-import React, { useState } from "react";
+import React, {useEffect, useState} from "react";
 import Pagination from '../component/Pagination'; // Make sure the path is correct
 import '../css/Pagination.css'; // Ensure this path is correct
 
@@ -211,6 +211,14 @@ const RegisterPage = () => {
     const [currentPage, setCurrentPage] = useState(1);
     const [resultsPerPage, setResultsPerPage] = useState(10);
     const [setFilteredResults] = useState([]);
+    const [TextForSearch, setTextForSearch] = useState('');
+    const [SearchOption, setSearchOption] = useState('');
+    const [DisplayResults, setDisplayResults] = useState(registerResults);
+
+    useEffect(() => {
+        const total = searchFields.reduce((sum, field) => sum + (parseFloat(field.price) || 0), 0);
+        setTotalPrice(total);
+    }, [searchFields]);
 
     const handleInputChange = (index, event) => {
         const { name, value } = event.target;
@@ -237,9 +245,39 @@ const RegisterPage = () => {
             )
         );
         setFilteredResults(filtered);
-        const total = filtered.reduce((sum, result) => sum + parseFloat(result.price || 0), 0);
+        const total = filtered.reduce((sum, result) => sum + parseInt(result.price || 0), 0);
         setTotalPrice(total);
     };
+
+    const handleSearchOption = (e) => {
+        setSearchOption(e.target.value);
+    }
+
+    const handleSearch1 = () => {
+        const lowerCasedFilter = TextForSearch.toLowerCase();
+        const filterResults = registerResults.filter(item => {
+            switch (SearchOption) {
+                case '등록일':
+                    return item.registrationDate.toLowerCase().includes(lowerCasedFilter);
+                case '카테고리':
+                    return item.category.toLowerCase().includes(lowerCasedFilter);
+                case '고객':
+                    return item.customer.toLowerCase().includes(lowerCasedFilter);
+                case '주소':
+                    return item.address.toLowerCase().includes(lowerCasedFilter);
+                case '연락처':
+                    return item.contact.toLowerCase().includes(lowerCasedFilter);
+                case '주문번호':
+                    return item.orderNumber.toLowerCase().includes(lowerCasedFilter);
+                case '기프트래핑':
+                    return item.giftWrapping.toLowerCase().includes(lowerCasedFilter);
+                default:
+                    return false;
+            }
+        });
+        setDisplayResults(filterResults);
+    }
+
 
     const handlePageChange = (pageNumber) => {
         setCurrentPage(pageNumber);
@@ -252,70 +290,94 @@ const RegisterPage = () => {
 
     const indexOfLastResult = currentPage * resultsPerPage;
     const indexOfFirstResult = indexOfLastResult - resultsPerPage;
-    const currentResults = registerResults.slice(indexOfFirstResult, indexOfLastResult);
+    const currentResults = DisplayResults.slice(indexOfFirstResult, indexOfLastResult);
 
     return (
         <div>
             <div className="processing-page-container">
                 <h2>주문등록 페이지</h2>
                 {/* input fields for product registration */}
-                <div className="input-container">
-                    <label htmlFor="workingDay">등록일(요일)</label>
-                    <input type="text" id="workingDay" />
-                    <label htmlFor="category">구분</label>
-                    <input type="text" id="category" />
-                    
-                </div>
-                <div className="input-container">
-                    <label htmlFor="customer">주문자</label>
-                    <input type="text" id="customer" />
-                    <label htmlFor="address">주소</label>
-                    <input type="text" id="address" />
-                </div>
-                <div className="input-container">
-                    <label htmlFor="contact">연락처</label>
-                    <input type="text" id="contact" />
-                    <label htmlFor="orderRegistrar">주문등록자</label>
-                    <input type="text" id="orderRegistrar" />
-                </div>
-            </div>
-            {/* search fields */}
-            {searchFields.map((field, index) => (
-                <div className="input-container" key={index}>
-                    <div className="input-product">
-                    <label htmlFor={`productName-${index}`}>제품명</label>
-                    <input
-                        type="text"
-                        id={`productName-${index}`}
-                        name="productName"
-                        value={field.productName}
-                        onChange={event => handleInputChange(index, event)}
-                    />
-                        <div>
-                    <label htmlFor={`price-${index}`}>가격</label>
-                    <input
-                        type="text"
-                        id={`price-${index}`}
-                        name="price"
-                        value={field.price}
-                        onChange={event => handleInputChange(index, event)}
-                    />
-
-                    <button onClick={() => handleRemoveField(index)}>-</button>
+                <div className="totalRegister">
+                    <div className="input-registerpage">
+                        <div className="input-container">
+                            <label htmlFor="workingDay">등록일(요일)</label>
+                            <input type="text" id="workingDay"/>
                         </div>
+
+                        <div className="input-container">
+                            <label htmlFor="category">구분</label>
+                            <input type="text" id="category"/>
+                        </div>
+
+                        <div className="input-container">
+                            <label htmlFor="customer">주문자</label>
+                            <input type="text" id="customer"/>
+                        </div>
+
+                        <div className="input-container">
+                            <label htmlFor="address">주소</label>
+                            <input type="text" id="address"/>
+                        </div>
+
+                        <div className="input-container">
+                            <label htmlFor="contact">연락처</label>
+                            <input type="text" id="contact"/>
+                        </div>
+
+                        <div className="input-container">
+                            <label htmlFor="orderRegistrar">주문등록자</label>
+                            <input type="text" id="orderRegistrar" />
                         </div>
                     </div>
-            ))}
-            {/* buttons for adding/removing search fields and initiating search */}
-            <div className="button">
-            <button onClick={handleAddField}>+</button>
-            <button onClick={handleSearch}>검색</button>
-            </div>
-            <div className="total-price-container">
-                <h3>가격 합계: {totalPrice}</h3>
+
+                {/* search fields */}
+                    <div className="priceTotal">
+                        {searchFields.map((field, index) => (
+                            <div className="" key={index}>
+                                <div className="orderprice">
+                                    <label htmlFor={`productName-${index}`}>제품명</label>
+                                    <input
+                                        type="text"
+                                        id={`productName-${index}`}
+                                        name="productName"
+                                        className="price-container"
+                                        value={field.productName}
+                                        onChange={event => handleInputChange(index, event)}
+                                    />
+
+                                    <label htmlFor={`price-${index}`}>가격</label>
+                                    <input
+                                        type="text"
+                                        id={`price-${index}`}
+                                        name="price"
+                                        className="price-container"
+                                        value={field.price}
+                                        onChange={event => handleInputChange(index, event)}
+                                    />
+                                    <div className="price-btn">
+                                        <button onClick={() => handleRemoveField(index)}>삭제</button>
+                                    </div>
+                                </div>
+                            </div>
+                        ))}
+                        {/* buttons for adding/removing search fields and initiating search */}
+                        <div className="add-btn">
+                            <button onClick={handleAddField}>추가</button>
+                        </div>
+                        <div className="totalPrice">
+                            <h3>가격 합계: {totalPrice}</h3>
+                        </div>
+                        <div className="registration">
+                            <button className="Order-registration" onClick={handleSearch}>주문 등록</button>
+                            <label>선물 포장 여부</label>
+                            <input className="giftPossible" type="checkbox"/>
+                        </div>
+
+                    </div>
+                </div>
             </div>
             <div className="processing-page-container">
-                <div className="dropdown-container">
+            <div className="dropdown-container">
                     <label htmlFor="resultsPerPage">한 페이지에 볼 리스트 개수:</label>
                     <select id="resultsPerPage" value={resultsPerPage} onChange={handleResultsPerPageChange}>
                         <option value="10">10</option>
@@ -324,16 +386,31 @@ const RegisterPage = () => {
                     </select>
                 </div>
                 <div className="input-container">
-                    <label htmlFor="orderDateTimeSearch">컬럼별 조회 목록</label>
-                    <input type="text" id="orderDateTimeSearch"/>
-                    <button>조회</button>
+                    {/*<label htmlFor="orderDateTimeSearch">컬럼별 조회 목록</label>*/}
+                    <select id="SearchOption" onChange={handleSearchOption} value={SearchOption} >
+                        <option value={'등록일'}>등록일</option>
+                        <option value={'카테고리'}>카테고리</option>
+                        <option value={'고객'}>고객</option>
+                        <option value={'주소'}>주소</option>
+                        <option value={'연락처'}>연락처</option>
+                        <option value={'주문번호'}>주문번호</option>
+                        <option value={'기프트래핑'}>기프트래핑</option>
+                    </select>
+                    <input
+                        type="text"
+                        id="orderDateTimeSearch"
+                        value={TextForSearch}
+                        onChange={(e) => setTextForSearch(e.target.value)}
+                        placeholder="검색"
+                    />
+                    <button onClick={handleSearch1}>조회</button>
                 </div>
                 <table>
                     <thead>
-                        <tr>
-                            <th>No.</th>
-                            <th>등록일</th>
-                            <th>카테고리</th>
+                    <tr>
+                        <th>No.</th>
+                        <th>등록일</th>
+                        <th>카테고리</th>
                             <th>고객</th>
                             <th>주소</th>
                             <th>연락처</th>
