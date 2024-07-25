@@ -12,10 +12,12 @@
     width: 40%;
 }
 
-.procurement-right {
-    float: right;
-    width: 53%;
+.basic-sunburst-example {
+    font-size: 10px;
+    font-weight: bold;
+    color: #ffffff;
 }
+
 /* select css */
 .selectid {
     width: 205px;

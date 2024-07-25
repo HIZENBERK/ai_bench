@@ -95,7 +95,7 @@ export default class SunburstWithTooltips extends React.Component {
                     this.setState({ hoveredCell: v.x && v.y ? v : false })
                 }
                 onValueMouseOut={() => this.setState({ hoveredCell: false })}
-                height={300}
+                height={450}
                 margin={{ top: 50, bottom: 50, left: 50, right: 50 }}
                 getLabel={d => d.name}
                 getSize={d => d.bigness}

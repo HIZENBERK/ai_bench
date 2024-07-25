@@ -163,10 +163,10 @@ button {
   margin-left: -50px; 
   }
 
-  .price-label {
-  margin-left: 20px;
-  width: 50px;
-  }
+.price-label {
+margin-left: 20px;
+width: 50px;
+}
 
   #price1, #price2, #price3 {
   margin-left: -70px; 

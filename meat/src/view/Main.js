@@ -6,6 +6,7 @@ import BarChart1 from "../component/BarChart1";
 import BarChart2 from "../component/BarChart2";
 import '../css/Main.css';
 import BasicSunburst from '../component/BasicSunburst';
+import SunburstWithTooltips from "../component/SunburstWithTooltips";
 
 const headers = [
     { text: '부위', value: 'part' },
@@ -90,7 +91,9 @@ const Main = () => (
             </div>
             <div className="item">
                 <div className="box">
-                    <BasicSunburst items={items}/>
+                    <BasicSunburst
+                        items={items}
+                    />
                 </div>
             </div>
         </div>

@@ -131,11 +131,12 @@ class BasicSunburst extends React.Component {
                     style={{
                         stroke: '#ddd',
                         strokeOpacity: 0.3,
-                        strokeWidth: '0.5'
+                        strokeWidth: '0.5',
                     }}
                     colorType="literal"
                     getSize={d => d.bigness}
                     getColor={d => d.clr}
+                    getLabel={d => d.name}
                     data={data}
                     height={450}
                     width={350}

@@ -1,4 +1,3 @@
-//결산 > 금액 페이지
 import React, { useState } from "react";
 import Pagination from '../component/Pagination'; // Ensure this path is correct
 import '../css/Pagination.css';
@@ -23,6 +22,20 @@ const OthersProductPage = () => {
             },
             {
                 part: "아랫등심",
+                January: "₩66,250",
+                February: "₩66,250",
+                March: "₩66,250",
+                April: "₩66,250",
+                May: "₩66,250",
+                June: "₩66,250",
+                July: "₩66,250",
+                August: "₩66,250",
+                September: "₩66,250",
+                October: "₩66,250",
+                November: "₩66,250",
+                December: "₩66,250",
+            },{
+                part: "부챗살",
                 January: "₩66,250",
                 February: "₩66,250",
                 March: "₩66,250",
@@ -88,29 +101,11 @@ const OthersProductPage = () => {
                 December: "₩66,250",
             },
         ],
-        "total" :[
-            {
-                total: "합계",
-                January: "",
-                February: "",
-                March: "",
-                April: "",
-                May: "",
-                June: "",
-                July: "",
-                August: "",
-                September: "",
-                October: "",
-                November: "",
-                December: "",
-            }
-        ]
     };
-
 
     const [currentYears, setCurrentYears] = useState(2021);
     const [currentPage, setCurrentPage] = useState(1);
-    const [resultsPerPage, setResultsPerPage] = useState(10); // Default value is 10
+    const [resultsPerPage, setResultsPerPage] = useState(10);
 
     const filteredData = currentYears ? data[currentYears] : [];
 
@@ -123,23 +118,65 @@ const OthersProductPage = () => {
     };
 
     const handleYearChange = (e) => {
-        setCurrentYears(e.target.value);
-    }
+        setCurrentYears(parseInt(e.target.value));
+        setCurrentPage(1);
+    };
 
     const handleResultsPerPageChange = (event) => {
         setResultsPerPage(parseInt(event.target.value));
-        setCurrentPage(1); // Reset to the first page
+        setCurrentPage(1);
     };
+
+    const parseCurrency = (currency) => {
+        return parseFloat(currency.replace(/[₩,]/g, ""));
+    };
+
+    const allTotal = (data) => {
+        const total = {
+            January: 0,
+            February: 0,
+            March: 0,
+            April: 0,
+            May: 0,
+            June: 0,
+            July: 0,
+            August: 0,
+            September: 0,
+            October: 0,
+            November: 0,
+            December: 0
+        };
+
+        data.forEach(item => {
+            total.January += parseCurrency(item.January);
+            total.February += parseCurrency(item.February);
+            total.March += parseCurrency(item.March);
+            total.April += parseCurrency(item.April);
+            total.May += parseCurrency(item.May);
+            total.June += parseCurrency(item.June);
+            total.July += parseCurrency(item.July);
+            total.August += parseCurrency(item.August);
+            total.September += parseCurrency(item.September);
+            total.October += parseCurrency(item.October);
+            total.November += parseCurrency(item.November);
+            total.December += parseCurrency(item.December);
+        });
+
+        return total;
+    };
+
+    const monthTotal = allTotal(filteredData);
 
     return (
         <div className="others-product-page-container">
             <div className="procurement-page-container">
                 <div className="input-header">
+                    <h2>금액 페이지</h2>
                     <select className="yearselect" onChange={handleYearChange} value={currentYears}>
-                        <option value="2021">2021</option>
-                        <option value="2022">2022</option>
-                        <option value="2023">2023</option>
-                        <option value="2024">2024</option>
+                        <option value="2021">2021년</option>
+                        <option value="2022">2022년</option>
+                        <option value="2023">2023년</option>
+                        <option value="2024">2024년</option>
                     </select>
 
                     <div className="resultsPerPage">
@@ -193,6 +230,23 @@ const OthersProductPage = () => {
                             </tr>
                         ))}
                         </tbody>
+                        <tbody>
+                        <tr>
+                            <th>합계</th>
+                            <th>{monthTotal.January.toLocaleString('ko-KR', { style: 'currency', currency: 'KRW' })}</th>
+                            <th>{monthTotal.February.toLocaleString('ko-KR', { style: 'currency', currency: 'KRW' })}</th>
+                            <th>{monthTotal.March.toLocaleString('ko-KR', { style: 'currency', currency: 'KRW' })}</th>
+                            <th>{monthTotal.April.toLocaleString('ko-KR', { style: 'currency', currency: 'KRW' })}</th>
+                            <th>{monthTotal.May.toLocaleString('ko-KR', { style: 'currency', currency: 'KRW' })}</th>
+                            <th>{monthTotal.June.toLocaleString('ko-KR', { style: 'currency', currency: 'KRW' })}</th>
+                            <th>{monthTotal.July.toLocaleString('ko-KR', { style: 'currency', currency: 'KRW' })}</th>
+                            <th>{monthTotal.August.toLocaleString('ko-KR', { style: 'currency', currency: 'KRW' })}</th>
+                            <th>{monthTotal.September.toLocaleString('ko-KR', { style: 'currency', currency: 'KRW' })}</th>
+                            <th>{monthTotal.October.toLocaleString('ko-KR', { style: 'currency', currency: 'KRW' })}</th>
+                            <th>{monthTotal.November.toLocaleString('ko-KR', { style: 'currency', currency: 'KRW' })}</th>
+                            <th>{monthTotal.December.toLocaleString('ko-KR', { style: 'currency', currency: 'KRW' })}</th>
+                        </tr>
+                        </tbody>
                     </table>
                 )}
 
@@ -201,8 +255,6 @@ const OthersProductPage = () => {
                     totalPages={Math.ceil(filteredData.length / resultsPerPage)}
                     onPageChange={handlePageChange}
                 />
-                <div>
-                </div>
             </div>
         </div>
     );
