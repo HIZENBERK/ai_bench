@@ -1,5 +1,5 @@
 //로그인 페이지
-import React, { useState } from 'react';
+import React, {useEffect, useState} from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from "axios";
 import '../css/Login.css';  // CSS 파일 경로
@@ -34,7 +34,11 @@ const Login = () => {
                 login( response.data.empNo,response.data.username,response.data.job,response.data.position); // Update the auth state with the employee number
                 setSuccess(`Logged in successfully! Welcome ${response.data.username}`);
                 setLogoutSuccess('');
-                navigate('/main');
+                if (response.data.job === 'DM' || (response.data.position === 'A' || response.data.position === 'M')){
+                    navigate('/raw-material/processing');
+                } else {
+                    navigate('/main');
+                }
             } catch (error) {
                 if (error.response) {
                     setError(error.response.data.error || 'An error occurred.');

@@ -12,10 +12,20 @@
     width: 40%;
 }
 
+.newSunburst {
+    width: 550px;
+}
+
+.newSunburst1 {
+    margin-left: 50px;
+}
+
+
 .basic-sunburst-example {
     font-size: 10px;
     font-weight: bold;
     color: #ffffff;
+
 }
 
 /* select css */
