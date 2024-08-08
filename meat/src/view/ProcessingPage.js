@@ -22,7 +22,8 @@ const ProcessingPage = () => {
     const [EditModal, setEditModal] = useState('');
     const [ProductNo, setProductNo] = useState('');
     const [selectedProduct, setSelectedProduct] = useState('');
-
+    const [editingRow, setEditingRow] = useState(null);
+    const [editedValues, setEditedValues] = useState({});
 
     const indexOfLastResult = currentPage * resultsPerPage;
     const indexOfFirstResult = indexOfLastResult - resultsPerPage;
@@ -182,13 +183,52 @@ const ProcessingPage = () => {
     };
 
     //2차 가공 수정 모달
+    // const handleEdit = (product) => {
+    //     setEditModal(true);
+    //     setSelectedProduct(product);
+    // };
+
     const handleEdit = (product) => {
-        setEditModal(true);
-        setSelectedProduct(product);
+        setEditingRow(product.ProductNo);
+        setEditedValues({ ...product });
+    }
+
+    const handleSaveClick = async () => {
+        try {
+            const response = await axios.post('http://localhost:8000/api/product/', {
+                Method: 'put',
+                ProductNo: editedValues.ProductNo,
+                RealWeight: editedValues.RealWeight,
+                RealPrice: editedValues.RealPrice,
+                MeterialNo: editedValues.MeterialNo,
+                SlaugtherDate: editedValues.SlaugtherDate,
+                UnitPrice: editedValues.UnitPrice,
+                ProductDate: editedValues.ProductDate,
+                ProductWorker: editedValues.ProductWorker,
+                WeightAfterWork: editedValues.WeightAfterWork,
+                LossWeight: editedValues.LossWeight,
+                ProductPrice: editedValues.ProductPrice,
+                DiscountRate: editedValues.DiscountRate,
+            });
+            alert('수정되었습니다.');
+            fetchSearchResults();
+            setEditingRow(null);
+            setEditedValues({});
+        } catch (error) {
+            console.error('수정 에러:', error);
+            alert('수정 실패.');
+        }
     };
 
     const handleRawMaterial = (event) => {
         setSelectedRawMaterialNumberOption(event.target.value);
+    };
+
+    const handleInputChange = (field, value) => {
+        setEditedValues({
+            ...editedValues,
+            [field]: value,
+        });
     };
 
     return (
@@ -256,7 +296,6 @@ const ProcessingPage = () => {
                 </div>
 
                 <ProSearch setProcessingResults={setProcessingResults} />
-
                 <table className="table-container">
                     <thead>
                         <tr>
@@ -276,12 +315,12 @@ const ProcessingPage = () => {
                             <th>입고단가</th>
                             <th>작업일</th>
                             <th>작업자</th>
+                            <th>원료번호</th>
+                            <th>상태</th>
                             <th>작업 후 중량</th>
                             <th>로스</th>
                             <th>단가</th>
                             <th>할인율</th>
-                            <th>원료번호</th>
-                            <th>상태</th>
                             <th>수정</th>
                         </tr>
                     </thead>
@@ -304,17 +343,55 @@ const ProcessingPage = () => {
                                 <td>{result.UnitPrice}</td>
                                 <td>{result.ProductDate ? format(new Date(result.ProductDate), 'yyyy-MM-dd') : null}</td>
                                 <td>{result.ProductWorker}</td>
-                                <td>{result.WeightAfterWork}</td>
-                                <td>{result.LossWeight}</td>
-                                <td>{result.ProductPrice}</td>
-                                <td>{result.DiscountRate}</td>
                                 <td>{result.ProductNo}</td>
                                 <td>{result.ProductSituation}</td>
-                                <td>
-                                    <button onClick={() => handleEdit(result)}>수정</button>
-                                    /
-                                    <button onClick={() => handleDelete(result.ProductNo)}>삭제</button>
-                                </td>
+                                {editingRow === result.ProductNo ? (
+                                    <>
+                                        <td>
+                                            <input
+                                            type="text"
+                                            id="WeightAfterWork"
+                                            value={editedValues.WeightAfterWork || ''}
+                                            onChange={(e) => handleInputChange('WeightAfterWork', e.target.value)} />
+                                        </td>
+                                        <td>
+                                            <input
+                                            type="text"
+                                            id="LossWeight"
+                                            value={editedValues.LossWeight || ''}
+                                            onChange={(e) => handleInputChange('LossWeight', e.target.value)} />
+                                        </td>
+                                        <td>
+                                            <input
+                                            type="text"
+                                            id="ProductPrice"
+                                            value={editedValues.ProductPrice || ''}
+                                            onChange={(e) => handleInputChange('ProductPrice', e.target.value)} />
+                                        </td>
+                                        <td>
+                                            <input
+                                            type="text"
+                                            id="DiscountRate"
+                                            value={editedValues.DiscountRate || ''}
+                                            onChange={(e) => handleInputChange('DiscountRate', e.target.value)} />
+                                        </td>
+                                        <td>
+                                            <button onClick={handleSaveClick}>저장</button>
+                                            <button onClick={() => setEditingRow(null)}>취소</button>
+                                        </td>
+                                    </>
+                                ) : (
+                                    <>
+                                    <td>{result.WeightAfterWork}</td>
+                                    <td>{result.LossWeight}</td>
+                                    <td>{result.ProductPrice}</td>
+                                    <td>{result.DiscountRate}</td>
+                                    <td>
+                                        <button onClick={() => handleEdit(result)}>수정</button>
+                                        <button onClick={() => handleDelete(result.ProductNo)}>삭제</button>
+                                    </td>
+                                    </>
+                                )}
                             </tr>
                         ))}
                     </tbody>
@@ -333,265 +410,266 @@ const ProcessingPage = () => {
                 </DeleteModal>
 
 
-                <Dialog open={EditModal} onClose={() => setEditModal(false)}>
-                    <div className="modal-overlay">
-                        <div className="modal-edit">
-                            <h2>2차가공 수정</h2>
-                            <h3>원료번호: {selectedProduct.ProductNo}</h3>
-                            <div className="editbtn1">
-                            <button className="editbtn"
-                                    onClick={async () => {
-                                        try {
-                                            const response = await axios.post('http://localhost:8000/api/product/', {
-                                                Method: 'update',
-                                                ProductNo: selectedProduct.ProductNo,
-                                                RealWeight: selectedProduct.RealWeight,
-                                                RealPrice: selectedProduct.RealPrice,
-                                                MeterialNo: selectedProduct.MeterialNo,
-                                                SlaugtherDate: selectedProduct.SlaugtherDate,
-                                                UnitPrice: selectedProduct.UnitPrice,
-                                                ProductDate: selectedProduct.ProductDate,
-                                                ProductWorker: selectedProduct.ProductWorker,
-                                                WeightAfterWork: selectedProduct.WeightAfterWork,
-                                                LossWeight: selectedProduct.LossWeight,
-                                                ProductPrice: selectedProduct.ProductPrice,
-                                                DiscountRate: selectedProduct.DiscountRate,
-                                            });
-                                            alert('수정되었습니다.');
-                                            fetchSearchResults();
-                                            setEditModal(false);
-                                        } catch (error) {
-                                            console.error('수정 에러:', error);
-                                            alert('수정 실패.');
-                                        }
-                                    }}
-                            >
-                                저장
-                            </button>
-                            <button className="editbtn" onClick={() => setEditModal(false)}>취소</button>
+                {/*<Dialog open={EditModal} onClose={() => setEditModal(false)}>*/}
+                {/*    <div className="modal-overlay">*/}
+                {/*        <div className="modal-edit">*/}
+                {/*            <h2>2차가공 수정</h2>*/}
+                {/*            <h3>원료번호: {selectedProduct.ProductNo}</h3>*/}
+                {/*            <div className="editbtn1">*/}
+                {/*            <button className="editbtn"*/}
+                {/*                    onClick={async () => {*/}
+                {/*                        try {*/}
+                {/*                            const response = await axios.post('http://localhost:8000/api/product/', {*/}
+                {/*                                Method: 'put',*/}
+                {/*                                ProductNo: selectedProduct.ProductNo,*/}
+                {/*                                RealWeight: selectedProduct.RealWeight,*/}
+                {/*                                RealPrice: selectedProduct.RealPrice,*/}
+                {/*                                MeterialNo: selectedProduct.MeterialNo,*/}
+                {/*                                SlaugtherDate: selectedProduct.SlaugtherDate,*/}
+                {/*                                UnitPrice: selectedProduct.UnitPrice,*/}
+                {/*                                ProductDate: selectedProduct.ProductDate,*/}
+                {/*                                ProductWorker: selectedProduct.ProductWorker,*/}
+                {/*                                WeightAfterWork: selectedProduct.WeightAfterWork,*/}
+                {/*                                LossWeight: selectedProduct.LossWeight,*/}
+                {/*                                ProductPrice: selectedProduct.ProductPrice,*/}
+                {/*                                DiscountRate: selectedProduct.DiscountRate,*/}
+                {/*                            });*/}
+                {/*                            alert('수정되었습니다.');*/}
+                {/*                            fetchSearchResults();*/}
+                {/*                            setEditModal(false);*/}
+                {/*                        } catch (error) {*/}
+                {/*                            console.error('수정 에러:', error);*/}
+                {/*                            alert('수정 실패.');*/}
+                {/*                        }*/}
+                {/*                    }}*/}
+                {/*            >*/}
+                {/*                저장*/}
+                {/*            </button>*/}
+                {/*            <button className="editbtn" onClick={() => setEditModal(false)}>취소</button>*/}
 
-                            </div>
-                                {selectedProduct && (
-                                <>
-                                    <div className="allEdit">
-                                    <div className="input-container">
-                                        <div className="edit">
-                                        <label>발주일시 : {selectedProduct.OrderDate}</label>
-                                        </div>
-                                        <div className="updateinput">
-                                            <div className="left">
-                                                <label>실중량 :</label>
-                                            </div>
-                                            <div className="right">
-                                                <input
-                                                type="text"
-                                                value={selectedProduct.RealWeight}
-                                                onChange={(e) => setSelectedProduct({
-                                                    ...selectedProduct,
-                                                    RealWeight: e.target.value
-                                                })}
-                                            />
-                                            </div>
-                                        </div>
-                                    </div>
+                {/*            </div>*/}
+                {/*                {selectedProduct && (*/}
+                {/*                <>*/}
+                {/*                    <div className="allEdit">*/}
+                {/*                    <div className="input-container">*/}
+                {/*                        <div className="edit">*/}
+                {/*                        <label>발주일시 : {selectedProduct.OrderDate}</label>*/}
+                {/*                        </div>*/}
+                {/*                        <div className="updateinput">*/}
+                {/*                            <div className="left">*/}
+                {/*                                <label>실중량 :</label>*/}
+                {/*                            </div>*/}
+                {/*                            <div className="right">*/}
+                {/*                                <input*/}
+                {/*                                type="text"*/}
+                {/*                                value={selectedProduct.RealWeight}*/}
+                {/*                                onChange={(e) => setSelectedProduct({*/}
+                {/*                                    ...selectedProduct,*/}
+                {/*                                    RealWeight: e.target.value*/}
+                {/*                                })}*/}
+                {/*                            />*/}
+                {/*                            </div>*/}
+                {/*                        </div>*/}
+                {/*                    </div>*/}
 
-                                    <div className="input-container">
-                                        <div className="edit">
-                                        <label>거래처(번호) : {selectedProduct.Client}</label>
-                                        </div>
-                                            <div className="updateinput">
-                                                <div className="left">
-                                                    <label>실 매입가 :</label>
-                                                </div>
-                                            <div className="right">
-                                                <input
-                                                    type="text"
-                                                    value={selectedProduct.RealPrice}
-                                                    onChange={(e) => setSelectedProduct({
-                                                        ...selectedProduct,
-                                                        RealPrice: e.target.value
-                                                    })}
-                                                />
-                                            </div>
-                                        </div>
-                                    </div>
+                {/*                    <div className="input-container">*/}
+                {/*                        <div className="edit">*/}
+                {/*                        <label>거래처(번호) : {selectedProduct.Client}</label>*/}
+                {/*                        </div>*/}
+                {/*                            <div className="updateinput">*/}
+                {/*                                <div className="left">*/}
+                {/*                                    <label>실 매입가 :</label>*/}
+                {/*                                </div>*/}
+                {/*                            <div className="right">*/}
+                {/*                                <input*/}
+                {/*                                    type="text"*/}
+                {/*                                    value={selectedProduct.RealPrice}*/}
+                {/*                                    onChange={(e) => setSelectedProduct({*/}
+                {/*                                        ...selectedProduct,*/}
+                {/*                                        RealPrice: e.target.value*/}
+                {/*                                    })}*/}
+                {/*                                />*/}
+                {/*                            </div>*/}
+                {/*                        </div>*/}
+                {/*                    </div>*/}
 
-                                    <div className="input-container">
-                                        <div className="edit">
-                                        <label>발주중량(KG) : {selectedProduct.OrderWeight}</label>
-                                        </div>
-                                            <div className="updateinput">
-                                                <div className="left">
-                                                    <label>이력번호 :</label>
-                                                </div>
-                                            <div className="right">
-                                                <input
-                                                    type="text"
-                                                    value={selectedProduct.MeterialNo}
-                                                    onChange={(e) => setSelectedProduct({
-                                                        ...selectedProduct,
-                                                        MeterialNo: e.target.value
-                                                    })}
-                                                />
-                                            </div>
-                                        </div>
-                                    </div>
+                {/*                    <div className="input-container">*/}
+                {/*                        <div className="edit">*/}
+                {/*                        <label>발주중량(KG) : {selectedProduct.OrderWeight}</label>*/}
+                {/*                        </div>*/}
+                {/*                            <div className="updateinput">*/}
+                {/*                                <div className="left">*/}
+                {/*                                    <label>이력번호 :</label>*/}
+                {/*                                </div>*/}
+                {/*                            <div className="right">*/}
+                {/*                                <input*/}
+                {/*                                    type="text"*/}
+                {/*                                    value={selectedProduct.MeterialNo}*/}
+                {/*                                    onChange={(e) => setSelectedProduct({*/}
+                {/*                                        ...selectedProduct,*/}
+                {/*                                        MeterialNo: e.target.value*/}
+                {/*                                    })}*/}
+                {/*                                />*/}
+                {/*                            </div>*/}
+                {/*                        </div>*/}
+                {/*                    </div>*/}
 
-                                    <div className="input-container">
-                                        <div className="edit">
-                                        <label>부위 : {selectedProduct.Part}</label>
-                                        </div>
-                                            <div className="updateinput">
-                                                <div className="left">
-                                                    <label>도축일 :</label>
-                                                </div>
-                                                <div className="right">
-                                                <input
-                                                    type="text"
-                                                    value={selectedProduct.SlaugtherDate}
-                                                    onChange={(e) => setSelectedProduct({
-                                                        ...selectedProduct,
-                                                        SlaugtherDate: e.target.value
-                                                    })}
-                                                />
-                                                </div>
-                                        </div>
-                                    </div>
+                {/*                    <div className="input-container">*/}
+                {/*                        <div className="edit">*/}
+                {/*                        <label>부위 : {selectedProduct.Part}</label>*/}
+                {/*                        </div>*/}
+                {/*                            <div className="updateinput">*/}
+                {/*                                <div className="left">*/}
+                {/*                                    <label>도축일 :</label>*/}
+                {/*                                </div>*/}
+                {/*                                <div className="right">*/}
+                {/*                                <input*/}
+                {/*                                    type="text"*/}
+                {/*                                    value={selectedProduct.SlaugtherDate}*/}
+                {/*                                    onChange={(e) => setSelectedProduct({*/}
+                {/*                                        ...selectedProduct,*/}
+                {/*                                        SlaugtherDate: e.target.value*/}
+                {/*                                    })}*/}
+                {/*                                />*/}
+                {/*                                </div>*/}
+                {/*                        </div>*/}
+                {/*                    </div>*/}
 
-                                    <div className="input-container">
-                                        <div className="edit">
-                                        <label>발주금액 : {selectedProduct.OrderPrice}</label>
-                                        </div>
-                                            <div className="updateinput">
-                                                <div className="left">
-                                                    <label>입고단가 :</label>
-                                                </div>
-                                                <div className="right">
-                                                <input
-                                                    type="text"
-                                                    value={selectedProduct.UnitPrice}
-                                                    onChange={(e) => setSelectedProduct({
-                                                        ...selectedProduct,
-                                                        UnitPrice: e.target.value
-                                                    })}
-                                                />
-                                                </div>
-                                        </div>
-                                    </div>
+                {/*                    <div className="input-container">*/}
+                {/*                        <div className="edit">*/}
+                {/*                        <label>발주금액 : {selectedProduct.OrderPrice}</label>*/}
+                {/*                        </div>*/}
+                {/*                            <div className="updateinput">*/}
+                {/*                                <div className="left">*/}
+                {/*                                    <label>입고단가 :</label>*/}
+                {/*                                </div>*/}
+                {/*                                <div className="right">*/}
+                {/*                                <input*/}
+                {/*                                    type="text"*/}
+                {/*                                    value={selectedProduct.UnitPrice}*/}
+                {/*                                    onChange={(e) => setSelectedProduct({*/}
+                {/*                                        ...selectedProduct,*/}
+                {/*                                        UnitPrice: e.target.value*/}
+                {/*                                    })}*/}
+                {/*                                />*/}
+                {/*                                </div>*/}
+                {/*                        </div>*/}
+                {/*                    </div>*/}
 
-                                    <div className="input-container">
-                                        <div className="edit">
-                                        <label>입고일시 : {selectedProduct.StockDate}</label>
-                                        </div>
-                                            <div className="updateinput">
-                                                <div className="left">
-                                                    <label>단가 :</label>
-                                                </div>
-                                                <div className="right">
-                                                <input
-                                                    type="text"
-                                                    value={selectedProduct.ProductPrice}
-                                                    onChange={(e) => setSelectedProduct({
-                                                        ...selectedProduct,
-                                                        ProductPrice: e.target.value
-                                                    })}
-                                                />
-                                                </div>
-                                        </div>
-                                    </div>
+                {/*                    <div className="input-container">*/}
+                {/*                        <div className="edit">*/}
+                {/*                        <label>입고일시 : {selectedProduct.StockDate}</label>*/}
+                {/*                        </div>*/}
+                {/*                            <div className="updateinput">*/}
+                {/*                                <div className="left">*/}
+                {/*                                    <label>단가 :</label>*/}
+                {/*                                </div>*/}
+                {/*                                <div className="right">*/}
+                {/*                                <input*/}
+                {/*                                    type="text"*/}
+                {/*                                    value={selectedProduct.ProductPrice}*/}
+                {/*                                    onChange={(e) => setSelectedProduct({*/}
+                {/*                                        ...selectedProduct,*/}
+                {/*                                        ProductPrice: e.target.value*/}
+                {/*                                    })}*/}
+                {/*                                />*/}
+                {/*                                </div>*/}
+                {/*                        </div>*/}
+                {/*                    </div>*/}
 
-                                    <div className="input-container">
-                                        <div className="edit">
-                                        <label>입고자명 : {selectedProduct.StockWorker}</label>
-                                        </div>
-                                            <div className="updateinput">
-                                                <div className="left">
-                                                    <label>작업자 :</label>
-                                                </div>
-                                                <div className="right">
-                                                <input
-                                                    type="text"
-                                                    value={selectedProduct.ProductWorker}
-                                                    onChange={(e) => setSelectedProduct({
-                                                        ...selectedProduct,
-                                                        ProductWorker: e.target.value
-                                                    })}
-                                                />
-                                                </div>
-                                        </div>
-                                    </div>
+                {/*                    <div className="input-container">*/}
+                {/*                        <div className="edit">*/}
+                {/*                        <label>입고자명 : {selectedProduct.StockWorker}</label>*/}
+                {/*                        </div>*/}
+                {/*                            <div className="updateinput">*/}
+                {/*                                <div className="left">*/}
+                {/*                                    <label>작업자 :</label>*/}
+                {/*                                </div>*/}
+                {/*                                <div className="right">*/}
+                {/*                                <input*/}
+                {/*                                    type="text"*/}
+                {/*                                    value={selectedProduct.ProductWorker}*/}
+                {/*                                    onChange={(e) => setSelectedProduct({*/}
+                {/*                                        ...selectedProduct,*/}
+                {/*                                        ProductWorker: e.target.value*/}
+                {/*                                    })}*/}
+                {/*                                />*/}
+                {/*                                </div>*/}
+                {/*                        </div>*/}
+                {/*                    </div>*/}
 
-                                    <div className="input-container">
-                                        <div className="edit">
-                                        <label>입고품목 : {selectedProduct.Stockitem}</label>
-                                        </div>
-                                            <div className="updateinput">
-                                                <div className="left">
-                                                    <label>작업 후 중량 :</label>
-                                                </div>
-                                                <div className="right">
-                                                <input
-                                                    type="text"
-                                                    value={selectedProduct.WeightAfterWork}
-                                                    onChange={(e) => setSelectedProduct({
-                                                        ...selectedProduct,
-                                                        WeightAfterWork: e.target.value
-                                                    })}
-                                                />
-                                                </div>
-                                        </div>
-                                    </div>
+                {/*                    <div className="input-container">*/}
+                {/*                        <div className="edit">*/}
+                {/*                        <label>입고품목 : {selectedProduct.Stockitem}</label>*/}
+                {/*                        </div>*/}
+                {/*                            <div className="updateinput">*/}
+                {/*                                <div className="left">*/}
+                {/*                                    <label>작업 후 중량 :</label>*/}
+                {/*                                </div>*/}
+                {/*                                <div className="right">*/}
+                {/*                                <input*/}
+                {/*                                    type="text"*/}
+                {/*                                    value={selectedProduct.WeightAfterWork}*/}
+                {/*                                    onChange={(e) => setSelectedProduct({*/}
+                {/*                                        ...selectedProduct,*/}
+                {/*                                        WeightAfterWork: e.target.value*/}
+                {/*                                    })}*/}
+                {/*                                />*/}
+                {/*                                </div>*/}
+                {/*                        </div>*/}
+                {/*                    </div>*/}
 
-                                    <div className="input-container">
-                                        <div className="edit">
-                                        <label>작업일 : {selectedProduct.ProductDate ? format(new Date(selectedProduct.ProductDate), 'yyyy년 MM월 dd일 HH시 mm분 ss초') : null}</label>
-                                        </div>
-                                            <div className="updateinput">
-                                                <div className="left">
-                                                    <label>로스 :</label>
-                                                </div>
-                                                <div className="right">
-                                                <input
-                                                    type="text"
-                                                    value={selectedProduct.LossWeight}
-                                                    onChange={(e) => setSelectedProduct({
-                                                        ...selectedProduct,
-                                                        LossWeight: e.target.value
-                                                    })}
-                                                />
-                                                </div>
-                                        </div>
-                                    </div>
+                {/*                    <div className="input-container">*/}
+                {/*                        <div className="edit">*/}
+                {/*                        <label>작업일 : {selectedProduct.ProductDate ? format(new Date(selectedProduct.ProductDate), 'yyyy년 MM월 dd일 HH시 mm분 ss초') : null}</label>*/}
+                {/*                        </div>*/}
+                {/*                            <div className="updateinput">*/}
+                {/*                                <div className="left">*/}
+                {/*                                    <label>로스 :</label>*/}
+                {/*                                </div>*/}
+                {/*                                <div className="right">*/}
+                {/*                                <input*/}
+                {/*                                    type="text"*/}
+                {/*                                    value={selectedProduct.LossWeight}*/}
+                {/*                                    onChange={(e) => setSelectedProduct({*/}
+                {/*                                        ...selectedProduct,*/}
+                {/*                                        LossWeight: e.target.value*/}
+                {/*                                    })}*/}
+                {/*                                />*/}
+                {/*                                </div>*/}
+                {/*                        </div>*/}
+                {/*                    </div>*/}
 
-                                    <div className="input-container">
-                                        <div className="edit">
-                                        <label>상태 : {selectedProduct.ProductSituation}</label>
-                                        </div>
-                                            <div className="updateinput">
-                                                <div className="left">
-                                                    <label>할인율 :</label>
-                                                </div>
-                                                <div className="right">
-                                                <input
-                                                type="text"
-                                                value={selectedProduct.DiscountRate}
-                                                onChange={(e) => setSelectedProduct({
-                                                    ...selectedProduct,
-                                                    DiscountRate: e.target.value
-                                                })}
-                                            />
-                                                </div>
-                                        </div>
-                                    </div>
-                                    </div>
-                                </>
-                            )}
-                        </div>
-                    </div>
-                </Dialog>
+                {/*                    <div className="input-container">*/}
+                {/*                        <div className="edit">*/}
+                {/*                        <label>상태 : {selectedProduct.ProductSituation}</label>*/}
+                {/*                        </div>*/}
+                {/*                            <div className="updateinput">*/}
+                {/*                                <div className="left">*/}
+                {/*                                    <label>할인율 :</label>*/}
+                {/*                                </div>*/}
+                {/*                                <div className="right">*/}
+                {/*                                <input*/}
+                {/*                                type="text"*/}
+                {/*                                value={selectedProduct.DiscountRate}*/}
+                {/*                                onChange={(e) => setSelectedProduct({*/}
+                {/*                                    ...selectedProduct,*/}
+                {/*                                    DiscountRate: e.target.value*/}
+                {/*                                })}*/}
+                {/*                            />*/}
+                {/*                                </div>*/}
+                {/*                        </div>*/}
+                {/*                    </div>*/}
+                {/*                    </div>*/}
+                {/*                </>*/}
+                {/*            )}*/}
+                {/*        </div>*/}
+                {/*    </div>*/}
+                {/*</Dialog>*/}
             </div>
         </div>
     );
 };
 
 export default ProcessingPage;
+

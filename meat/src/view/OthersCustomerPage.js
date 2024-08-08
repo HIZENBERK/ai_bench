@@ -223,7 +223,7 @@ const OthersCustomerPage = () => {
                                             onClick={async () => {
                                                 try {
                                                     const response= await  axios.post('http://localhost:8000/api/Client/', {
-                                                        Method: 'update',
+                                                        Method: 'put',
                                                         ClientType: selectedClient.ClientType,
                                                         ClientName: selectedClient.ClientName,
                                                         RepresentativeName: selectedClient.RepresentativeName,

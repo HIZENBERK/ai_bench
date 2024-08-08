@@ -87,18 +87,26 @@ const options = {
     plugins: {
         legend: {
             display: false,
-            padding: 10,
         },
         datalabels: {
             align: "center",
+            clip: true,
             formatter: function (value, context) {
-                return context.dataset.labels[context.dataIndex];
+                let label = context.dataset.labels[context.dataIndex];
+                let lines = label.split(' ');
+
+                if (lines.length > 2) {
+                    lines = [lines.slice(0,2).join(' '), lines.slice(2).join(' ')];
+                }
+
+                return lines.join('\n');
             },
             color: "#fff",
             font: {
                 weight: "bold",
-                size: 13,
+                size: 12,
             },
+
         },
         position: "top",
         tooltip: {

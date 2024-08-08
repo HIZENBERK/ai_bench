@@ -3,14 +3,17 @@
     color: #fff;
     padding: 10px;
     display: flex;
+    width: 100%;
     justify-content: space-between;
     align-items: center;
 }
 
+/*
 .navbar-content {
     display: flex;
     align-items: center;
 }
+ */
 
 .navbar-title {
     font-size: 18px;
