@@ -58,6 +58,7 @@ const Login = () => {
             setPassword(parsedData.password);
             handleLogin1(parsedData.empNo,parsedData.password);
         }
+        console.log(scannedData)
     }, [scannedData]);
 
     const handleLogin1 = async (empNoParam, passwordParam) => {

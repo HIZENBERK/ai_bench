@@ -17,6 +17,7 @@ const ProcurementPage = () => {
     const [ETA, setETA] = useState('');
     const [OrderWeight, setOrderWeight] = useState('');
     const [OrderPrice, setOrderPrice] = useState('');
+    const [OrderNo, setOrderNo] = useState('');
 
     const [filteredResults, setFilteredResults] = useState([]);
     const [searchResults, setSearchResults] = useState([]);
@@ -25,6 +26,9 @@ const ProcurementPage = () => {
     const indexOfLastResult = currentPage * resultsPerPage;
     const indexOfFirstResult = indexOfLastResult - resultsPerPage;
     const currentResults = filteredResults.slice(indexOfFirstResult, indexOfLastResult);
+    const [editingRow, setEditingRow] = useState(null);
+    const [editedValues, setEditedValues] = useState([]);
+
 
     // Part dropdown state
     const [partOptions, setPartOptions] = useState([]);
@@ -145,8 +149,6 @@ const ProcurementPage = () => {
         }
     };
 
-
-
     const handleDropdownClickPart = (e) => {
         setSelectedPartOption(e.target.value);
         setSelectedPartCode(e.target.value);
@@ -213,6 +215,44 @@ const ProcurementPage = () => {
 
     };
 
+    const handleEdit = (order) => {
+        setEditingRow(order.OrderNo);
+        setEditedValues({...order});
+        console.log(order);
+    }
+
+    const handleSaveClick = async () => {
+        try {
+            const response = await axios.post('http://localhost:8000/api/order/', {
+                Method: 'put',
+                Part: editedValues.Part,
+                OrderDate: editedValues.OrderDate,
+                OrderWorker: editedValues.OrderWorker,
+                ETA: editedValues.ETA,
+                Client: editedValues.Client,
+                OrderWeight: editedValues.OrderWeight,
+                OrderPrice: editedValues.OrderPrice,
+                OrderSituation: editedValues.OrderSituation,
+                OrderNo: editedValues.OrderNo
+            });
+            alert('수정되었습니다.');
+            fetchSearchResults();
+            setEditingRow(null);
+            setEditedValues([]);
+        } catch (error) {
+            console.error('수정 에러:', error);
+            alert('수정 실패.');
+        }
+    };
+
+    const handleInputChange = (field, value) => {
+        setEditedValues({
+            ...editedValues,
+            [field]: value,
+        });
+    };
+
+
     return (
         <div>
             <div className="procurement-page-container">
@@ -234,7 +274,7 @@ const ProcurementPage = () => {
                             <option value="" disabled selected>부위를 선택하세요.</option>
                             {partOptions.map((option, index) => (
                                 <option key={index} value={option.code}>
-                                    {option.name}
+                                    {option.name} 
                                 </option>
                             ))}
                         </select>
@@ -334,19 +374,86 @@ const ProcurementPage = () => {
                             {currentResults.map((result, index) => (
                                 <tr key={index}>
                                     <td>{index + 1}</td>
-                                    <td>{result.OrderDate}</td>
-                                    <td>{result.ETA}</td>
-                                    <td>{result.Client}</td>
-                                    <td>{result.OrderWeight}</td>
-                                    <td>{result.Part}</td>
-                                    <td>{result.OrderPrice}</td>
-                                    <td>{result.OrderSituation}</td>
-                                    <td>{result.OrderNo}</td>
-                                    <td>
-                                        <button onClick={() => handleDelete()}>수정</button>
-                                        /
-                                        <button onClick={() => handleDelete()}>삭제</button>
-                                    </td>
+                                    {editingRow === result.OrderNo ? (
+                                        <>
+                                            <td>
+                                                <input
+                                                    type="text"
+                                                    id="OrderDate"
+                                                    value={editedValues.OrderDate || ''}
+                                                    onChange={(e) => handleInputChange('OrderDate', e.target.value)}/>
+                                            </td>
+                                            <td>
+                                                <input
+                                                    type="text"
+                                                    id="ETA"
+                                                    value={editedValues.ETA || ''}
+                                                    onChange={(e) => handleInputChange('ETA', e.target.value)}/>
+                                            </td>
+                                            <td>
+                                                <input
+                                                    type="text"
+                                                    id="Client"
+                                                    value={editedValues.Client || ''}
+                                                    onChange={(e) => handleInputChange('Client', e.target.value)}/>
+                                            </td>
+                                            <td>
+                                                <input
+                                                    type="text"
+                                                    id="OrderWeight"
+                                                    value={editedValues.OrderWeight || ''}
+                                                    onChange={(e) => handleInputChange('OrderWeight', e.target.value)}/>
+                                            </td>
+                                            <td>
+                                                <input
+                                                    type="text"
+                                                    id="Part"
+                                                    value={editedValues.Part || ''}
+                                                    onChange={(e) => handleInputChange('Part', e.target.value)}/>
+                                            </td>
+                                            <td>
+                                                <input
+                                                    type="text"
+                                                    id="OrderPrice"
+                                                    value={editedValues.OrderPrice || ''}
+                                                    onChange={(e) => handleInputChange('OrderPrice', e.target.value)}/>
+                                            </td>
+                                            <td>
+                                                <input
+                                                    type="text"
+                                                    id="OrderSituation"
+                                                    value={editedValues.OrderSituation || ''}
+                                                    onChange={(e) => handleInputChange('OrderSituation', e.target.value)}/>
+                                            </td>
+                                            <td>
+                                                <input
+                                                    type="text"
+                                                    id="OrderNo"
+                                                    value={editedValues.OrderNo || ''}
+                                                    onChange={(e) => handleInputChange('OrderNo', e.target.value)}/>
+                                            </td>
+                                            <td>
+                                                <button onClick={handleSaveClick}>저장</button>
+                                                <button onClick={() => setEditingRow(null)}>취소</button>
+                                            </td>
+                                        </>
+                                    ) : (
+                                        <>
+                                            <td>{result.OrderDate}</td>
+                                            <td>{result.ETA}</td>
+                                            <td>{result.Client}</td>
+                                            <td>{result.OrderWeight}</td>
+                                            <td>{result.Part}</td>
+                                            <td>{result.OrderPrice}</td>
+                                            <td>{result.OrderSituation}</td>
+                                            <td>{result.OrderNo}</td>
+                                            <td>
+                                                <button onClick={() => handleEdit(result)}>수정</button>
+                                                /
+                                                <button onClick={() => handleDelete()}>삭제</button>
+                                            </td>
+                                        </>
+                                    )}
                                 </tr>
                             ))}
                         </tbody>

@@ -27,6 +27,8 @@ const IncomingPage = () => {
     const [actualWeight, setActualWeight] = useState('');
     const [actualPurchasePrice, setActualPurchasePrice] = useState('');
     const [stockItem, setStockItem] = useState('');
+    const [editingRow, setEditingRow] = useState(null);
+    const [editedValues, setEditedValues] = useState({});
 
     
     const indexOfLastResult = currentPage * resultsPerPage;
@@ -168,6 +170,45 @@ const IncomingPage = () => {
 
     };
 
+    const handleEdit = (orderNo) => {
+        setEditingRow(orderNo.OrderNo);
+        setEditedValues({...orderNo});
+    }
+
+    const handleSaveClick = async () => {
+        try {
+            const response = await axios.post('http://localhost:8000/api/stock/', {
+                Method: 'put',
+                OrderNo: editedValues.OrderNo,
+                StockDate: editedValues.StockDate,
+                StockWorker: editedValues.StockWorker,
+                RealWeight: editedValues.RealWeight,
+                RealPrice: editedValues.RealPrice,
+                MeterialNo: editedValues.MeterialNo,
+                SlaugtherDate: editedValues.SlaugtherDate,
+                UnitPrice: editedValues.UnitPrice,
+                StockSituation: editedValues.StockSituation
+            });
+            alert('수정되었습니다.');
+            fetchInitialData();
+            setEditingRow(null);
+            setEditedValues({});
+        } catch (error) {
+            console.error('수정 실패', error);
+            alert('수정 실패.');
+        }
+    };
+
+    const handleInputChange = (field, value) => {
+        setEditedValues({
+            ...editedValues,
+            [field]: value,
+        });
+    };
+
+
+
+
     return (
         <div>
             <div className="procurement-page-container">
@@ -268,20 +309,19 @@ const IncomingPage = () => {
                             <th>부위</th>
                             <th>발주금액</th>
                             <th>입고자명</th>
-                            <th>입고품목</th>
-                            <th>실 중량</th>
-                            <th>실 매입가</th>
                             <th>이력번호</th>
                             <th>도축일</th>
-                            <th>입고단가</th>
                             <th>입고번호</th>
                             <th>상태</th>
+                            <th>입고품목</th>
+                            <th>실중량</th>
+                            <th>실 매입가</th>
+                            <th>입고단가</th>
                             <th>수정</th>
                         </tr>
                     </thead>
                     <tbody>
-                        {
-                            currentResults.map((result, index) => (
+                        {currentResults.map((result, index) => (
                             <tr key={index}>
                                 <td>{index + 1}</td>
                                 <td>{result.order?.OrderDate || '-'}</td>
@@ -291,15 +331,61 @@ const IncomingPage = () => {
                                 <td>{result.order?.Part || '-'}</td>
                                 <td>{result.order?.OrderPrice || '-'}</td>
                                 <td>{result.StockWorker}</td>
-                                <td>{result.Stockitem}</td>
-                                <td>{result.RealWeight}</td>
-                                <td>{result.RealPrice}</td>
+                                {/*<td>{result.Stockitem}</td>*/}
+                                {/*<td>{result.RealWeight}</td>*/}
+                                {/*<td>{result.RealPrice}</td>*/}
                                 <td>{result.MeterialNo}</td>
                                 <td>{result.SlaugtherDate}</td>
-                                <td>{result.UnitPrice}</td>
+                                {/*<td>{result.UnitPrice}</td>*/}
                                 <td>{result.StockNo}</td>
                                 <td>{result.StockSituation}</td>
-                                <td><button onClick={() => handleDelete()}>수정</button></td>
+                                {editingRow === result.OrderNo ? (
+                                    <>
+                                        <td>
+                                            <input
+                                                type="text"
+                                                id="Stockitem"
+                                                value={editedValues.Stockitem || ''}
+                                                onChange={(e) => handleInputChange('Stockitem', e.target.value)} />
+                                        </td>
+                                        <td>
+                                            <input
+                                                type="text"
+                                                id="RealWeight"
+                                                value={editedValues.RealWeight || ''}
+                                                onChange={(e) => handleInputChange('RealWeight', e.target.value)} />
+                                        </td>
+                                        <td>
+                                            <input
+                                                type="text"
+                                                id="RealPrice"
+                                                value={editedValues.RealPrice || ''}
+                                                onChange={(e) => handleInputChange('RealPrice', e.target.value)} />
+                                        </td>
+                                        <td>
+                                            <input
+                                                type="text"
+                                                id="UnitPrice"
+                                                value={editedValues.UnitPrice || ''}
+                                                onChange={(e) => handleInputChange('UnitPrice', e.target.value)} />
+                                        </td>
+                                        <td>
+                                            <button onClick={handleSaveClick}>저장</button>
+                                            <button onClick={() => setEditingRow(null)}>취소</button>
+                                        </td>
+                                    </>
+                                ) : (
+                                    <>
+                                        <td>{result.Stockitem}</td>
+                                        <td>{result.RealWeight}</td>
+                                        <td>{result.RealPrice}</td>
+                                        <td>{result.UnitPrice}</td>
+                                        <td>
+                                            <button onClick={() => handleEdit(result)}>수정</button>
+                                        </td>
+                                    </>
+                                )}
+                                {/*<td><button onClick={() => handleDelete()}>수정</button></td>*/}
                             </tr>
                         ))}
                     </tbody>
