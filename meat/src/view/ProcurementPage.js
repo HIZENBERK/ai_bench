@@ -8,6 +8,7 @@ import { useAuth } from "../component/AuthContext";
 import axios from "axios";
 import { format } from "date-fns";
 import ProSearch from "../component/ProSearch";
+import DeleteModal from "../component/DeleteModal";
 
 const ProcurementPage = () => {
 
@@ -18,6 +19,10 @@ const ProcurementPage = () => {
     const [OrderWeight, setOrderWeight] = useState('');
     const [OrderPrice, setOrderPrice] = useState('');
     const [OrderNo, setOrderNo] = useState('');
+    const [Part, setPart] = useState('');
+    const [Client, setClient] = useState('');
+    const [OrderSituation ,setOrderSituation] = useState('');
+
 
     const [filteredResults, setFilteredResults] = useState([]);
     const [searchResults, setSearchResults] = useState([]);
@@ -27,7 +32,8 @@ const ProcurementPage = () => {
     const indexOfFirstResult = indexOfLastResult - resultsPerPage;
     const currentResults = filteredResults.slice(indexOfFirstResult, indexOfLastResult);
     const [editingRow, setEditingRow] = useState(null);
-    const [editedValues, setEditedValues] = useState([]);
+    const [editedValues, setEditedValues] = useState({});
+    const [DeleteModalOpen, setDeleteModalOpen] = useState(false);
 
 
     // Part dropdown state
@@ -179,6 +185,7 @@ const ProcurementPage = () => {
         setSelectedClientOption(option.ClientName);
         setIsClientOpen(false);
     };
+
     const handleClickOutside = (event) => {
         if (partRef.current && !partRef.current.contains(event.target)) {
             setIsPartOpen(false);
@@ -211,8 +218,32 @@ const ProcurementPage = () => {
         setOrderPrice(formattedPrice); // 천 단위 구분자 추가, '원'은 제거
     }
 
-    const handleDelete = () => {
+    const handleDelete = (OrderNo) => {
+        setDeleteModalOpen(true);
+        setOrderNo(OrderNo);
+    };
 
+    const confirmDelete = async () => {
+        try {
+            const response = await axios.post('http://localhost:8000/api/order/', {
+                Method: 'delete',
+                OrderNo: OrderNo
+            });
+            console.log(response);
+            fetchSearchResults();
+            setPart('');
+            setOrderDate('');
+            setETA('');
+            setOrderPrice('');
+            setOrderWeight('');
+            setOrderNo('');
+            setClient('');
+            setOrderSituation('');
+            alert('삭제되었습니다.');
+            setDeleteModalOpen(false);
+        } catch (error) {
+            console.error('데이터 삭제 에러:', error)
+        }
     };
 
     const handleEdit = (order) => {
@@ -223,8 +254,8 @@ const ProcurementPage = () => {
 
     const handleSaveClick = async () => {
         try {
-            const response = await axios.post('http://localhost:8000/api/order/', {
-                Method: 'put',
+            const response = await axios.put(`http://localhost:8000/api/order/`, {
+                // Method: 'put',
                 Part: editedValues.Part,
                 OrderDate: editedValues.OrderDate,
                 OrderWorker: editedValues.OrderWorker,
@@ -238,7 +269,7 @@ const ProcurementPage = () => {
             alert('수정되었습니다.');
             fetchSearchResults();
             setEditingRow(null);
-            setEditedValues([]);
+            setEditedValues({});
         } catch (error) {
             console.error('수정 에러:', error);
             alert('수정 실패.');
@@ -450,7 +481,7 @@ const ProcurementPage = () => {
                                             <td>
                                                 <button onClick={() => handleEdit(result)}>수정</button>
                                                 /
-                                                <button onClick={() => handleDelete()}>삭제</button>
+                                                <button onClick={() => handleDelete(result.OrderNo)}>삭제</button>
                                             </td>
                                         </>
                                     )}
@@ -464,6 +495,12 @@ const ProcurementPage = () => {
                     totalPages={Math.ceil(filteredResults.length / resultsPerPage)}
                     onPageChange={handlePageChange}
                 />
+
+                <DeleteModal
+                    open={DeleteModalOpen}
+                    onClose={() => setDeleteModalOpen(false)}
+                    onConfirm={confirmDelete}>
+                </DeleteModal>
             </div>
         </div>
     );

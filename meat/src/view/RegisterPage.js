@@ -1,219 +1,40 @@
 //주문 등록 페이지
-import React, {useEffect, useState} from "react";
+import React, {useEffect, useRef, useState} from "react";
 import Pagination from '../component/Pagination'; // Make sure the path is correct
-import '../css/Pagination.css'; // Ensure this path is correct
+import '../css/Pagination.css';
+import DatePicker from "../component/DatePicker";
+import {useAuth} from "../component/AuthContext";
+import PopupPostCode from "../component/DaumPost";
+import axios from "axios";
+import {format} from "date-fns";
+import DeleteModal from "../component/DeleteModal";
 
 const RegisterPage = () => {
-    const [registerResults] = useState([
-        { 
-        no: 1,
-        registrationDate: "2024-06-01",
-        category: "Electronics",
-        customer: "John Doe",
-        address: "123 Main St, City, Country",
-        contact: "+1234567890",
-        orderNumber: "ORD001",
-        giftWrapping: "Yes",
-        edit: <button>Edit</button>
-    },
-    { 
-        no: 2,
-        registrationDate: "2024-06-02",
-        category: "Clothing",
-        customer: "Jane Smith",
-        address: "456 Elm St, City, Country",
-        contact: "+0987654321",
-        orderNumber: "ORD002",
-        giftWrapping: "No",
-        edit: <button>Edit</button>
-    },
-    { 
-        no: 3,
-        registrationDate: "2024-06-03",
-        category: "Furniture",
-        customer: "Michael Johnson",
-        address: "789 Oak St, City, Country",
-        contact: "+1357924680",
-        orderNumber: "ORD003",
-        giftWrapping: "Yes",
-        edit: <button>Edit</button>
-    },
-    { 
-        no: 4,
-        registrationDate: "2024-06-04",
-        category: "Books",
-        customer: "Emily Brown",
-        address: "987 Pine St, City, Country",
-        contact: "+2468013579",
-        orderNumber: "ORD004",
-        giftWrapping: "No",
-        edit: <button>Edit</button>
-    },
-    { 
-        no: 5,
-        registrationDate: "2024-06-05",
-        category: "Sports Equipment",
-        customer: "William Wilson",
-        address: "654 Maple St, City, Country",
-        contact: "+9876543210",
-        orderNumber: "ORD005",
-        giftWrapping: "Yes",
-        edit: <button>Edit</button>
-    },
-    { 
-        no: 6,
-        registrationDate: "2024-06-06",
-        category: "Beauty Products",
-        customer: "Sarah Lee",
-        address: "321 Birch St, City, Country",
-        contact: "+0123456789",
-        orderNumber: "ORD006",
-        giftWrapping: "No",
-        edit: <button>Edit</button>
-    },
-    { 
-        no: 7,
-        registrationDate: "2024-06-07",
-        category: "Home Appliances",
-        customer: "David Clark",
-        address: "147 Cedar St, City, Country",
-        contact: "+9876543210",
-        orderNumber: "ORD007",
-        giftWrapping: "Yes",
-        edit: <button>Edit</button>
-    },
-    { 
-        no: 8,
-        registrationDate: "2024-06-08",
-        category: "Toys",
-        customer: "Olivia Garcia",
-        address: "369 Elm St, City, Country",
-        contact: "+1357924680",
-        orderNumber: "ORD008",
-        giftWrapping: "No",
-        edit: <button>Edit</button>
-    },
-    { 
-        no: 9,
-        registrationDate: "2024-06-09",
-        category: "Food",
-        customer: "Daniel Martinez",
-        address: "258 Oak St, City, Country",
-        contact: "+2468013579",
-        orderNumber: "ORD009",
-        giftWrapping: "Yes",
-        edit: <button>Edit</button>
-    },
-    { 
-        no: 10,
-        registrationDate: "2024-06-10",
-        category: "Jewelry",
-        customer: "Sophia Lopez",
-        address: "753 Pine St, City, Country",
-        contact: "+1234567890",
-        orderNumber: "ORD010",
-        giftWrapping: "No",
-        edit: <button>Edit</button>
-    },
-    { 
-        no: 11,
-        registrationDate: "2024-06-11",
-        category: "Electronics",
-        customer: "Alexander Hernandez",
-        address: "159 Maple St, City, Country",
-        contact: "+9876543210",
-        orderNumber: "ORD011",
-        giftWrapping: "Yes",
-        edit: <button>Edit</button>
-    },
-    { 
-        no: 12,
-        registrationDate: "2024-06-12",
-        category: "Clothing",
-        customer: "Isabella Martinez",
-        address: "753 Oak St, City, Country",
-        contact: "+1357924680",
-        orderNumber: "ORD012",
-        giftWrapping: "No",
-        edit: <button>Edit</button>
-    },
-    { 
-        no: 13,
-        registrationDate: "2024-06-13",
-        category: "Furniture",
-        customer: "Mason Gonzalez",
-        address: "456 Elm St, City, Country",
-        contact: "+2468013579",
-        orderNumber: "ORD013",
-        giftWrapping: "Yes",
-        edit: <button>Edit</button>
-    },
-    { 
-        no: 14,
-        registrationDate: "2024-06-14",
-        category: "Books",
-        customer: "Ava Perez",
-        address: "951 Pine St, City, Country",
-        contact: "+0123456789",
-        orderNumber: "ORD014",
-        giftWrapping: "No",
-        edit: <button>Edit</button>
-    },
-    { 
-        no: 15,
-        registrationDate: "2024-06-15",
-        category: "Sports Equipment",
-        customer: "Ethan Rivera",
-        address: "258 Birch St, City, Country",
-        contact: "+1234567890",
-        orderNumber: "ORD015",
-        giftWrapping: "Yes",
-        edit: <button>Edit</button>
-    },
-    { 
-        no: 16,
-        registrationDate: "2024-06-16",
-        category: "Beauty Products",
-        customer: "Madison Carter",
-        address: "357 Cedar St, City, Country",
-        contact: "+1357924680",
-        orderNumber: "ORD016",
-        giftWrapping: "No",
-        edit: <button>Edit</button>
-    },
-    { 
-        no: 17,
-        registrationDate: "2024-06-17",
-        category: "Home Appliances",
-        customer: "Benjamin Torres",
-        address: "852 Elm St, City, Country",
-        contact: "+2468013579",
-        orderNumber: "ORD017",
-        giftWrapping: "Yes",
-        edit: <button>Edit</button>
-    },
-    { 
-        no: 18,
-        registrationDate: "2024-06-18",
-        category: "Toys",
-        customer: "Charlotte Flores",
-        address: "753 Birch St, City, Country",
-        contact: "+0123456789",
-        orderNumber: "ORD018",
-        giftWrapping: "No",
-        edit: <button>Edit</button>
-    },
-        // Add more data as required (up to 20 items)
-    ]);
-    
-    const [searchFields, setSearchFields] = useState([{ productName: "", price: "" }]);
+    const [searchFields, setSearchFields] = useState([{ productName: "", price: ""}]);
     const [totalPrice, setTotalPrice] = useState(0);
     const [currentPage, setCurrentPage] = useState(1);
     const [resultsPerPage, setResultsPerPage] = useState(10);
-    const [setFilteredResults] = useState([]);
+    const [filteredResults, setFilteredResults] = useState([]);
     const [TextForSearch, setTextForSearch] = useState('');
     const [SearchOption, setSearchOption] = useState('');
-    const [DisplayResults, setDisplayResults] = useState(registerResults);
+    const [DisplayResults, setDisplayResults] = useState('');
+    const [workingDay, setWorkingDay] = useState('');
+    const [isPostCodeOpen, setIsPostCodeOpen] = useState(false);
+    const [address, setAddress] = useState('');
+    const [searchResults, setSearchResults] = useState([]);
+    const [registerResults, setRegisterResults] = useState([]);
+    const [DeleteModalOpen, setDeleteModalOpen] = useState(false);
+
+    const [PurchaseDate, setPurchaseDate] = useState('');
+    const [PurchaseStep, setPurchaseStep] = useState('');
+    const [Purchaser, setPurchaser] = useState('');
+    const [PurchaseAddress, setPurchaseAddress] = useState('');
+    const [PurchaseAddressDetail, setPurchaseAddressDetail] = useState('');
+    const [PurchasePhone, setPurchasePhone] = useState('');
+    const [PurchaseNo, setPurchaseNo] = useState('');
+    const [Wrapping, setWrapping] = useState("NO");
+
+
 
     useEffect(() => {
         const total = searchFields.reduce((sum, field) => sum + (parseFloat(field.price) || 0), 0);
@@ -288,9 +109,157 @@ const RegisterPage = () => {
         setCurrentPage(1);
     };
 
+    const handleAddressClick = () => {
+        setIsPostCodeOpen(true);
+    }
+
+    const closePostCode = () => {
+        setIsPostCodeOpen(false);
+    }
+
+    const handleAddress = (selectedAddress) => {
+        setPurchaseAddress(selectedAddress);
+        setIsPostCodeOpen(false);
+    }
+
     const indexOfLastResult = currentPage * resultsPerPage;
     const indexOfFirstResult = indexOfLastResult - resultsPerPage;
-    const currentResults = DisplayResults.slice(indexOfFirstResult, indexOfLastResult);
+    const currentResults = searchResults.slice(indexOfFirstResult, indexOfLastResult);
+
+    // const currentResults = searchResults.slice(
+    //     (currentPage - 1) * resultsPerPage,
+    //     currentPage * resultsPerPage
+    // );
+
+    const handleDateChange = (date, id) => {
+        if (id === 'PurchaseDate') {
+            setPurchaseDate(date);
+            console.log(PurchaseDate);
+        }
+    };
+
+    const { authState} = useAuth();
+    let empNo = 'admin';
+    try {
+        empNo = authState.empNo;
+    } catch (e) {}
+
+    const selectList = [
+        {value: "배송", name: "배송"},
+        {value: "픽업", name: "픽업"}
+    ]
+
+    const [selected, setSelected] = useState('구분을 선택하세요.')
+
+    const handleSelect = (e) => {
+        setSelected(e.target.value);
+    };
+
+
+    const fetchSearchResults = async () => {
+        try {
+            const response = await axios.get('http://localhost:8000/api/register');
+            console.log('FetchData:', response.data);
+            setSearchResults(response.data);
+            setFilteredResults(response.data);
+        } catch (error){
+            console.error('데이터 가져오기 실패');
+        }
+    };
+
+    useEffect(() => {
+        fetchSearchResults();
+    }, []);
+
+    useEffect(() => {
+        console.log('SearchResults:', searchResults);
+        console.log('Filtered:', filteredResults);
+    }, [searchResults, filteredResults]);
+
+    const handleRegisterNavigation = async () => {
+        setPurchaseNo("");
+        console.log(selected,Purchaser,PurchaseAddress,PurchaseAddressDetail,PurchasePhone,PurchaseNo,Wrapping)
+        try {
+            const response = await axios.post('http://localhost:8000/api/register/', {
+                Method: 'post',
+                PurchaseDate: PurchaseDate,
+                PurchaseStep: selected,
+                Purchaser: Purchaser,
+                PurchaseAddress: PurchaseAddress,
+                PurchaseAddressDetail: PurchaseAddressDetail,
+                PurchasePhone: PurchasePhone,
+                PurchaseNo: PurchaseNo,
+                Wrapping: Wrapping,
+            });
+            console.log(response);
+            fetchSearchResults();
+            setPurchaseDate('');
+            setPurchaseStep('');
+            setPurchaser('');
+            setPurchaseAddress('');
+            setPurchaseAddressDetail('');
+            setPurchasePhone('');
+            setPurchaseNo('');
+            setWrapping("NO");
+        } catch (error) {
+            console.error('데이터 생성 에러:', error);
+        }
+    };
+
+    const handleDelete = (PurchaseNo) => {
+        setDeleteModalOpen(true);
+        setPurchaseNo(PurchaseNo);
+    }
+
+    const confirmDelete = async () => {
+        console.log(PurchaseNo)
+        try {
+            const response = await axios.post('http://localhost:8000/api/register/', {
+                Method: 'delete',
+                PurchaseNo: PurchaseNo
+            });
+            console.log(response)
+            fetchSearchResults();
+            setPurchaseDate('');
+            setPurchaseStep('');
+            setPurchaser('');
+            setPurchaseAddress('');
+            setPurchaseAddressDetail('');
+            setPurchasePhone('');
+            setPurchaseNo('');
+            setWrapping('');
+            setDeleteModalOpen(false);
+        } catch (error) {
+            console.error('데이터삭제 에러:', error);
+        }
+    }
+
+    const phoneRef = useRef();
+
+    const handlePhone = (e) => {
+        const value = e.target.value.replace(/\D+/g, ""); // 숫자만 남김
+        const numberLength = 11;
+
+        let result = '';
+
+        for (let i = 0; i < value.length && i < numberLength; i++) {
+            if (i === 3 || i === 7) {
+                result += "-";
+            }
+            result += value[i];
+        }
+
+        setPurchasePhone(result);
+    };
+
+    const handleWrapping = (e) => {
+        if (e.target.value) {
+            setWrapping("YES");
+        } else {
+            setWrapping("");
+        }
+    }
+
 
     return (
         <div>
@@ -299,38 +268,65 @@ const RegisterPage = () => {
                 {/* input fields for product registration */}
                 <div className="totalRegister">
                     <div className="input-registerpage">
-                        <div className="input-container">
-                            <label htmlFor="workingDay">등록일(요일)</label>
-                            <input type="text" id="workingDay"/>
+                        <div className="input-container1">
+                            <label htmlFor="PurchaseDate">등록일</label>
+                            <DatePicker id="PurchaseDate" selectedDate={PurchaseDate} onChangeDate={handleDateChange}/>
+                            {/*<input type="text" id="workingDay"/>*/}
                         </div>
 
-                        <div className="input-container">
-                            <label htmlFor="category">구분</label>
-                            <input type="text" id="category"/>
+                        <div className="input-container1">
+                            <label htmlFor="input-container1">구분</label>
+                            <select className="selectCustom" onChange={handleSelect} value={selected} id="PurchaseStep">
+                                {selectList.map((option, index) => (
+                                    <option value={option.value} key={index}>
+                                        {option.name}
+                                    </option>
+                                ))}
+                            </select>
+                            {/*<input type="text" id="input-container1"/>*/}
                         </div>
 
-                        <div className="input-container">
+                        <div className="input-container1">
                             <label htmlFor="customer">주문자</label>
-                            <input type="text" id="customer"/>
+                            <input type="text" id="Purchaser" value={Purchaser} onChange={(e) => setPurchaser(e.target.value)}/>
                         </div>
 
-                        <div className="input-container">
+                        <div className="input-container1">
                             <label htmlFor="address">주소</label>
-                            <input type="text" id="address"/>
+                            <input type="text" id="PurchaseAddress" value={PurchaseAddress} onClick={handleAddressClick} readOnly/>
+                            {isPostCodeOpen && (
+                                <div className="modalStyle">
+                                    <div className="modalContentStyle">
+                                        <PopupPostCode onClose={closePostCode} onSelect={handleAddress} />
+                                    </div>
+                                </div>
+                            )}
                         </div>
 
-                        <div className="input-container">
+                        <div className="input-container1">
+                            <input type="text" id="PurchaserAddressDetail"
+                                   value={PurchaseAddressDetail}
+                                   onChange={(e) => setPurchaseAddressDetail(e.target.value)}
+                                   placeholder="상세주소"/>
+                        </div>
+
+                        <div className="input-container1">
                             <label htmlFor="contact">연락처</label>
-                            <input type="text" id="contact"/>
+                            <input type="text" id="PurchasePhone"
+                                   ref={phoneRef}
+                                   value={PurchasePhone}
+                                   onChange={handlePhone}
+                                   placeholder="010-1234-5678"/>
                         </div>
 
-                        <div className="input-container">
+                        <div className="input-container1">
                             <label htmlFor="orderRegistrar">주문등록자</label>
-                            <input type="text" id="orderRegistrar" />
+                            <text id="orderRegistrar">{empNo}</text>
+                            {/*<input type="text" id="orderRegistrar" />*/}
                         </div>
                     </div>
 
-                {/* search fields */}
+                    {/* search fields */}
                     <div className="priceTotal">
                         {searchFields.map((field, index) => (
                             <div className="" key={index}>
@@ -360,7 +356,6 @@ const RegisterPage = () => {
                                 </div>
                             </div>
                         ))}
-                        {/* buttons for adding/removing search fields and initiating search */}
                         <div className="add-btn">
                             <button onClick={handleAddField}>추가</button>
                         </div>
@@ -368,11 +363,15 @@ const RegisterPage = () => {
                             <h3>가격 합계: {totalPrice}</h3>
                         </div>
                         <div className="registration">
-                            <button className="Order-registration" onClick={handleSearch}>주문 등록</button>
+                            <button className="Order-registration" onClick={handleRegisterNavigation}>주문 등록</button>
                             <label>선물 포장 여부</label>
-                            <input className="giftPossible" type="checkbox"/>
+                            <input
+                                className="giftPossible"
+                                type="checkbox"
+                                id="Wrapping"
+                                checked={Wrapping === "YES"}
+                                onChange={handleWrapping}/>
                         </div>
-
                     </div>
                 </div>
             </div>
@@ -407,11 +406,11 @@ const RegisterPage = () => {
                 </div>
                 <table>
                     <thead>
-                    <tr>
-                        <th>No.</th>
-                        <th>등록일</th>
-                        <th>카테고리</th>
-                            <th>고객</th>
+                        <tr>
+                            <th>No.</th>
+                            <th>등록일</th>
+                            <th>구분</th>
+                            <th>주문자</th>
                             <th>주소</th>
                             <th>연락처</th>
                             <th>주문번호</th>
@@ -422,22 +421,32 @@ const RegisterPage = () => {
                     <tbody>
                         {currentResults.map((result, index) => (
                             <tr key={index}>
-                                <td>{result.no}</td>
-                                <td>{result.registrationDate}</td>
-                                <td>{result.category}</td>
-                                <td>{result.customer}</td>
-                                <td>{result.address}</td>
-                                <td>{result.contact}</td>
-                                <td>{result.orderNumber}</td>
-                                <td>{result.giftWrapping}</td>
-                                <td>{result.edit}</td>
+                                <td>{index+1}</td>
+                                <td>{result.PurchaseDate ? format(new Date(result.PurchaseDate), 'yyyy-MM-dd') : null}</td>
+                                <td>{result.PurchaseStep}</td>
+                                <td>{result.Purchaser}</td>
+                                <td>{result.PurchaseAddress} ,<br/>{result.PurchaseAddressDetail}</td>
+                                <td>{result.PurchasePhone}</td>
+                                <td>{result.PurchaseNo}</td>
+                                <td>{result.Wrapping === 1 ? 'YES' : 'NO'}</td>
+                                <td>
+                                    <button>수정</button>
+                                    /
+                                    <button onClick={() => handleDelete(result.PurchaseNo)}>삭제</button>
+                                </td>
                             </tr>
                         ))}
                     </tbody>
                 </table>
+                <DeleteModal
+                    open={DeleteModalOpen}
+                    onClose={() => setDeleteModalOpen(false)}
+                    onConfirm={confirmDelete}
+                />
+
                 <Pagination
                     currentPage={currentPage}
-                    totalPages={Math.ceil(registerResults.length / resultsPerPage)}
+                    totalPages={Math.ceil(filteredResults.length / resultsPerPage)}
                     onPageChange={handlePageChange}
                 />
             </div>
