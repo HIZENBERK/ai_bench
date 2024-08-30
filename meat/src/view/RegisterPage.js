@@ -10,7 +10,7 @@ import {format} from "date-fns";
 import DeleteModal from "../component/DeleteModal";
 
 const RegisterPage = () => {
-    const [searchFields, setSearchFields] = useState([{ productName: "", price: ""}]);
+    const [searchFields, setSearchFields] = useState([{ PurchaserName: "", PurchaserPrice: ""}]);
     const [totalPrice, setTotalPrice] = useState(0);
     const [currentPage, setCurrentPage] = useState(1);
     const [resultsPerPage, setResultsPerPage] = useState(10);
@@ -32,20 +32,34 @@ const RegisterPage = () => {
     const [PurchaseAddressDetail, setPurchaseAddressDetail] = useState('');
     const [PurchasePhone, setPurchasePhone] = useState('');
     const [PurchaseNo, setPurchaseNo] = useState('');
-    const [Wrapping, setWrapping] = useState("NO");
+    const [Wrapping, setWrapping] = useState(false);
+    const [PurchaserName, setPurchaserName] = useState('');
+    const [PurchaserPrice, setPurchaserPrice] = useState('');
 
 
 
     useEffect(() => {
-        const total = searchFields.reduce((sum, field) => sum + (parseFloat(field.price) || 0), 0);
+        const total = searchFields.reduce((sum, field) => sum + (parseFloat(field.PurchaserPrice) || 0), 0);
         setTotalPrice(total);
     }, [searchFields]);
 
     const handleInputChange = (index, event) => {
         const { name, value } = event.target;
+        console.log("Field Name:", name);
+        console.log("Field Value:", value);
+
         const updatedFields = [...searchFields];
         updatedFields[index][name] = value;
         setSearchFields(updatedFields);
+
+        if(name === 'PurchaserName') {
+            setPurchaserName(value);
+        } else if(name === 'PurchaserPrice') {
+            setPurchaserPrice(value);
+        }
+
+        const total = updatedFields.reduce((sum, field) => sum + parseFloat(field.PurchaserPrice || 0), 0);
+        setTotalPrice(total);
     };
 
     const handleRemoveField = (index) => {
@@ -55,18 +69,18 @@ const RegisterPage = () => {
     };
 
     const handleAddField = () => {
-        setSearchFields([...searchFields, { productName: "", price: "" }]);
+        setSearchFields([...searchFields, { PurchaserName: "", PurchaserPrice: "" }]);
     };
 
     const handleSearch = () => {
         const filtered = registerResults.filter(result =>
             searchFields.every(field =>
-                result.productName.includes(field.productName) &&
-                (parseFloat(result.price) >= parseFloat(field.price) || !field.price)
+                result.PurchaserName.includes(field.PurchaserName) &&
+                (parseFloat(result.PurchaserPrice) >= parseFloat(field.PurchaserPrice) || !field.PurchaserPrice)
             )
         );
         setFilteredResults(filtered);
-        const total = filtered.reduce((sum, result) => sum + parseInt(result.price || 0), 0);
+        const total = filtered.reduce((sum, result) => sum + parseInt(result.PurchaserPrice || 0), 0);
         setTotalPrice(total);
     };
 
@@ -149,12 +163,11 @@ const RegisterPage = () => {
         {value: "픽업", name: "픽업"}
     ]
 
-    const [selected, setSelected] = useState('구분을 선택하세요.')
+    const [selected, setSelected] = useState('배송')
 
     const handleSelect = (e) => {
         setSelected(e.target.value);
     };
-
 
     const fetchSearchResults = async () => {
         try {
@@ -178,7 +191,7 @@ const RegisterPage = () => {
 
     const handleRegisterNavigation = async () => {
         setPurchaseNo("");
-        console.log(selected,Purchaser,PurchaseAddress,PurchaseAddressDetail,PurchasePhone,PurchaseNo,Wrapping)
+        console.log(selected,Purchaser,PurchaseAddress,PurchaseAddressDetail,PurchasePhone,PurchaseNo,Wrapping,searchFields)
         try {
             const response = await axios.post('http://localhost:8000/api/register/', {
                 Method: 'post',
@@ -189,18 +202,22 @@ const RegisterPage = () => {
                 PurchaseAddressDetail: PurchaseAddressDetail,
                 PurchasePhone: PurchasePhone,
                 PurchaseNo: PurchaseNo,
-                Wrapping: Wrapping,
+                Wrapping: Wrapping ? "YES" : "NO",
+                PurchaserItems: searchFields,
+                //PurchaserName: searchFields,
+                //PurchaserPrice: searchFields
             });
             console.log(response);
             fetchSearchResults();
             setPurchaseDate('');
-            setPurchaseStep('');
+            //setPurchaseStep('');
             setPurchaser('');
             setPurchaseAddress('');
             setPurchaseAddressDetail('');
             setPurchasePhone('');
             setPurchaseNo('');
-            setWrapping("NO");
+            setWrapping(false);
+            setSearchFields([{PurchaserName: "", PurchaserPrice: ""}])
         } catch (error) {
             console.error('데이터 생성 에러:', error);
         }
@@ -227,7 +244,8 @@ const RegisterPage = () => {
             setPurchaseAddressDetail('');
             setPurchasePhone('');
             setPurchaseNo('');
-            setWrapping('');
+            setWrapping(false);
+            setSearchFields([{PurchaserName: '',PurchaserPrice: ''}])
             setDeleteModalOpen(false);
         } catch (error) {
             console.error('데이터삭제 에러:', error);
@@ -248,18 +266,13 @@ const RegisterPage = () => {
             }
             result += value[i];
         }
-
         setPurchasePhone(result);
     };
 
     const handleWrapping = (e) => {
-        if (e.target.value) {
-            setWrapping("YES");
-        } else {
-            setWrapping("");
-        }
+        setWrapping(e.target.checked);
+        console.log(Wrapping)
     }
-
 
     return (
         <div>
@@ -335,9 +348,9 @@ const RegisterPage = () => {
                                     <input
                                         type="text"
                                         id={`productName-${index}`}
-                                        name="productName"
+                                        name="PurchaserName"
                                         className="price-container"
-                                        value={field.productName}
+                                        value={field.PurchaserName}
                                         onChange={event => handleInputChange(index, event)}
                                     />
 
@@ -345,9 +358,9 @@ const RegisterPage = () => {
                                     <input
                                         type="text"
                                         id={`price-${index}`}
-                                        name="price"
+                                        name="PurchaserPrice"
                                         className="price-container"
-                                        value={field.price}
+                                        value={field.PurchaserPrice}
                                         onChange={event => handleInputChange(index, event)}
                                     />
                                     <div className="price-btn">
@@ -369,7 +382,7 @@ const RegisterPage = () => {
                                 className="giftPossible"
                                 type="checkbox"
                                 id="Wrapping"
-                                checked={Wrapping === "YES"}
+                                checked={Wrapping}
                                 onChange={handleWrapping}/>
                         </div>
                     </div>
@@ -421,18 +434,18 @@ const RegisterPage = () => {
                     <tbody>
                         {currentResults.map((result, index) => (
                             <tr key={index}>
-                                <td>{index+1}</td>
+                                <td>{index + 1}</td>
                                 <td>{result.PurchaseDate ? format(new Date(result.PurchaseDate), 'yyyy-MM-dd') : null}</td>
                                 <td>{result.PurchaseStep}</td>
                                 <td>{result.Purchaser}</td>
                                 <td>{result.PurchaseAddress} ,<br/>{result.PurchaseAddressDetail}</td>
                                 <td>{result.PurchasePhone}</td>
                                 <td>{result.PurchaseNo}</td>
-                                <td>{result.Wrapping === 1 ? 'YES' : 'NO'}</td>
+                                <td>{result.Wrapping ? "YES" : "NO"}</td>
                                 <td>
                                     <button>수정</button>
                                     /
-                                    <button onClick={() => handleDelete(result.PurchaseNo)}>삭제</button>
+                                    <button onClick={() => handleDelete(result.PurchaseNo)}>취소</button>
                                 </td>
                             </tr>
                         ))}
