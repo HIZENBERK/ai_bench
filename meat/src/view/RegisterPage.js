@@ -88,6 +88,7 @@ const RegisterPage = () => {
         setSearchOption(e.target.value);
     }
 
+
     const handleSearch1 = () => {
         const lowerCasedFilter = TextForSearch.toLowerCase();
         const filterResults = registerResults.filter(item => {
@@ -189,10 +190,15 @@ const RegisterPage = () => {
         console.log('Filtered:', filteredResults);
     }, [searchResults, filteredResults]);
 
+
     const handleRegisterNavigation = async () => {
         setPurchaseNo("");
-        console.log(selected,Purchaser,PurchaseAddress,PurchaseAddressDetail,PurchasePhone,PurchaseNo,Wrapping,searchFields)
+        console.log(selected, Purchaser, PurchaseAddress, PurchaseAddressDetail, PurchasePhone, PurchaseNo, Wrapping, searchFields);
+
         try {
+            const purchaserNames = searchFields.map(items => items.PurchaserName).join();
+            const purchaserPrices = searchFields.map(items => items.PurchaserPrice).join();
+
             const response = await axios.post('http://localhost:8000/api/register/', {
                 Method: 'post',
                 PurchaseDate: PurchaseDate,
@@ -203,25 +209,25 @@ const RegisterPage = () => {
                 PurchasePhone: PurchasePhone,
                 PurchaseNo: PurchaseNo,
                 Wrapping: Wrapping ? "YES" : "NO",
-                PurchaserItems: searchFields,
-                //PurchaserName: searchFields,
-                //PurchaserPrice: searchFields
+                PurchaserName: purchaserNames,
+                PurchaserPrice: purchaserPrices
             });
+
             console.log(response);
             fetchSearchResults();
             setPurchaseDate('');
-            //setPurchaseStep('');
             setPurchaser('');
             setPurchaseAddress('');
             setPurchaseAddressDetail('');
             setPurchasePhone('');
             setPurchaseNo('');
             setWrapping(false);
-            setSearchFields([{PurchaserName: "", PurchaserPrice: ""}])
+            setSearchFields([{ PurchaserName: "", PurchaserPrice: "" }]);
         } catch (error) {
             console.error('데이터 생성 에러:', error);
         }
     };
+
 
     const handleDelete = (PurchaseNo) => {
         setDeleteModalOpen(true);
