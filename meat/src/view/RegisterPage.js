@@ -149,8 +149,8 @@ const RegisterPage = () => {
     const handleDateChange = (date, id) => {
         if (id === 'PurchaseDate') {
             setPurchaseDate(date);
-            console.log(PurchaseDate);
         }
+        console.log(PurchaseDate);
     };
 
     const { authState} = useAuth();
@@ -441,7 +441,7 @@ const RegisterPage = () => {
                         {currentResults.map((result, index) => (
                             <tr key={index}>
                                 <td>{index + 1}</td>
-                                <td>{result.PurchaseDate ? format(new Date(result.PurchaseDate), 'yyyy-MM-dd') : null}</td>
+                                <td>{result.PurchaseDate ? format(result.PurchaseDate, 'yyyy-MM-dd') : null}</td>
                                 <td>{result.PurchaseStep}</td>
                                 <td>{result.Purchaser}</td>
                                 <td>{result.PurchaseAddress} ,<br/>{result.PurchaseAddressDetail}</td>
