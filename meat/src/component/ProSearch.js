@@ -2,22 +2,26 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import '../css/Pagination.css';
 
-const ProSearch = ({ setProcessingResults, setFilteredResults, setIncomingResults }) => {
+const ProSearch = ({ setProcessingResults, setFilteredResults, setIncomingResults, setRegisterResult }) => {
     const [TextForSearch, setTextForSearch] = useState('');
     const [TextForSearch1, setTextForSearch1] = useState('');
     const [TextForSearch2, setTextForSearch2] = useState('');
+    const [TextForSearch3, setTextForSearch3] = useState('');
     const [SearchOption, setSearchOption] = useState('');
     const [searchResults, setSearchResults] = useState([]);
     const [searchResults1, setSearchResults1] = useState([]);
     const [searchResults2, setSearchResults2] = useState([]);
+    const [searchResults3, setSearchResults3] = useState([]);
     const [orderNumbers, setOrderNumbers] = useState([]);
+    const [ProcessingResult, setProcessingResult] = useState([]);
+    const [registerResults, setRegisterResults] = useState([]);
 
     const fetchSearchResults = async () => {
         try {
             const response = await axios.get('http://localhost:8000/api/product/');
             console.log(response.data);
             setSearchResults(response.data); // 초기 데이터 설정
-            setProcessingResults(response.data);
+            setProcessingResult(response.data);
         } catch (error) {
             console.error('데이터 가져오기 에러:', error);
         }
@@ -31,6 +35,17 @@ const ProSearch = ({ setProcessingResults, setFilteredResults, setIncomingResult
             setFilteredResults(response.data);
         } catch (error) {
             console.error('데이터 가져오기 에러:', error);
+        }
+    };
+
+    const fetchSearchResults2 = async () => {
+        try {
+            const response = await axios.get('http://localhost:8000/api/register/');
+            console.log(response.data);
+            setSearchResults3(response.data);
+            setRegisterResults(response.data);
+        } catch (error) {
+            console.error('데이터 가져오기 에러 :', error);
         }
     };
 
@@ -66,7 +81,7 @@ const ProSearch = ({ setProcessingResults, setFilteredResults, setIncomingResult
     // 2차 가공 검색
     const handleSearch = () => {
         const lowerCasedFilter = TextForSearch.toLowerCase();
-        const filteredData = searchResults.filter(item => {
+        const filteredData = ProcessingResult.filter(item => {
             switch (SearchOption) {
                 case '발주일시':
                     return item.OrderDate.toLowerCase().includes(lowerCasedFilter);
@@ -203,6 +218,58 @@ const ProSearch = ({ setProcessingResults, setFilteredResults, setIncomingResult
         setIncomingResults(combinedResults);
     };
 
+    // 주문등록 검색
+    const handleSearch7 = () => {
+        const lowerCasedFilter = TextForSearch3.toLowerCase();
+        const RegisterResults = registerResults.filter(item => {
+            switch (SearchOption) {
+                case '등록일':
+                    return item.PurchaseDate.toLowerCase().includes(lowerCasedFilter);
+                case '구분':
+                    return item.PurchaseStep.toLowerCase().includes(lowerCasedFilter);
+                case '주문자':
+                    return item.Purchaser.toLowerCase().includes(lowerCasedFilter);
+                case '주소':
+                    return item.PurchaseAddress.toLowerCase().includes(lowerCasedFilter);
+                case '연락처':
+                    return item.PurchasePhone.toLowerCase().includes(lowerCasedFilter);
+                case '주문번호':
+                    return item.PurchaseNo.toLowerCase().includes(lowerCasedFilter);
+                case '기프트래핑':
+                    return item.Wrapping.toLowerCase().includes(lowerCasedFilter);
+                default:
+                    return false;
+            }
+        });
+        setRegisterResult(RegisterResults);
+    }
+
+    const handleSearch8 = (searchValue3) => {
+        setTextForSearch3(searchValue3);
+        const lowerCasedFilter = searchValue3.toLowerCase();
+        const filterResult = searchResults3.filter(item => {
+            switch (SearchOption) {
+                case '등록일':
+                    return item.PurchaseDate.toLowerCase().includes(lowerCasedFilter);
+                case '구분':
+                    return item.PurchaseStep.toLowerCase().includes(lowerCasedFilter);
+                case '주문자':
+                    return item.Purchaser.toLowerCase().includes(lowerCasedFilter);
+                case '주소':
+                    return item.PurchaseAddress.toLowerCase().includes(lowerCasedFilter);
+                case '연락처':
+                    return item.PurchasePhone.toLowerCase().includes(lowerCasedFilter);
+                case '주문번호':
+                    return item.PurchaseNo.toLowerCase().includes(lowerCasedFilter);
+                case '기프트래핑':
+                    return item.Wrapping.toLowerCase().includes(lowerCasedFilter);
+                default:
+                    return false;
+            }
+        });
+        setRegisterResult(filterResult)
+    }
+
     useEffect(() => {
         fetchSearchResults();
     }, []);
@@ -213,6 +280,10 @@ const ProSearch = ({ setProcessingResults, setFilteredResults, setIncomingResult
 
     useEffect(() => {
         fetchInitialData();
+    }, []);
+
+    useEffect(() => {
+        fetchSearchResults2();
     }, []);
 
 
@@ -275,6 +346,26 @@ const ProSearch = ({ setProcessingResults, setFilteredResults, setIncomingResult
                     </div>
                 </div>
                 : null}
+
+            {/*주문등록 검색*/}
+            {setRegisterResult != null ?
+                <div className="selectInput">
+                    <select id="SearchOption" value={SearchOption} onChange={handleSearchOption}>
+                        <option value={'등록일'}>등록일</option>
+                        <option value={'구분'}>구분</option>
+                        <option value={'주문자'}>주문자</option>
+                        <option value={'주소'}>주소</option>
+                        <option value={'연락처'}>연락처</option>
+                        <option value={'주문번호'}>주문번호</option>
+                        <option value={'기프트 래핑'}>기프트 래핑</option>
+                    </select>
+                    <div className="textInput">
+                        <input type="text" id="TextForSearch3" value={TextForSearch3}
+                               onChange={(e) => handleSearch8(e.target.value)}/>
+                        <button onClick={handleSearch7}>조회</button>
+                    </div>
+                </div>
+            : null}
         </div>
     );
 }

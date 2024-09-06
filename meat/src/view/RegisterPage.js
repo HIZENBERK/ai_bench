@@ -8,6 +8,7 @@ import PopupPostCode from "../component/DaumPost";
 import axios from "axios";
 import {format} from "date-fns";
 import DeleteModal from "../component/DeleteModal";
+import ProSearch from "../component/ProSearch";
 
 const RegisterPage = () => {
     const [searchFields, setSearchFields] = useState([{ PurchaserName: "", PurchaserPrice: ""}]);
@@ -35,6 +36,9 @@ const RegisterPage = () => {
     const [Wrapping, setWrapping] = useState(false);
     const [PurchaserName, setPurchaserName] = useState('');
     const [PurchaserPrice, setPurchaserPrice] = useState('');
+
+    const [editingRow, setEditingRow] = useState(null);
+    const [editedValues, setEditedValues] = useState({});
 
 
 
@@ -94,19 +98,19 @@ const RegisterPage = () => {
         const filterResults = registerResults.filter(item => {
             switch (SearchOption) {
                 case '등록일':
-                    return item.registrationDate.toLowerCase().includes(lowerCasedFilter);
-                case '카테고리':
-                    return item.category.toLowerCase().includes(lowerCasedFilter);
-                case '고객':
-                    return item.customer.toLowerCase().includes(lowerCasedFilter);
+                    return item.PurchaseDate.toLowerCase().includes(lowerCasedFilter);
+                case '구분':
+                    return item.PurchaseStep.toLowerCase().includes(lowerCasedFilter);
+                case '주문자':
+                    return item.Purchaser.toLowerCase().includes(lowerCasedFilter);
                 case '주소':
-                    return item.address.toLowerCase().includes(lowerCasedFilter);
+                    return item.PurchaseAddress.toLowerCase().includes(lowerCasedFilter);
                 case '연락처':
-                    return item.contact.toLowerCase().includes(lowerCasedFilter);
+                    return item.PurchasePhone.toLowerCase().includes(lowerCasedFilter);
                 case '주문번호':
-                    return item.orderNumber.toLowerCase().includes(lowerCasedFilter);
+                    return item.PurchaseNo.toLowerCase().includes(lowerCasedFilter);
                 case '기프트래핑':
-                    return item.giftWrapping.toLowerCase().includes(lowerCasedFilter);
+                    return item.Wrapping.toLowerCase().includes(lowerCasedFilter);
                 default:
                     return false;
             }
@@ -140,11 +144,6 @@ const RegisterPage = () => {
     const indexOfLastResult = currentPage * resultsPerPage;
     const indexOfFirstResult = indexOfLastResult - resultsPerPage;
     const currentResults = searchResults.slice(indexOfFirstResult, indexOfLastResult);
-
-    // const currentResults = searchResults.slice(
-    //     (currentPage - 1) * resultsPerPage,
-    //     currentPage * resultsPerPage
-    // );
 
     const handleDateChange = (date, id) => {
         if (id === 'PurchaseDate') {
@@ -280,6 +279,45 @@ const RegisterPage = () => {
         console.log(Wrapping)
     }
 
+    const handleEdit = (PurchaseNo) => {
+        setEditingRow(PurchaseNo.PurchaseNo);
+        setEditedValues({...PurchaseNo});
+    }
+
+    const handleSaveClick = async () => {
+        console.log(editedValues.PurchaseDate, editedValues.PurchaseStep, editedValues.Purchaser, editedValues.PurchaseAddress,
+            editedValues.PurchaseAddressDetail, editedValues.PurchasePhone)
+        try {
+            const purchaserNames = searchFields.map(items => items.PurchaserName).join();
+            const purchaserPrices = searchFields.map(items => items.PurchaserPrice).join();
+
+            const response = await axios.post('http://localhost:8000/api/register/', {
+                Method: 'put',
+                PurchaseDate: editedValues.PurchaseDate,
+                PurchaseStep: editedValues.PurchaseStep,
+                Purchaser: editedValues.Purchaser,
+                PurchaseAddress: editedValues.PurchaseAddress,
+                PurchaseAddressDetail: editedValues.PurchaseAddressDetail,
+                PurchasePhone: editedValues.PurchasePhone,
+                PurchaseNo: editedValues.PurchaseNo,
+            });
+            alert('수정되었습니다.')
+            fetchSearchResults();
+            setEditingRow(null);
+            setEditedValues({});
+        } catch (error) {
+            console.error('수정 실패:',error)
+            alert('수정 실패');
+        }
+    };
+
+    const handleInputChane = (field, value) => {
+        setEditedValues({
+            ...editedValues,
+            [field]: value,
+        });
+    };
+
     return (
         <div>
             <div className="processing-page-container">
@@ -403,26 +441,8 @@ const RegisterPage = () => {
                         <option value="30">30</option>
                     </select>
                 </div>
-                <div className="input-container">
-                    {/*<label htmlFor="orderDateTimeSearch">컬럼별 조회 목록</label>*/}
-                    <select id="SearchOption" onChange={handleSearchOption} value={SearchOption} >
-                        <option value={'등록일'}>등록일</option>
-                        <option value={'카테고리'}>카테고리</option>
-                        <option value={'고객'}>고객</option>
-                        <option value={'주소'}>주소</option>
-                        <option value={'연락처'}>연락처</option>
-                        <option value={'주문번호'}>주문번호</option>
-                        <option value={'기프트래핑'}>기프트래핑</option>
-                    </select>
-                    <input
-                        type="text"
-                        id="orderDateTimeSearch"
-                        value={TextForSearch}
-                        onChange={(e) => setTextForSearch(e.target.value)}
-                        placeholder="검색"
-                    />
-                    <button onClick={handleSearch1}>조회</button>
-                </div>
+
+                <ProSearch setRegisterResult={setSearchResults} />
                 <table>
                     <thead>
                         <tr>
@@ -441,18 +461,71 @@ const RegisterPage = () => {
                         {currentResults.map((result, index) => (
                             <tr key={index}>
                                 <td>{index + 1}</td>
-                                <td>{result.PurchaseDate ? format(result.PurchaseDate, 'yyyy-MM-dd') : null}</td>
-                                <td>{result.PurchaseStep}</td>
-                                <td>{result.Purchaser}</td>
-                                <td>{result.PurchaseAddress} ,<br/>{result.PurchaseAddressDetail}</td>
-                                <td>{result.PurchasePhone}</td>
-                                <td>{result.PurchaseNo}</td>
-                                <td>{result.Wrapping ? "YES" : "NO"}</td>
-                                <td>
-                                    <button>수정</button>
-                                    /
-                                    <button onClick={() => handleDelete(result.PurchaseNo)}>취소</button>
-                                </td>
+                                {editingRow === result.PurchaseNo ? (
+                                    <>
+                                        <td>
+                                            <input type="text"
+                                                   id="PurchaseDate"
+                                                   name='PurchaseDate'
+                                                   value={[editedValues.PurchaseDate ? format(result.PurchaseDate, 'yyyy-MM-dd') : null]  || ''}
+                                                   onChange={(e) => handleInputChane('PurchaseDate', e.target.value)}/>
+                                        </td>
+                                        <td>
+                                            <input type="text"
+                                                   id="PurchaseStep"
+                                                   name='PurchaseStep'
+                                                   value={editedValues.PurchaseStep || ''}
+                                                   onChange={(e) => handleInputChane('PurchaseStep', e.target.value)}/>
+                                        </td>
+                                        <td>
+                                            <input type="text"
+                                                   id="Purchaser"
+                                                   name="Purchaser"
+                                                   value={editedValues.Purchaser || ''}
+                                                   onChange={(e) => handleInputChane('Purchaser', e.target.value)}/>
+                                        </td>
+                                        <td>
+                                            <input type="text"
+                                                   id="PurchaseAddress"
+                                                   name='PurchaseAddress PurchaseAddressDetail'
+                                                   value={[editedValues.PurchaseAddress, editedValues.PurchaseAddressDetail] || ''}
+                                                   onChange={(e) => handleInputChane(['PurchaseAddress', 'PurchaseAddressDetail'], e.target.value)}/>
+                                        </td>
+                                        <td>
+                                            <input type="text"
+                                                   id="PurchasePhone"
+                                                   name='PurchasePhone'
+                                                   value={editedValues.PurchasePhone || ''}
+                                                   onChange={(e) => handleInputChane('PurchasePhone', e.target.value)}/>
+                                        </td>
+                                        <td>
+                                            {result.PurchaseNo}
+                                        </td>
+                                        <td>
+                                            {result.Wrapping ? "YES" : "NO"}
+                                        </td>
+                                        <td>
+                                            <button onClick={handleSaveClick}>저장</button>
+                                            <button onClick={() => setEditingRow(null)}>취소</button>
+                                        </td>
+                                    </>
+                                ) : (
+                                    <>
+                                        <td>{result.PurchaseDate ? format(result.PurchaseDate, 'yyyy-MM-dd') : null}</td>
+                                        <td>{result.PurchaseStep}</td>
+                                        <td>{result.Purchaser}</td>
+                                        <td>{result.PurchaseAddress} ,<br/>{result.PurchaseAddressDetail}</td>
+                                        <td>{result.PurchasePhone}</td>
+                                        <td>{result.PurchaseNo}</td>
+                                        <td>{result.Wrapping ? "YES" : "NO"}</td>
+                                        <td>
+                                            <button onClick={() => handleEdit(result)}>수정</button>
+                                            /
+                                            <button onClick={() => handleDelete(result.PurchaseNo)}>삭제</button>
+                                        </td>
+                                    </>
+                                )}
+
                             </tr>
                         ))}
                     </tbody>
